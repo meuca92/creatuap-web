@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Carta</title>
+<meta name="theme-color" content="#0e7490">
+<link rel="manifest" href="manifest.json">
+<script src="../shared/manifest.js?v=6087a0f"></script>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand: #0e7490;
+    --bg: #f7f5f1;
+    --card: #ffffff;
+    --text: #1c1917;
+    --muted: #78716c;
+    --border: #e7e2da;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.45; padding-bottom: 110px; }
+  button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+
+  /* Capçalera */
+  .hero { background: var(--brand); color: #fff; padding: 22px 0 26px; }
+  .hero.has-cover { padding-top: 96px; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+  .logo { overflow: hidden; }
+  .hero-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,.18); display: grid; place-items: center; font-size: 1.7rem; }
+  .brand h1 { font-size: 1.35rem; line-height: 1.15; }
+  .brand p { opacity: .85; font-size: .9rem; }
+  .langs { display: flex; gap: 4px; background: rgba(0,0,0,.18); border-radius: 999px; padding: 3px; }
+  .langs button { padding: 5px 10px; border-radius: 999px; font-size: .78rem; font-weight: 700; text-transform: uppercase; opacity: .75; }
+  .langs button.on { background: #fff; color: var(--brand); opacity: 1; }
+  .table-pill { display: inline-flex; margin-top: 16px; background: rgba(255,255,255,.18); padding: 6px 12px; border-radius: 999px; font-size: .85rem; font-weight: 500; }
+
+  /* Barra de categories */
+  .cats { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--border); }
+  .cats-row { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; scrollbar-width: none; max-width: 640px; margin: 0 auto; }
+  .cats-row::-webkit-scrollbar { display: none; }
+  .chip { white-space: nowrap; padding: 8px 14px; border-radius: 999px; background: var(--card); border: 1px solid var(--border); font-weight: 500; font-size: .9rem; }
+  .chip.on { background: var(--text); color: #fff; border-color: var(--text); }
+  .chip.filter { border-style: dashed; }
+  .chip.filter.active { border-style: solid; border-color: #dc2626; color: #dc2626; background: #fef2f2; }
+
+  /* Productes */
+  section { padding-top: 22px; scroll-margin-top: 60px; }
+  section h2 { font-size: 1.2rem; margin-bottom: 12px; }
+  .item { display: flex; gap: 14px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
+  .item.off { opacity: .55; }
+  .emoji { width: 64px; height: 64px; flex-shrink: 0; border-radius: 12px; background: var(--bg); display: grid; place-items: center; font-size: 2rem; }
+  .info { flex: 1; min-width: 0; }
+  .info h3 { font-size: 1rem; }
+  .info p { font-size: .86rem; color: var(--muted); margin-top: 2px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }
+  .al { font-size: .8rem; background: var(--bg); border-radius: 6px; padding: 2px 6px; }
+  .tag { font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+  .tag.vega { background: #dcfce7; color: #166534; }
+  .tag.picant { background: #fee2e2; color: #991b1b; }
+  .tag.esgotat { background: #e7e5e4; color: #57534e; }
+  .side { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; gap: 8px; }
+  .price { font-weight: 700; white-space: nowrap; }
+  .qty { display: flex; align-items: center; gap: 8px; }
+  .qty button { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 1.15rem; font-weight: 700; }
+  .qty .add { background: var(--brand); color: #fff; }
+  .qty .rem { background: var(--bg); border: 1px solid var(--border); }
+  .qty span { min-width: 14px; text-align: center; font-weight: 700; }
+  .empty { text-align: center; color: var(--muted); padding: 30px 0; }
+
+  /* Barra inferior de comanda */
+  .cartbar { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--bg) 30%); z-index: 30; }
+  .cartbar button { width: 100%; max-width: 608px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; background: var(--brand); color: #fff; padding: 16px 20px; border-radius: 14px; font-weight: 700; font-size: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+  .cartbar .count { background: rgba(255,255,255,.22); border-radius: 8px; padding: 2px 9px; margin-right: 10px; }
+
+  /* Fulls (sheets) */
+  .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 40; display: none; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: var(--card); border-radius: 22px 22px 0 0; max-height: 88vh; overflow-y: auto; padding: 10px 20px calc(24px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform .25s ease; max-width: 640px; margin: 0 auto; }
+  .sheet.open { transform: none; }
+  .grip { width: 40px; height: 5px; border-radius: 9px; background: var(--border); margin: 0 auto 16px; }
+  .sheet h2 { font-size: 1.3rem; margin-bottom: 14px; }
+  .line { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .line .n { flex: 1; }
+  .line small { color: var(--muted); display: block; }
+  .total { display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 700; padding: 16px 0; }
+  label { display: block; font-size: .85rem; font-weight: 700; margin: 12px 0 6px; }
+  input, textarea { width: 100%; font: inherit; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); }
+  .primary { width: 100%; background: var(--brand); color: #fff; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 1rem; margin-top: 18px; }
+  .primary:disabled { opacity: .5; }
+  .al-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .al-opt { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; text-align: left; font-size: .9rem; }
+  .al-opt.on { border-color: #dc2626; background: #fef2f2; color: #991b1b; font-weight: 700; }
+  .hint { color: var(--muted); font-size: .88rem; margin-bottom: 14px; }
+  .done { text-align: center; padding: 20px 0 6px; }
+  .done .big { font-size: 3.4rem; }
+  .done h2 { margin: 8px 0 4px; }
+  .done p { color: var(--muted); }
+  .done .num { display: inline-block; margin-top: 14px; font-size: 1.6rem; font-weight: 700; background: var(--bg); padding: 8px 20px; border-radius: 12px; }
+
+  footer { text-align: center; color: var(--muted); font-size: .78rem; padding: 30px 0 10px; }
+  .error { padding: 60px 20px; text-align: center; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<div class="backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet"><div class="grip"></div><div id="sheet-body"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+<script src="../shared/config.js?v=6087a0f"></script>
+<script src="../shared/remote.js?v=6087a0f"></script>
+<script src="core.js?v=6087a0f"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('c') || 'demo';
+  let table = params.get('taula') || '';
+
+  const UI = {
+    ca: { table: 'Taula', allergens: 'Al·lèrgens', filterTitle: 'Amaga plats amb…', filterHint: 'Marca els al·lèrgens que vols evitar i amagarem els plats que en contenen.', clear: 'Treure filtres', apply: 'Veure carta', hidden: n => `${n} plats amagats pels teus filtres`, view: 'Veure comanda', order: 'La teva comanda', tableQ: 'Número de taula', note: 'Algun comentari per a cuina?', notePh: 'Ex: sense ceba, ben fet…', send: 'Enviar a cuina', sent: 'Comanda enviada!', sentHint: 'La cuina ja l\'està preparant. Te la portem a taula.', orderNum: 'Comanda', back: 'Tornar a la carta', total: 'Total', soldOut: 'Esgotat', vegan: 'Vegà', spicy: 'Picant', menuOnly: 'Demana al cambrer quan vulguis.' },
+    es: { table: 'Mesa', allergens: 'Alérgenos', filterTitle: 'Ocultar platos con…', filterHint: 'Marca los alérgenos que quieres evitar y ocultaremos los platos que los contienen.', clear: 'Quitar filtros', apply: 'Ver carta', hidden: n => `${n} platos ocultos por tus filtros`, view: 'Ver pedido', order: 'Tu pedido', tableQ: 'Número de mesa', note: '¿Algún comentario para cocina?', notePh: 'Ej: sin cebolla, muy hecho…', send: 'Enviar a cocina', sent: '¡Pedido enviado!', sentHint: 'La cocina ya lo está preparando. Te lo llevamos a la mesa.', orderNum: 'Pedido', back: 'Volver a la carta', total: 'Total', soldOut: 'Agotado', vegan: 'Vegano', spicy: 'Picante', menuOnly: 'Pide al camarero cuando quieras.' },
+    en: { table: 'Table', allergens: 'Allergens', filterTitle: 'Hide dishes with…', filterHint: 'Select the allergens you want to avoid and we\'ll hide dishes that contain them.', clear: 'Clear filters', apply: 'View menu', hidden: n => `${n} dishes hidden by your filters`, view: 'View order', order: 'Your order', tableQ: 'Table number', note: 'Any note for the kitchen?', notePh: 'E.g. no onion, well done…', send: 'Send to kitchen', sent: 'Order sent!', sentHint: 'The kitchen is preparing it. We\'ll bring it to your table.', orderNum: 'Order', back: 'Back to menu', total: 'Total', soldOut: 'Sold out', vegan: 'Vegan', spicy: 'Spicy', menuOnly: 'Ask your waiter whenever you\'re ready.' }
+  };
+
+  let client, lang, cart = {}, avoid = new Set();
+  const $ = id => document.getElementById(id);
+  const t = key => UI[lang][key];
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  function pickLang() {
+    const saved = (() => { try { return localStorage.getItem('cartaqr:lang'); } catch (_) { return null; } })();
+    const nav = (navigator.language || 'ca').slice(0, 2);
+    return [saved, nav].find(l => l && client.languages.includes(l)) || client.languages[0];
+  }
+
+  function setLang(l) {
+    lang = l;
+    try { localStorage.setItem('cartaqr:lang', l); } catch (_) {}
+    document.documentElement.lang = l;
+    render();
+  }
+
+  const productById = id => client.products.find(p => p.id === id);
+  const cartCount = () => Object.values(cart).reduce((a, b) => a + b, 0);
+  const cartTotal = () => Object.entries(cart).reduce((s, [id, q]) => s + productById(id).price * q, 0);
+  const visible = p => !p.allergens.some(a => avoid.has(a));
+
+  function render() {
+    document.title = client.name;
+    const canOrder = client.modules.comandes;
+    const hiddenCount = client.products.filter(p => !visible(p)).length;
+
+    $('app').innerHTML = `
+      <header ${Brand.hero(client)}><div class="wrap">
+        <div class="hero-top">
+          <div class="brand"><div class="logo">${Brand.logo(client)}</div>
+            <div><h1>${esc(client.name)}</h1><p>${esc(tr(client.tagline, lang))}</p></div></div>
+          ${client.languages.length > 1 ? `<div class="langs">${client.languages.map(l => `<button class="${l === lang ? 'on' : ''}" data-lang="${l}" title="${LANG_NAMES[l]}">${l}</button>`).join('')}</div>` : ''}
+        </div>
+        ${table ? `<span class="table-pill">📍 ${t('table')} ${esc(table)}</span>` : ''}
+      </div></header>
+
+      <nav class="cats"><div class="cats-row">
+        <button class="chip filter ${avoid.size ? 'active' : ''}" data-action="allergens">⚠️ ${t('allergens')}${avoid.size ? ` (${avoid.size})` : ''}</button>
+        ${client.categories.map(c => `<button class="chip" data-cat="${c.id}">${esc(tr(c.name, lang))}</button>`).join('')}
+      </div></nav>
+
+      <main class="wrap">
+        ${hiddenCount ? `<p class="hint" style="margin-top:16px">🙈 ${t('hidden')(hiddenCount)}</p>` : ''}
+        ${client.categories.map(c => {
+          const items = client.products.filter(p => p.cat === c.id && visible(p));
+          if (!items.length) return '';
+          return `<section id="cat-${c.id}"><h2>${esc(tr(c.name, lang))}</h2>${items.map(itemHTML).join('')}</section>`;
+        }).join('')}
+        ${!canOrder ? `<p class="empty">${t('menuOnly')}</p>` : ''}
+        <footer>${esc(client.name)} · CartaQR by CreaTuApp</footer>
+      </main>
+
+      ${canOrder && cartCount() ? `<div class="cartbar"><button data-action="cart"><span><span class="count">${cartCount()}</span>${t('view')}</span><span>${fmtPrice(cartTotal())}</span></button></div>` : ''}
+    `;
+  }
+
+  function itemHTML(p) {
+    const q = cart[p.id] || 0;
+    const tags = [
+      p.tags.includes('vegà') ? `<span class="tag vega">🌱 ${t('vegan')}</span>` : '',
+      p.tags.includes('picant') ? `<span class="tag picant">🌶️ ${t('spicy')}</span>` : '',
+      !p.available ? `<span class="tag esgotat">${t('soldOut')}</span>` : ''
+    ].join('');
+    const als = p.allergens.map(a => `<span class="al" title="${ALLERGENS[a][lang]}">${ALLERGENS[a].icon}</span>`).join('');
+    const controls = client.modules.comandes && p.available
+      ? `<div class="qty">${q ? `<button class="rem" data-rem="${p.id}" aria-label="−">−</button><span>${q}</span>` : ''}<button class="add" data-add="${p.id}" aria-label="+">+</button></div>`
+      : '';
+    return `<article class="item ${p.available ? '' : 'off'}">
+      <div class="emoji">${p.emoji}</div>
+      <div class="info"><h3>${esc(tr(p.name, lang))}</h3><p>${esc(tr(p.desc, lang))}</p><div class="meta">${tags}${als}</div></div>
+      <div class="side"><span class="price">${fmtPrice(p.price)}</span>${controls}</div>
+    </article>`;
+  }
+
+  // Fulls inferiors
+  function openSheet(html) { $('sheet-body').innerHTML = html; $('backdrop').style.display = 'block'; requestAnimationFrame(() => $('sheet').classList.add('open')); }
+  function closeSheet() { $('sheet').classList.remove('open'); $('backdrop').style.display = 'none'; }
+
+  function allergenSheet() {
+    openSheet(`<h2>${t('filterTitle')}</h2><p class="hint">${t('filterHint')}</p>
+      <div class="al-grid">${Object.entries(ALLERGENS).map(([k, a]) => `<button class="al-opt ${avoid.has(k) ? 'on' : ''}" data-avoid="${k}">${a.icon} ${a[lang]}</button>`).join('')}</div>
+      <button class="primary" data-action="close">${t('apply')}</button>
+      ${avoid.size ? `<button class="primary" style="background:var(--bg);color:var(--text);margin-top:8px" data-action="clear-avoid">${t('clear')}</button>` : ''}`);
+  }
+
+  function cartSheet() {
+    const lines = Object.entries(cart).map(([id, q]) => {
+      const p = productById(id);
+      return `<div class="line"><div class="n"><b>${esc(tr(p.name, lang))}</b><small>${fmtPrice(p.price)}</small></div>
+        <div class="qty"><button class="rem" data-rem="${id}" data-in-sheet>−</button><span>${q}</span><button class="add" data-add="${id}" data-in-sheet>+</button></div></div>`;
+    }).join('');
+    openSheet(`<h2>${t('order')}</h2>${lines}
+      <div class="total"><span>${t('total')}</span><span>${fmtPrice(cartTotal())}</span></div>
+      <label for="f-table">${t('tableQ')}</label><input id="f-table" inputmode="numeric" value="${esc(table)}" placeholder="—">
+      <label for="f-note">${t('note')}</label><textarea id="f-note" rows="2" placeholder="${t('notePh')}"></textarea>
+      <button class="primary" data-action="send">${t('send')} · ${fmtPrice(cartTotal())}</button>`);
+  }
+
+  let sending = false;
+  async function sendOrder() {
+    if (sending) return;
+    const tableVal = $('f-table').value.trim();
+    if (!tableVal) { $('f-table').focus(); $('f-table').style.borderColor = '#dc2626'; return; }
+    table = tableVal;
+    sending = true;
+    let order;
+    try {
+    order = await Store.addOrder(slug, {
+      table: tableVal,
+      note: $('f-note').value.trim(),
+      lang,
+      items: Object.entries(cart).map(([id, qty]) => { const p = productById(id); return { id, qty, name: tr(p.name, 'ca'), price: p.price }; }),
+      total: cartTotal()
+    });
+    } catch (err) {
+      sending = false;
+      return openSheet(`<div class="done"><div class="big">⚠️</div><h2>${lang === 'es' ? 'No se ha podido enviar' : lang === 'en' ? 'Could not send' : 'No s\'ha pogut enviar'}</h2>
+        <p>${lang === 'es' ? 'Algún plato se ha agotado o no hay conexión. Revisa el pedido o avisa al camarero.' : lang === 'en' ? 'A dish may have sold out or there is no connection. Check your order or ask your waiter.' : 'Potser s\'ha acabat algun plat o no hi ha connexió. Revisa la comanda o avisa el cambrer.'}</p></div>
+        <button class="primary" data-action="close">${t('back')}</button>`);
+    }
+    sending = false;
+    cart = {};
+    render();
+    openSheet(`<div class="done"><div class="big">✅</div><h2>${t('sent')}</h2><p>${t('sentHint')}</p>
+      <div class="num">${t('orderNum')} #${order.num}</div></div>
+      <button class="primary" data-action="close">${t('back')}</button>`);
+  }
+
+  // Un sol gestor de clics per a tota la pàgina
+  document.addEventListener('click', e => {
+    const el = e.target.closest('button, .backdrop');
+    if (!el) return;
+    if (el.id === 'backdrop') return closeSheet();
+    const d = el.dataset;
+    if (d.lang) return setLang(d.lang);
+    if (d.cat) return document.getElementById('cat-' + d.cat)?.scrollIntoView({ behavior: 'smooth' });
+    if (d.add || d.rem) {
+      const id = d.add || d.rem;
+      cart[id] = (cart[id] || 0) + (d.add ? 1 : -1);
+      if (cart[id] <= 0) delete cart[id];
+      render();
+      if (d.inSheet !== undefined) cartCount() ? cartSheet() : closeSheet();
+      return;
+    }
+    if (d.avoid) { avoid.has(d.avoid) ? avoid.delete(d.avoid) : avoid.add(d.avoid); render(); return allergenSheet(); }
+    switch (d.action) {
+      case 'allergens': return allergenSheet();
+      case 'cart': return cartSheet();
+      case 'send': return sendOrder();
+      case 'clear-avoid': avoid.clear(); render(); return closeSheet();
+      case 'close': return closeSheet();
+    }
+  });
+
+  // Si al panell canvien preus o disponibilitat, la carta s'actualitza sola.
+  Store.onChange(async () => { client = Store.remote ? Store.config : await Store.loadClient(slug); render(); });
+
+  Store.loadClient(slug).then(c => {
+    client = c;
+    if (Store.remote) Brand.homeScreen(c, false);
+    document.documentElement.style.setProperty('--brand', c.color);
+    document.querySelector('meta[name=theme-color]').content = c.color;
+    setLang(pickLang());
+    if (Store.remote) Store.attachPublic(slug);
+  }).catch(err => {
+    $('app').innerHTML = err && err.message === 'not_live'
+      ? `<div class="error"><h2>${esc(err.businessName || '')}</h2><p>La carta digital no està disponible ara mateix. Demana-la al cambrer.</p></div>`
+      : '<div class="error"><h2>Carta no trobada</h2><p>Revisa l\'enllaç o el codi QR.</p></div>';
+  });
+</script>
+</body>
+</html>

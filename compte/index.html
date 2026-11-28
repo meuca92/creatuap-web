@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El meu compte · CreaTuApp</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#06070c">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<script src="../i18n/core.js?v=6087a0f"></script>
+<script src="../i18n/compte.js?v=6087a0f"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../apps/shared/panel.css?v=6087a0f">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
+<style>
+  :root { --brand: #7c3aed; --bg: #f6f5fb; --text: #1b1830; --muted: #6b6880; --border: #e5e2ef; }
+  body { padding-bottom: 40px; }
+  .top { background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; padding-bottom: 12px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .14em; text-decoration: none; color: inherit; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, #f97316, #ec4899 55%, #8b5cf6); }
+  .who { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: .92rem; }
+  .home-btn { border: 1px solid var(--border); padding: 8px 12px; border-radius: 10px; font-weight: 700; font-size: .88rem; color: var(--text); text-decoration: none; background: rgba(255,255,255,.05); white-space: nowrap; }
+  .home-btn:hover { border-color: var(--brand); }
+  @media (max-width: 560px) { .logo { font-size: 0; gap: 0; } #who-email { display: none; } }
+  .who button { border: 1px solid var(--border); padding: 8px 12px; border-radius: 10px; font-weight: 700; color: var(--text); background: #fff; }
+  main { padding: 26px 0; }
+  h1 { font-size: 1.8rem; line-height: 1.15; }
+  .lead { color: var(--muted); margin: 6px 0 20px; }
+  .head-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 18px; border-radius: 14px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-size: 1rem; }
+  .btn.main { background: var(--brand); color: #fff; }
+  .btn.sec { background: #fff; border: 1px solid var(--border); color: var(--text); }
+
+  /* Entrar */
+  .login { max-width: 420px; margin: 30px auto; background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; }
+  .login h1 { font-size: 1.5rem; margin-bottom: 6px; }
+  .login label { display: block; font-weight: 700; font-size: .95rem; margin: 14px 0 6px; }
+  .login input { width: 100%; font: inherit; padding: 14px 16px; border: 2px solid var(--border); border-radius: 12px; }
+  .login input:focus { outline: none; border-color: var(--brand); }
+  #guests input { font: inherit; padding: 12px 14px; border: 2px solid var(--border); border-radius: 12px; }
+  #guests input:focus { outline: none; border-color: var(--brand); }
+  .login .btn { width: 100%; margin-top: 18px; padding: 15px; }
+  .linkbtn { background: none; border: 0; color: var(--brand); font-weight: 700; text-decoration: underline; cursor: pointer; font: inherit; padding: 0; }
+  .msg { margin-top: 12px; font-weight: 500; min-height: 1.2em; }
+  .msg.bad { color: #f87171; }
+  .login .alt { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); text-align: center; }
+
+  /* Apps */
+  .apps { display: grid; gap: 16px; }
+  .app { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 18px; }
+  .app-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .app-logo { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; font-size: 1.8rem; color: #fff; flex-shrink: 0; overflow: hidden; }
+  .app-name { font-weight: 700; font-size: 1.2rem; line-height: 1.2; }
+  .app-meta { color: var(--muted); font-size: .9rem; }
+  .pill { margin-left: auto; font-weight: 700; font-size: .82rem; padding: 5px 10px; border-radius: 999px; white-space: nowrap; }
+  .pill.ok { background: #dcfce7; color: #166534; }
+  .pill.warn { background: #fef3c7; color: #92400e; }
+  .pill.bad { background: #fee2e2; color: #991b1b; }
+  .pill.info { background: #ede9fe; color: #5b21b6; }
+  .actions { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+  .actions a, .actions button { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); font-weight: 700; font-size: .95rem; color: var(--text); text-decoration: none; cursor: pointer; text-align: left; }
+  .actions a.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .link-row { display: flex; gap: 8px; align-items: center; margin-top: 12px; background: var(--bg); border-radius: 12px; padding: 8px 8px 8px 12px; font-size: .9rem; color: var(--muted); overflow: hidden; }
+  .link-row span { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .empty { background: #fff; border: 2px dashed var(--border); border-radius: 20px; padding: 40px 20px; text-align: center; }
+  .empty .big { font-size: 2.6rem; }
+  .account { margin-top: 28px; background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 18px; }
+  .account h2 { font-size: 1.1rem; margin-bottom: 10px; }
+  .account .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .account .row:first-of-type { border-top: 0; }
+  .account small { color: var(--muted); display: block; }
+  .howto ol { padding-left: 20px; margin-top: 8px; }
+  .howto li { margin: 6px 0; }
+  .loading { color: var(--muted); padding: 30px 0; text-align: center; }
+  @media (max-width: 560px) { .pill { display: none; } .who span { display: none; } }
+
+  /* ===== Mode fosc (com la portada de creatuap.com) ===== */
+  :root { color-scheme: dark; --brand: #8b5cf6; --bg: #06070c; --card: #10121c; --text: #eef1f8; --muted: #8b93a7; --border: rgba(255,255,255,.12); --soft: #171a27; --on: rgba(139,92,246,.18); --bad: #f87171; --ok: #4ade80; }
+  body { background: radial-gradient(1200px 600px at 80% -10%, rgba(139,92,246,.16), transparent 60%), radial-gradient(900px 500px at -10% 10%, rgba(34,211,238,.08), transparent 60%), var(--bg) fixed; color: var(--text); }
+  .top, .nav { background: rgba(6,7,12,.82) !important; backdrop-filter: blur(14px); }
+  .box, .type, .done-card, .howto, .mine .it, .modal, .card, .login, .app, .empty, .account, .p-modal { background: var(--card) !important; color: var(--text); }
+  .in-text, .seg button, .emojis button, .upl, .row input, .row select, .row .em, .staff .em, .cat-head input:hover, .cat-head input:focus,
+  input, select, textarea, .who button, .btn.sec, .preview-m button, .p-modal input, .p-modal select, .p-modal textarea { background: var(--soft) !important; color: var(--text); }
+  input::placeholder, textarea::placeholder { color: #6b7286; }
+  .type.on, .seg button.on, .emojis button.on { background: var(--on) !important; }
+  .seg button.on { color: #c4b5fd; }
+  .cat { background: rgba(255,255,255,.025); }
+  .colors button { border-color: var(--card); }
+  .switch { background: #3a3f52; }
+  .preview .switcher button.on { background: var(--soft); color: var(--text); }
+  .notice { background: rgba(251,146,60,.12); border-color: rgba(251,146,60,.35); color: #fdba74; }
+  .row .del:hover { background: rgba(239,68,68,.15); }
+  .pill.ok { background: rgba(52,211,153,.15); color: #6ee7b7; } .pill.warn { background: rgba(251,191,36,.15); color: #fcd34d; }
+  .pill.bad { background: rgba(239,68,68,.15); color: #fca5a5; } .pill.info { background: rgba(139,92,246,.2); color: #c4b5fd; }
+  .actions a, .actions button, .link-row, .p-btn.sec { background: var(--soft); color: var(--text); }
+  .actions a.primary { background: var(--brand); color: #fff; }
+  .p-tip { background: rgba(251,191,36,.12); color: #fcd34d; } .p-tip button { background: #fbbf24; color: #1b1406; }
+  .p-toast { background: #eef1f8; color: #06070c; }
+  .p-backdrop, .modal-back { background: rgba(0,0,0,.7); }
+  .linkbtn, .link { color: #a78bfa; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div style="display:flex;align-items:center;gap:10px"><a class="logo" href="/"><span class="logo-mark"></span>CREATUAPP</a>
+    <a class="home-btn" href="/">← Pàgina principal</a></div>
+  <div style="display:flex;align-items:center;gap:10px"><div id="langs"></div>
+  <div class="who" id="who" hidden><span id="who-email"></span><button onclick="logout()">Sortir</button></div></div>
+</div></header>
+
+<main class="wrap" id="main"><p class="loading">Un moment…</p></main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+<script src="../apps/shared/config.js?v=6087a0f"></script>
+<script src="../apps/shared/remote.js?v=6087a0f"></script>
+<script src="../apps/shared/panel.js?v=6087a0f"></script>
+<script>
+  i18nStart();
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const sb = Remote.client();
+  const APPS = {
+    cartaqr: { name: 'CartaQR', kind: 'Carta digital i comandes', what: 'comandes' },
+    reservafacil: { name: 'Tanda', kind: 'Reserves de cites', what: 'cites' },
+    botigaexpress: { name: 'BotigaExpress', kind: 'Botiga online', what: 'comandes' },
+    entradesqr: { name: 'EntradesQR', kind: "Venda d'entrades", what: 'entrades' }
+  };
+  const SITE = location.origin;
+  const appUrl = b => `${SITE}/apps/${b.app}/index.html?c=${encodeURIComponent(b.slug)}`;
+  const panelUrl = b => `${SITE}/apps/${b.app}/admin.html?c=${encodeURIComponent(b.slug)}`;
+  const fmtDate = iso => new Date(iso).toLocaleDateString(LOCALE, { day: 'numeric', month: 'long', year: 'numeric' });
+  let user = null, list = [], isAdmin = false;
+
+  // ---------- Entrar ----------
+  // Entrar o registrar-se (sense haver de crear cap app primer).
+  function viewLogin(msg, mode = 'login') {
+    const reg = mode === 'signup';
+    $('who').hidden = true;
+    $('main').innerHTML = `<form class="login" id="login">
+      <h1>${reg ? 'Crea el teu compte' : 'El meu compte'}</h1><p class="lead">${reg ? 'Amb el teu correu i una contrasenya. Després ja podràs crear les teves apps.' : 'Entra per veure i gestionar les teves apps.'}</p>
+      <label for="em">Correu</label><input id="em" type="email" autocomplete="email" required>
+      <label for="pw">Contrasenya${reg ? ' <small style="font-weight:400;color:var(--muted)">(mínim 8 lletres o números)</small>' : ''}</label><input id="pw" type="password" autocomplete="${reg ? 'new-password' : 'current-password'}" minlength="${reg ? 8 : 1}" required>
+      <p style="margin-top:8px"><button type="button" class="linkbtn" id="show">👁 Mostrar la contrasenya</button></p>
+      <button class="btn main" type="submit">${reg ? 'Crear el compte' : 'Entrar'}</button>
+      ${reg ? `<p style="margin-top:10px;font-size:.85rem;color:var(--muted)">En crear el compte acceptes les <a class="linkbtn" href="../legal/#condicions" target="_blank">condicions d'ús</a> i la <a class="linkbtn" href="../legal/#privacitat" target="_blank">política de privacitat</a>.</p>` : ''}
+      <p class="msg ${msg ? 'bad' : ''}" id="msg">${esc(msg || '')}</p>
+      ${reg ? '' : '<p style="text-align:center"><a class="linkbtn" href="../contrasenya/">He oblidat la contrasenya</a></p>'}
+      <div class="alt">${reg ? 'Ja tens compte? <button type="button" class="linkbtn" id="swap">Entra</button>'
+        : 'Encara no tens compte? <button type="button" class="linkbtn" id="swap">Registra’t</button>'}</div>
+    </form>`;
+    $('swap').onclick = () => viewLogin('', reg ? 'login' : 'signup');
+    $('show').onclick = e => { const v = $('pw').type === 'password'; $('pw').type = v ? 'text' : 'password'; e.target.textContent = v ? '🙈 Amagar la contrasenya' : '👁 Mostrar la contrasenya'; };
+    $('login').onsubmit = async e => {
+      e.preventDefault();
+      const email = $('em').value.trim(), password = $('pw').value, m = $('msg');
+      const bad = t => { m.className = 'msg bad'; m.textContent = t; };
+      m.className = 'msg'; m.textContent = reg ? 'Creant el compte…' : 'Entrant…';
+      if (!reg) {
+        const { error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) return bad(/confirm/i.test(error.message) ? 'Encara no has confirmat el correu: busca el missatge de CreaTuApp a la safata d\'entrada.' : 'El correu o la contrasenya no són correctes.');
+        return location.assign('/');   // després d'entrar, a la pàgina principal (el botó del compte ja surt destacat)
+      }
+      if (password.length < 8) return bad('La contrasenya ha de tenir com a mínim 8 lletres o números.');
+      const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: location.origin + '/compte/' } });
+      if (error) {
+        if (/registered|exists/i.test(error.message)) return viewLogin('Aquest correu ja té compte. Entra amb la teva contrasenya.');
+        if (/rate|limit/i.test(error.message)) return bad('S\'han enviat massa correus. Torna-ho a provar d\'aquí a una hora.');
+        if (/password/i.test(error.message)) return bad('Aquesta contrasenya és massa fàcil. Prova\'n una de més llarga.');
+        return bad('No s\'ha pogut crear el compte. Revisa el correu i torna-ho a provar.');
+      }
+      if (data.session) return location.assign('/');
+      $('main').innerHTML = `<div class="login" style="text-align:center"><div style="font-size:3rem">📧</div><h1>Mira el teu correu</h1>
+        <p class="lead">T’hem enviat un missatge a <b>${esc(email)}</b>. Toca l’enllaç per confirmar el compte i ja podràs entrar.</p>
+        <p class="lead" style="font-size:.92rem">No el trobes? Mira a la carpeta de correu brossa o de promocions.</p>
+        <button class="btn main" onclick="viewLogin()">Ja l’he confirmat: entrar</button></div>`;
+    };
+    setTimeout(() => $('em') && $('em').focus(), 50);
+  }
+  async function logout() { await sb.auth.signOut(); user = null; viewLogin(); }
+
+  // ---------- Les meves apps ----------
+  function status(b) {
+    const days = Math.ceil((Date.parse(b.trial_ends_at) - Date.now()) / 864e5);
+    if (b.sub_status === 'admin') return ['ok', 'Gratis · administrador'];
+    if (b.sub_status === 'guest') return ['ok', 'Gratis · compte convidat'];
+    if (b.status === 'pending') return ['warn', 'Falta activar-la'];
+    if (b.status === 'paused') return ['bad', 'Aturada'];
+    if (b.sub_status === 'prepaid') return ['ok', days > 365 * 50 ? 'Pagada per sempre' : `Pagada fins al ${fmtDate(b.trial_ends_at)}`];
+    if (b.sub_status === 'past_due') return ['bad', 'Cobrament pendent'];
+    if (b.sub_status === 'trialing') return ['info', days <= 1 ? 'Prova: últim dia' : `Prova: ${days} dies`];
+    if (b.status === 'trial') return days > 0 ? ['info', `Prova: ${days} dies`] : ['bad', 'Prova acabada'];
+    return ['ok', 'Activa'];
+  }
+  function card(b, i) {
+    const c = b.config || {}, A = APPS[b.app] || { name: b.app, kind: '' };
+    const [cls, label] = b.isMember ? ['info', '👥 Ets de l’equip'] : status(b);
+    const paid = !b.isMember && b.stripe_customer_id && !['admin', 'guest'].includes(b.sub_status);
+    return `<article class="app">
+      <div class="app-head">
+        <div class="app-logo" style="background:${esc(c.color || '#7c3aed')}">${Brand.logo(c)}</div>
+        <div><div class="app-name">${esc(c.name || b.slug)}</div><div class="app-meta">${esc(A.name)} · ${esc(A.kind)} · des del ${fmtDate(b.created_at)}</div></div>
+        <span class="pill ${cls}">${esc(label)}</span>
+      </div>
+      ${Panel.trialBanner(b)}
+      <div class="actions">
+        <a class="primary" href="${esc(panelUrl(b))}" target="_blank">🛠️ Obrir el panell</a>
+        <a href="${esc(appUrl(b))}" target="_blank">📱 Veure l'app</a>
+        <a href="../crea/?editar=${encodeURIComponent(b.slug)}">✏️ Editar l'app</a>
+        <button onclick="downloadQR(${i})">🔳 Descarregar el QR</button>
+        <button onclick="howToInstall(${i})">📲 Desar-la al mòbil</button>
+        ${paid ? `<button onclick="Panel.pay('portal', '${esc(b.slug)}', this)">💳 Pagaments i factures</button>` : ''}
+        ${b.isMember ? '' : `<button onclick="team(${i})">👥 Equip</button>`}
+        ${!b.isMember && ['botigaexpress', 'entradesqr'].includes(b.app) ? `<button onclick="payments(${i})">💳 Cobraments amb targeta</button>` : ''}
+      </div>
+      <div class="link-row"><span>${esc(appUrl(b))}</span><button class="linkbtn" onclick="copyLink(${i})">Copiar l'enllaç</button></div>
+    </article>`;
+  }
+  function viewApps() {
+    $('who').hidden = false; $('who-email').textContent = user.email;
+    $('main').innerHTML = `<div class="head-row"><div><h1>Les meves apps</h1><p class="lead" style="margin-bottom:0">Tot el que has creat amb CreaTuApp, a punt des de qualsevol lloc.</p></div>
+        <a class="btn main" href="../crea/">➕ Crear una app nova</a></div>
+      ${list.length ? `<div class="apps">${list.map(card).join('')}</div>`
+        : `<div class="empty"><div class="big">📱</div><h2>Encara no tens cap app</h2><p class="lead">En 10 minuts pots tenir la del teu negoci, i els primers 14 dies són gratis.</p><a class="btn main" href="../crea/">Crear la meva app</a></div>`}
+      <section class="account"><h2>El meu compte</h2>
+        <div class="row"><span><small>Correu</small>${esc(user.email)}</span></div>
+        <div class="row"><span><small>Contrasenya</small>••••••••</span><a class="btn sec" href="../contrasenya/">Canviar la contrasenya</a></div>
+        <div class="row"><span><small>Ajuda</small>Escriu-nos a support@creatuap.com i et responem per correu.</span><a class="btn sec" href="mailto:support@creatuap.com">Escriure</a></div>
+        <div class="row"><span><small>Sessió</small>Has entrat en aquest aparell.</span><button class="btn sec" onclick="logout()">Sortir</button></div>
+      </section>
+      ${list.some(b => !b.isMember && b.status === 'active') ? '<section class="account" id="refer"><h2>🎁 Recomana i estalvia</h2><p class="loading">Carregant…</p></section>' : ''}
+      ${isAdmin ? '<section class="account" id="guests"><h2>🎟️ Comptes convidats</h2><p class="loading">Carregant…</p></section>' : ''}`;
+    if (isAdmin) loadGuests();
+    if ($('refer')) loadRefer();
+    const cb = new URLSearchParams(location.search).get('cobraments');
+    if (cb) {
+      history.replaceState(null, '', location.pathname);
+      let sl = null; try { sl = sessionStorage.getItem('creatuapp:cobraments'); } catch (_) {}
+      const idx = list.findIndex(x => x.slug === sl);
+      if (idx >= 0) payments(idx);
+    }
+  }
+
+  // ---------- Cobraments amb targeta (Stripe Connect) ----------
+  // El negoci connecta el SEU compte de Stripe: hi posa el DNI i el compte del banc al formulari de
+  // Stripe (nosaltres no els veiem mai) i els diners de les vendes amb targeta li arriben al banc.
+  async function payments(i) {
+    const b = list[i];
+    Panel.modal('<h3>💳 Cobraments amb targeta</h3><p>Consultant…</p>');
+    let st;
+    try { st = await Remote.connect('connect-status', b.slug); }
+    catch (_) { return Panel.modal('<h3>💳 Cobraments amb targeta</h3><p>Ara mateix no s\u2019ha pogut consultar. Torna-ho a provar d\u2019aquí a una estona.</p><div class="p-row"><button class="p-btn sec" onclick="Panel.closeModal()">Tancar</button></div>'); }
+    const close = '<button class="p-btn sec" onclick="Panel.closeModal()">Tancar</button>';
+    if (st.enabled) return Panel.modal(`<h3>✅ Ja cobres amb targeta</h3>
+      <p>Els teus clients poden pagar amb targeta, Apple Pay o Google Pay a la botiga, i els diners t\u2019arriben al teu compte del banc (normalment en pocs dies).</p>
+      <p style="font-size:.9rem">Stripe es queda la seva comissió per cada pagament (aprox. 1,5 % + 0,25 € amb targetes europees). CreaTuApp no et cobra res més per vendre.</p>
+      <div class="p-row">${close}${st.dashboard ? `<a class="p-btn main" style="text-align:center;text-decoration:none" target="_blank" href="${esc(st.dashboard)}">Veure els meus cobraments</a>` : ''}</div>`);
+    Panel.modal(`<h3>💳 Cobra amb targeta a la teva botiga</h3>
+      <div class="howto"><p>${st.submitted ? '⏳ <b>Stripe està revisant les teves dades</b> o en falta alguna. Toca el botó per completar-les.' : 'Connecta el teu compte i els teus clients podran pagar amb <b>targeta, Apple Pay o Google Pay</b>.'}</p>
+      <ol><li>Toca <b>«Connectar el meu compte»</b>: s\u2019obre el formulari segur de <b>Stripe</b>.</li>
+        <li>Posa-hi les dades del negoci, el teu DNI i el <b>compte del banc on vols rebre els diners</b>. Uns 5 minuts.</li>
+        <li>Quan Stripe ho aprovi, la botiga ja accepta targeta sola.</li></ol>
+      <p style="font-size:.9rem">Nosaltres no veiem mai les teves dades del banc. Stripe es queda la seva comissió per pagament (aprox. 1,5 % + 0,25 €).</p></div>
+      <p class="msg bad" id="pay-err"></p>
+      <div class="p-row">${close}<button class="p-btn main" onclick="startConnect(${i}, this)">${st.submitted ? 'Completar les dades' : 'Connectar el meu compte'}</button></div>`);
+  }
+  async function startConnect(i, el) {
+    el.disabled = true;
+    try {
+      try { sessionStorage.setItem('creatuapp:cobraments', list[i].slug); } catch (_) {}
+      const d = await Remote.connect('connect', list[i].slug);
+      location.href = d.url;
+    } catch (e) {
+      el.disabled = false;
+      $('pay-err').textContent = e.message === 'connect_off' ? 'Els cobraments amb targeta encara s\u2019estan activant a CreaTuApp. Torna-ho a provar en uns dies o escriu-nos.' : 'No s\u2019ha pogut obrir Stripe. Torna-ho a provar d\u2019aquí a una estona.';
+    }
+  }
+
+  // ---------- Recomanacions ----------
+  // El codi és l'adreça de l'app. Quan el negoci recomanat i el teu porteu 2 mesos pagant, la teva
+  // quota baixa a la meitat durant 6 mesos (ho aplica el servidor sol).
+  async function loadRefer() {
+    const box = $('refer'); if (!box) return;
+    const mine = list.filter(b => !b.isMember && b.status === 'active');
+    const { data } = await sb.rpc('my_referrals');
+    const refs = data || [];
+    const st = r => r.rewarded_at ? `✅ Descompte aplicat el ${fmtDate(r.rewarded_at)}` : !r.paying ? '⏳ Encara no ha activat l’app'
+      : `⏳ Funcionant des del ${fmtDate(r.active_since)}: el descompte arriba quan tots dos porteu 2 mesos`;
+    box.innerHTML = `<h2>🎁 Recomana i estalvia</h2>
+      <p class="lead" style="font-size:.95rem">Si un altre negoci activa la seva app amb el teu codi, quan tots dos porteu <b>2 mesos funcionant</b> la teva quota passa a la <b>meitat durant 6 mesos</b>. Si en recomanes més d’un, els descomptes van un darrere l’altre.</p>
+      ${mine.map(b => `<div class="row"><span><small>El teu codi${mine.length > 1 ? ' · ' + esc((b.config || {}).name || b.slug) : ''}</small><b style="font-size:1.15rem;letter-spacing:.02em">${esc(b.slug)}</b></span>
+        <span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sec" onclick="copyRef('${esc(b.slug)}')">Copiar</button>
+        <a class="btn main" target="_blank" href="https://wa.me/?text=${encodeURIComponent(T(`Fes-te l’app del teu negoci amb CreaTuApp (14 dies gratis): https://creatuap.com/crea/ — En activar-la, posa el meu codi: ${b.slug}`))}">WhatsApp</a></span></div>`).join('')}
+      ${refs.length ? refs.map(r => `<div class="row"><span><small>${st(r)}</small>${esc(r.name || 'Un negoci')}</span></div>`).join('')
+        : '<p class="loading" style="text-align:left;padding:10px 0 0">Encara no has recomanat cap negoci.</p>'}`;
+  }
+  function copyRef(code) {
+    (navigator.clipboard ? navigator.clipboard.writeText(code) : Promise.reject()).then(() => Panel.toast('📋 Codi copiat'), () => Panel.toast(code));
+  }
+
+  // ---------- Comptes convidats (només administradors de CreaTuApp) ----------
+  // Un correu de la llista té totes les apps gratis i actives, per sempre i sense posar targeta.
+  let guests = [];
+  async function loadGuests() {
+    const { data, error } = await sb.rpc('list_free_accounts');
+    const box = $('guests'); if (!box) return;
+    if (error) { box.innerHTML = '<h2>🎟️ Comptes convidats</h2><p class="loading">⚠️ No s’ha pogut carregar la llista.</p>'; return; }
+    guests = data || [];
+    box.innerHTML = `<h2>🎟️ Comptes convidats</h2>
+      <p class="lead" style="font-size:.95rem">Per a la família o per fer proves: aquests correus poden crear totes les apps que vulguin, actives i <b>gratis per sempre</b>, sense targeta. Si ja tenen apps, passen a gratis al moment.</p>
+      <div class="row" style="gap:8px;flex-wrap:wrap">
+        <input id="g-email" type="email" placeholder="correu@exemple.com" style="flex:2;min-width:200px">
+        <input id="g-note" placeholder="Nota (ex: el pare, bar de la tieta)" maxlength="80" style="flex:2;min-width:160px">
+        <button class="btn main" onclick="addGuest()">➕ Afegir</button>
+      </div>
+      ${guests.length ? guests.map((g, i) => `<div class="row"><span><small>${g.registered ? (g.apps ? `${g.apps} ${g.apps === 1 ? 'app' : 'apps'}` : 'Registrat, sense apps') : 'Encara no s’ha registrat'}${g.note ? ' · ' + esc(g.note) : ''}</small>${esc(g.email)}</span>
+        <span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sec" onclick="guestMsg(${i})">💬 Missatge</button><button class="btn sec" onclick="removeGuest(${i})">Treure</button></span></div>`).join('')
+        : '<p class="loading" style="text-align:left">Encara no hi ha cap compte convidat.</p>'}`;
+  }
+  async function addGuest() {
+    const email = $('g-email').value.trim().toLowerCase(), note = $('g-note').value.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return Panel.toast('⚠️ Escriu un correu vàlid.');
+    const { data, error } = await sb.rpc('grant_free_account', { p_email: email, p_note: note || null });
+    if (error) return Panel.toast('⚠️ No s’ha pogut afegir.');
+    Panel.toast(data ? `✅ Afegit. ${data} ${data === 1 ? 'app ja és gratis' : 'apps ja són gratis'}.` : '✅ Afegit');
+    await loadGuests(); guestMsg(guests.findIndex(g => g.email === email));
+  }
+  function removeGuest(i) {
+    const g = guests[i];
+    Panel.ask(`Treure ${g.email}?`, g.apps ? `Les seves apps gratis quedaran aturades fins que les activi pagant. Les dades no s’esborren.` : 'Deixarà de tenir les apps gratis.', 'Treure', async () => {
+      const { error } = await sb.rpc('revoke_free_account', { p_email: g.email });
+      if (error) return Panel.toast('⚠️ No s’ha pogut treure.');
+      Panel.toast('Fet'); loadGuests(); load();
+    }, true);
+  }
+  function guestMsg(i) {
+    const g = guests[i]; if (!g) return;
+    const text = `Hola! T'he donat un compte gratuït de CreaTuApp per crear l'app del teu negoci. Entra a https://creatuap.com/crea/ i registra't amb aquest correu: ${g.email}. Totes les apps et sortiran actives i gratis, sense posar cap targeta.`;
+    Panel.modal(`<h3>💬 Envia-li això</h3><p>Per WhatsApp o com vulguis:</p><textarea readonly rows="6" style="width:100%" onclick="this.select()">${esc(text)}</textarea>
+      <div class="p-row"><button class="p-btn sec" onclick="Panel.closeModal()">Tancar</button>
+      <a class="p-btn main" style="text-align:center;text-decoration:none" target="_blank" href="https://wa.me/?text=${encodeURIComponent(text)}">WhatsApp</a></div>`);
+  }
+
+  function copyLink(i) {
+    const url = appUrl(list[i]);
+    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(
+      () => Panel.toast('🔗 Enllaç copiat'),
+      () => Panel.modal(`<h3>Enllaç de l'app</h3><p>Copia'l i envia'l als teus clients:</p><input value="${esc(url)}" onclick="this.select()" readonly>
+        <div class="p-row"><button class="p-btn sec" onclick="Panel.closeModal()">Tancar</button></div>`));
+  }
+
+  // QR en PNG, gran i amb el nom del negoci a sota, a punt per imprimir.
+  function downloadQR(i) {
+    const b = list[i], name = (b.config && b.config.name) || b.slug;
+    if (!window.QRCode) return Panel.toast('⚠️ No s\'ha pogut carregar el generador de QR.');
+    const tmp = document.createElement('div');
+    new QRCode(tmp, { text: appUrl(b), width: 800, height: 800, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M });
+    const src = tmp.querySelector('canvas');
+    const W = 1000, H = 1160, cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    const g = cv.getContext('2d');
+    g.fillStyle = '#fff'; g.fillRect(0, 0, W, H);
+    g.drawImage(src, 100, 90, 800, 800);
+    g.fillStyle = '#111'; g.textAlign = 'center';
+    g.font = 'bold 54px "DM Sans", Arial, sans-serif'; g.fillText(name.slice(0, 32), W / 2, 980);
+    g.fillStyle = '#555'; g.font = '36px "DM Sans", Arial, sans-serif';
+    g.fillText(b.app === 'reservafacil' ? 'Escaneja per reservar' : b.app === 'cartaqr' ? 'Escaneja per veure la carta' : 'Escaneja per comprar', W / 2, 1050);
+    cv.toBlob(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = `qr-${b.slug}.png`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      Panel.toast('🔳 QR descarregat');
+    }, 'image/png');
+  }
+
+  function howToInstall(i) {
+    const b = list[i];
+    Panel.modal(`<h3>📲 Desar-la al mòbil</h3>
+      <div class="howto"><p>Així tindràs una icona amb el teu logo, com qualsevol altra app. Ho pot fer qualsevol persona: tu amb el panell i els teus clients amb l'app.</p>
+      <ol><li>Obre <b>${b.app === 'reservafacil' ? "l'app" : "l'app"}</b> o <b>el panell</b> al navegador del mòbil (Chrome o Safari).</li>
+        <li><b>Android:</b> toca els tres puntets <b>⋮</b> i després <b>«Afegir a la pantalla d'inici»</b> o <b>«Instal·lar l'aplicació»</b>.</li>
+        <li><b>iPhone:</b> toca el botó de compartir (el quadrat amb la fletxa) i després <b>«Afegir a la pantalla d'inici»</b>.</li></ol>
+      <p>Si l'enllaç s'obre dins de WhatsApp o Instagram, primer tria <b>«Obrir al navegador»</b>.</p></div>
+      <div class="p-row"><a class="p-btn sec" href="${esc(panelUrl(b))}" target="_blank" style="text-align:center;text-decoration:none">Obrir el panell</a><a class="p-btn main" href="${esc(appUrl(b))}" target="_blank" style="text-align:center;text-decoration:none">Obrir l'app</a></div>`);
+  }
+
+  // ---------- Equip ----------
+  // El propietari convida per correu (funció team-invite) i pot treure gent. Cada membre entra amb el
+  // seu compte i tria el seu PIN; els pagaments i l’equip només els veu el propietari.
+  async function team(i) {
+    const b = list[i];
+    Panel.modal('<h3>👥 Equip</h3><p>Carregant…</p>');
+    const { data, error } = await sb.from('business_members').select('email, user_id, joined_at, invited_at').eq('business_id', b.id).order('invited_at');
+    if (error) return Panel.modal('<h3>👥 Equip</h3><p>⚠️ No s’ha pogut carregar. Torna-ho a provar.</p><div class="p-row"><button class="p-btn sec" onclick="Panel.closeModal()">Tancar</button></div>');
+    const rows = (data || []).map(m => `<div class="kv"><span><b style="color:var(--text)">${esc(m.email)}</b><br>${m.user_id ? '✅ Ja hi té accés' : '⏳ Pendent d’acceptar la invitació'}</span>
+        <button class="linkbtn" onclick="removeMember(${i}, '${esc(m.email)}')">Treure</button></div>`).join('');
+    Panel.modal(`<h3>👥 Equip de ${esc((b.config && b.config.name) || b.slug)}</h3>
+      <p>Les persones de l’equip entren al panell amb <b>el seu propi correu i contrasenya</b> i tenen <b>el seu PIN</b>. Poden gestionar-ho tot, menys els pagaments i l’equip.</p>
+      <div class="kv"><span><b style="color:var(--text)">${esc(user.email)}</b><br>👑 Propietari (tu)</span></div>
+      ${rows}
+      <label for="tm-email">Convidar algú</label>
+      <input id="tm-email" type="email" placeholder="correu@exemple.com" autocomplete="off">
+      <p class="msg" id="tm-msg"></p>
+      <div class="p-row"><button class="p-btn sec" onclick="Panel.closeModal()">Tancar</button><button class="p-btn main" id="tm-go" onclick="invite(${i})">Enviar la invitació</button></div>`);
+  }
+  async function invite(i) {
+    const b = list[i], email = $('tm-email').value.trim();
+    const m = $('tm-msg');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { m.className = 'msg bad'; m.textContent = 'Escriu un correu vàlid.'; return; }
+    $('tm-go').disabled = true; m.className = 'msg'; m.textContent = 'Enviant…';
+    const { data, error } = await sb.functions.invoke('team-invite', { body: { slug: b.slug, email } });
+    let code = data && data.error;
+    if (error) { try { code = (await error.context.json()).error; } catch (_) { code = 'server'; } }
+    $('tm-go').disabled = false;
+    if (code) {
+      m.className = 'msg bad';
+      m.textContent = { self: 'Aquest correu és el teu: tu ja hi tens accés.', too_many: 'Has arribat al màxim de 10 persones.', invalid_email: 'Escriu un correu vàlid.' }[code] || 'No s’ha pogut enviar. Torna-ho a provar d’aquí a una estona.';
+      return;
+    }
+    Panel.toast(data.kind === 'new' ? '📧 Invitació enviada: li arribarà un correu per triar la contrasenya' : '📧 Fet! Ja tenia compte: li hem enviat un correu');
+    team(i);
+  }
+  function removeMember(i, email) {
+    const b = list[i];
+    Panel.modal(`<h3>Treure ${esc(email)} de l’equip?</h3><p>Deixarà de poder entrar al panell de ${esc((b.config && b.config.name) || b.slug)} al moment. Les cites i comandes no es toquen.</p>
+      <div class="p-row"><button class="p-btn sec" onclick="team(${i})">No</button><button class="p-btn main" style="background:#dc2626" onclick="doRemove(${i}, '${esc(email)}')">Sí, treure</button></div>`);
+  }
+  async function doRemove(i, email) {
+    const { error } = await sb.from('business_members').delete().eq('business_id', list[i].id).eq('email', email);
+    Panel.toast(error ? '⚠️ No s’ha pogut treure. Torna-ho a provar.' : 'Fet: ja no té accés');
+    team(i);
+  }
+
+  // ---------- Arrencada ----------
+  async function load() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return viewLogin('', new URLSearchParams(location.search).has('registre') ? 'signup' : 'login');
+    user = session.user;
+    $('main').innerHTML = '<p class="loading">Carregant les teves apps…</p>';
+    await Remote.claimInvites();   // si t'han convidat a l'equip d'algun negoci, ja surt aquí
+    const { data, error } = await sb.from('businesses')
+      .select('id, slug, app, config, status, sub_status, trial_ends_at, created_at, stripe_customer_id, owner_id')
+      .order('created_at', { ascending: true });
+    if (error) { $('main').innerHTML = '<p class="loading">⚠️ No s\'han pogut carregar les apps. Revisa la connexió i torna-ho a provar.</p>'; return; }
+    list = (data || []).map(b => ({ ...b, isMember: b.owner_id !== user.id }));
+    isAdmin = (await sb.rpc('is_app_admin')).data === true;
+    viewApps();
+    // Tornada de Stripe (pagament fet o cancel·lat).
+    const q = new URLSearchParams(location.search).get('pagament');
+    if (q) {
+      history.replaceState(null, '', location.pathname);
+      Panel.toast(q === 'ok' ? '✅ Pagament rebut. L\'app ja està activa.' : 'No s\'ha fet cap pagament.');
+      if (q === 'ok') setTimeout(load, 4000);   // el servidor tarda uns segons a activar-la
+    }
+  }
+  load();
+</script>
+</body>
+</html>

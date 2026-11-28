@@ -1,0 +1,1039 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Crea la teva app · CreaTuApp</title>
+<meta name="description" content="Crea l'app del teu negoci pas a pas, sense saber de tecnologia: carta digital, reserves de cites o botiga online.">
+<meta name="theme-color" content="#06070c">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<script src="../i18n/core.js?v=6087a0f"></script>
+<script src="../i18n/crea.js?v=6087a0f"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
+<style>
+  :root {
+    --brand: #7c3aed;
+    --grad: linear-gradient(110deg, #22d3ee, #8b5cf6 55%, #ec4899);
+    --bg: #f6f5fb;
+    --card: #fff;
+    --text: #1b1830;
+    --muted: #6b6880;
+    --border: #e5e2ef;
+    --ok: #16a34a;
+    --bad: #dc2626;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.45; }
+  button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  input, select, textarea { font: inherit; }
+  a { color: inherit; }
+  [hidden] { display: none !important; }
+
+  .top { background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; }
+  .top .in { max-width: 1240px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .14em; text-decoration: none; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, #f97316, #ec4899 55%, #8b5cf6); display: grid; place-items: center; }
+  .logo span.sub { font-weight: 400; color: var(--muted); }
+  .progress { flex: 1; max-width: 460px; }
+  .progress .bar { height: 8px; border-radius: 8px; background: var(--border); overflow: hidden; }
+  .progress .fill { height: 100%; background: var(--grad); transition: width .3s; }
+  .progress small { color: var(--muted); font-weight: 500; }
+
+  .layout { max-width: 1240px; margin: 0 auto; padding: 24px 20px 120px; display: grid; grid-template-columns: 1fr 380px; gap: 40px; align-items: start; }
+  .step h1 { font-size: 1.9rem; line-height: 1.2; margin-bottom: 6px; }
+  .step .lead { color: var(--muted); font-size: 1.05rem; margin-bottom: 22px; }
+  .box { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 14px; }
+  .box h3 { font-size: 1.1rem; margin-bottom: 4px; }
+  .box .hint { color: var(--muted); font-size: .95rem; margin-bottom: 12px; }
+  label.f { display: block; font-weight: 700; margin: 14px 0 6px; }
+  label.f:first-child { margin-top: 0; }
+  label.f small { font-weight: 400; color: var(--muted); }
+  .in-text { width: 100%; font-size: 1.1rem; padding: 14px; border: 2px solid var(--border); border-radius: 14px; background: #fff; }
+  .in-text:focus { outline: none; border-color: var(--brand); }
+
+  /* Tipus de negoci */
+  .types { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+  .type { text-align: left; background: #fff; border: 2px solid var(--border); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 6px; transition: border-color .15s, transform .15s; }
+  .type:hover { border-color: var(--brand); transform: translateY(-2px); }
+  .type.on { border-color: var(--brand); background: #f5f0ff; }
+  .type .ico { font-size: 2.4rem; }
+  .type b { font-size: 1.15rem; }
+  .type small { color: var(--muted); }
+  .type .app { font-size: .8rem; font-weight: 700; color: var(--brand); }
+  .type.soon { opacity: .55; cursor: default; }
+  .type.soon:hover { transform: none; border-color: var(--border); }
+
+  .seg { display: flex; gap: 8px; flex-wrap: wrap; }
+  .seg button { padding: 12px 18px; border-radius: 14px; border: 2px solid var(--border); background: #fff; font-weight: 700; }
+  .seg button.on { border-color: var(--brand); background: #f5f0ff; color: var(--brand); }
+
+  .emojis { display: grid; grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); gap: 8px; }
+  .emojis button { height: 56px; border-radius: 14px; border: 2px solid var(--border); background: #fff; font-size: 1.7rem; }
+  .emojis button.on { border-color: var(--brand); background: #f5f0ff; }
+  .colors { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .colors button { width: 52px; height: 52px; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 0 0 2px var(--border); }
+  .colors button.on { box-shadow: 0 0 0 3px var(--text); }
+  .upl { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; border-radius: 14px; border: 2px dashed var(--border); background: #fff; font-weight: 700; color: var(--brand); cursor: pointer; }
+  .upl:hover { border-color: var(--brand); }
+  .upl.big { width: 100%; padding: 26px; font-size: 1.05rem; }
+  .upl input { display: none; }
+  .cover-prev { height: 160px; border-radius: 16px; background-size: cover; background-position: center; margin-bottom: 12px; position: relative; }
+  .logo-prev { width: 96px; height: 96px; border-radius: 22px; background-size: cover; background-position: center; margin-bottom: 12px; border: 1px solid var(--border); }
+  .img-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .img-actions .rm { font-weight: 700; color: var(--muted); padding: 10px; }
+  .colors label { display: flex; align-items: center; gap: 8px; color: var(--muted); font-weight: 700; cursor: pointer; }
+  .colors input[type=color] { width: 52px; height: 52px; border: 0; border-radius: 50%; background: none; cursor: pointer; }
+
+  /* Llista de productes / serveis */
+  .cat { border: 1px solid var(--border); border-radius: 18px; padding: 14px; margin-bottom: 12px; background: #fcfbff; }
+  .cat-head { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .cat-head input { flex: 1; font-weight: 700; font-size: 1.05rem; padding: 10px 12px; border: 2px solid transparent; border-radius: 12px; background: transparent; }
+  .cat-head input:hover, .cat-head input:focus { border-color: var(--border); background: #fff; outline: none; }
+  .row { display: grid; grid-template-columns: 52px 1fr 110px 40px; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .row.svc { grid-template-columns: 52px 1fr 110px 110px 40px; }
+  .row input, .row select { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 12px; background: #fff; font-size: 1rem; }
+  .row input:focus, .row select:focus { outline: none; border-color: var(--brand); }
+  .row .em { height: 50px; border-radius: 12px; border: 2px solid var(--border); background: #fff; font-size: 1.5rem; }
+  .row .del { height: 44px; border-radius: 12px; color: var(--muted); font-size: 1.2rem; }
+  .row .del:hover { background: #fee2e2; color: var(--bad); }
+  .price { position: relative; }
+  .price::after { content: '€'; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-weight: 700; }
+  .price input { padding-right: 28px; }
+  .add { padding: 10px 14px; border-radius: 12px; border: 2px dashed var(--border); color: var(--brand); font-weight: 700; width: 100%; }
+  .add:hover { border-color: var(--brand); }
+  .head-row { display: grid; grid-template-columns: 52px 1fr 110px 40px; gap: 8px; color: var(--muted); font-size: .82rem; font-weight: 700; margin-bottom: 6px; }
+  .head-row.svc { grid-template-columns: 52px 1fr 110px 110px 40px; }
+
+  /* Horaris */
+  .day { display: grid; grid-template-columns: 110px 64px 1fr; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .day:last-child { border: 0; }
+  .day b { font-size: 1rem; }
+  .ranges { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--muted); }
+  .ranges input { padding: 8px 10px; border: 2px solid var(--border); border-radius: 10px; font-size: 1rem; }
+  .ranges .rm, .ranges .plus { font-weight: 700; color: var(--brand); padding: 6px 8px; }
+  .closed { color: var(--muted); font-weight: 700; }
+  .switch { width: 58px; height: 34px; border-radius: 999px; background: #d4d4d8; position: relative; flex-shrink: 0; }
+  .switch::after { content: ''; position: absolute; top: 4px; left: 4px; width: 26px; height: 26px; border-radius: 50%; background: #fff; transition: left .15s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  .switch.on { background: var(--ok); }
+  .switch.on::after { left: 28px; }
+  .toggle-line { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .copy-btn { margin-top: 10px; font-weight: 700; color: var(--brand); }
+
+  .staff { display: grid; grid-template-columns: 52px 1fr 40px; gap: 8px; margin-bottom: 8px; }
+  .staff input { padding: 12px; border: 2px solid var(--border); border-radius: 12px; font-size: 1rem; }
+  .staff .em { height: 50px; border-radius: 12px; border: 2px solid var(--border); background: #fff; font-size: 1.5rem; }
+  .staff .del { color: var(--muted); font-size: 1.2rem; border-radius: 12px; }
+
+  .pin-in { width: 220px; font-size: 2rem; letter-spacing: .5em; text-align: center; padding: 14px; border: 2px solid var(--border); border-radius: 16px; }
+  .err { color: var(--bad); font-weight: 700; margin-top: 10px; min-height: 1.4em; }
+  .okmsg { color: var(--ok); font-weight: 700; }
+
+  /* Navegació inferior */
+  .nav { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; border-top: 1px solid var(--border); z-index: 20; padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); }
+  .nav .in { max-width: 1240px; margin: 0 auto; display: flex; gap: 12px; align-items: center; }
+  .btn { padding: 16px 26px; border-radius: 16px; font-weight: 700; font-size: 1.05rem; }
+  .btn.main { background: var(--brand); color: #fff; margin-left: auto; }
+  .btn.main:disabled { opacity: .45; cursor: default; }
+  .btn.sec { background: var(--bg); }
+  .btn.prev-m { display: none; background: var(--bg); }
+
+  /* Vista prèvia */
+  .preview { position: sticky; top: 90px; }
+  .preview p { text-align: center; color: var(--muted); font-weight: 700; font-size: .9rem; margin-bottom: 10px; }
+  .phone { width: 360px; height: 720px; margin: 0 auto; border-radius: 46px; background: #111; padding: 12px; box-shadow: 0 30px 60px rgba(27,24,48,.25); position: relative; }
+  .phone iframe { width: 100%; height: 100%; border: 0; border-radius: 36px; background: #fff; }
+  .phone .placeholder { position: absolute; inset: 12px; border-radius: 36px; background: #fff; display: grid; place-items: center; text-align: center; color: var(--muted); padding: 30px; }
+  .preview .switcher { display: flex; justify-content: center; gap: 6px; margin-top: 12px; }
+  .preview .switcher button { padding: 8px 12px; border-radius: 10px; font-weight: 700; font-size: .85rem; color: var(--muted); }
+  .preview .switcher button.on { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+
+  /* Final */
+  .done-hero { text-align: center; padding: 10px 0 18px; }
+  .done-hero .big { font-size: 3.6rem; }
+  .done-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .done-card { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .done-card h3 { font-size: 1.15rem; }
+  .done-card p { color: var(--muted); }
+  .done-card .act { background: var(--brand); color: #fff; padding: 14px; border-radius: 14px; font-weight: 700; text-align: center; text-decoration: none; }
+  .done-card .act.sec { background: var(--bg); color: var(--text); }
+  .qr { display: flex; justify-content: center; padding: 8px; }
+  .notice { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; border-radius: 16px; padding: 14px 16px; margin: 14px 0; }
+  .howto { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-top: 14px; }
+  .howto ol { padding-left: 22px; color: var(--muted); }
+  .howto li { margin: 4px 0; }
+  .howto b { color: var(--text); }
+  .mine { display: grid; gap: 10px; margin-bottom: 22px; }
+  .mine .it { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; }
+  .mine .it .lg { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 1.4rem; }
+  .mine .it .t { flex: 1; }
+  .mine .it small { color: var(--muted); display: block; }
+  .mine .it a, .mine .it button { font-weight: 700; color: var(--brand); text-decoration: none; padding: 6px 8px; }
+
+  .modal-back { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 50; display: none; align-items: center; justify-content: center; padding: 16px; }
+  .modal-back.open { display: flex; }
+  .modal { background: #fff; border-radius: 22px; padding: 20px; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; }
+  .modal h3 { margin-bottom: 12px; }
+  .preview-m { position: fixed; inset: 0; z-index: 60; background: rgba(20,18,30,.92); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 16px; }
+  .preview-m.open { display: flex; }
+  .preview-m iframe { width: 100%; max-width: 420px; height: 80vh; border: 0; border-radius: 26px; background: #fff; }
+  .preview-m button { margin-top: 14px; background: #fff; padding: 14px 24px; border-radius: 14px; font-weight: 700; }
+
+  @media (max-width: 980px) {
+    .layout { grid-template-columns: 1fr; }
+    .preview { display: none; }
+    .btn.prev-m { display: inline-block; }
+    .done-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) { .top .acct-txt { display: none; } .acct-link { font-size: 1.2rem !important; } .top .in { gap: 10px; padding-left: 14px; padding-right: 14px; } }
+  @media (max-width: 600px) {
+    .step h1 { font-size: 1.5rem; }
+    .row { grid-template-columns: 48px 1fr 92px 34px; }
+    .row.svc { grid-template-columns: 48px 1fr 84px; }
+    .row.svc .dur { grid-column: 2; }
+    .row.svc .del { grid-column: 3; grid-row: 2; }
+    .head-row { display: none; }
+    .day { grid-template-columns: 1fr 64px; }
+    .day .ranges { grid-column: 1 / -1; }
+    .btn { padding: 15px 18px; }
+    .progress small { display: none; }
+    .logo span.sub { display: none; }
+  }
+
+  /* ===== Mode fosc (com la portada de creatuap.com) ===== */
+  :root { color-scheme: dark; --brand: #8b5cf6; --bg: #06070c; --card: #10121c; --text: #eef1f8; --muted: #8b93a7; --border: rgba(255,255,255,.12); --soft: #171a27; --on: rgba(139,92,246,.18); --bad: #f87171; --ok: #4ade80; }
+  body { background: radial-gradient(1200px 600px at 80% -10%, rgba(139,92,246,.16), transparent 60%), radial-gradient(900px 500px at -10% 10%, rgba(34,211,238,.08), transparent 60%), var(--bg) fixed; color: var(--text); }
+  .top, .nav { background: rgba(6,7,12,.82) !important; backdrop-filter: blur(14px); }
+  .box, .type, .done-card, .howto, .mine .it, .modal, .card, .login, .app, .empty, .account, .p-modal { background: var(--card) !important; color: var(--text); }
+  .in-text, .seg button, .emojis button, .upl, .row input, .row select, .row .em, .staff .em, .cat-head input:hover, .cat-head input:focus,
+  input, select, textarea, .who button, .btn.sec, .preview-m button, .p-modal input, .p-modal select, .p-modal textarea { background: var(--soft) !important; color: var(--text); }
+  input::placeholder, textarea::placeholder { color: #6b7286; }
+  .type.on, .seg button.on, .emojis button.on { background: var(--on) !important; }
+  .seg button.on { color: #c4b5fd; }
+  .cat { background: rgba(255,255,255,.025); }
+  .colors button { border-color: var(--card); }
+  .switch { background: #3a3f52; }
+  .preview .switcher button.on { background: var(--soft); color: var(--text); }
+  .notice { background: rgba(251,146,60,.12); border-color: rgba(251,146,60,.35); color: #fdba74; }
+  .row .del:hover { background: rgba(239,68,68,.15); }
+  .pill.ok { background: rgba(52,211,153,.15); color: #6ee7b7; } .pill.warn { background: rgba(251,191,36,.15); color: #fcd34d; }
+  .pill.bad { background: rgba(239,68,68,.15); color: #fca5a5; } .pill.info { background: rgba(139,92,246,.2); color: #c4b5fd; }
+  .actions a, .actions button, .link-row, .p-btn.sec { background: var(--soft); color: var(--text); }
+  .actions a.primary { background: var(--brand); color: #fff; }
+  .p-tip { background: rgba(251,191,36,.12); color: #fcd34d; } .p-tip button { background: #fbbf24; color: #1b1406; }
+  .p-toast { background: #eef1f8; color: #06070c; }
+  .p-backdrop, .modal-back { background: rgba(0,0,0,.7); }
+  .linkbtn, .link { color: #a78bfa; }
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <a class="logo" href="../"><span class="logo-mark"><svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z"/></svg></span>CREATU<span class="sub">APP</span></a>
+  <div class="progress" id="progress"></div>
+  <div style="display:flex;align-items:center;gap:10px"><div id="langs"></div>
+  <a href="../compte/" class="acct-link" aria-label="El meu compte" style="font-weight:700;font-size:.9rem;white-space:nowrap;text-decoration:none">👤 <span class="acct-txt">El meu compte</span></a></div>
+</div></header>
+
+<div class="layout">
+  <main class="step" id="step"></main>
+  <aside class="preview" id="preview">
+    <p>👀 Així la veuran els teus clients</p>
+    <div class="phone"><iframe id="frame" title="Vista prèvia de l'app"></iframe><div class="placeholder" id="ph">Tria el tipus de negoci i aquí veuràs la teva app en directe.</div></div>
+    <div class="switcher" id="switcher" hidden>
+      <button data-v="app" class="on">App dels clients</button><button data-v="panel">El teu panell</button>
+    </div>
+  </aside>
+</div>
+
+<nav class="nav"><div class="in">
+  <button class="btn sec" id="back">← Enrere</button>
+  <button class="btn prev-m" id="prev-m">👀 Veure-la</button>
+  <button class="btn main" id="next">Començar →</button>
+</div></nav>
+
+<div class="modal-back" id="modal-back"><div class="modal" id="modal"></div></div>
+<div class="preview-m" id="preview-m"><iframe id="frame-m" title="Vista prèvia"></iframe><button onclick="closeMobilePreview()">Tancar</button></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+<script src="../apps/shared/config.js?v=6087a0f"></script>
+<script src="../apps/shared/remote.js?v=6087a0f"></script>
+<script src="../apps/shared/panel.js?v=6087a0f"></script>
+<script>
+  i18nStart();
+  // =====================================================================
+  //  "Crea la teva app": el negoci es crea l'app sol, pas a pas.
+  //  Ara l'app es desa al navegador (localStorage, slug local-…) i les
+  //  apps la llegeixen d'allà. Quan hi hagi backend, finish() la desarà
+  //  al servidor i la publicarà; la resta de l'assistent no canvia.
+  // =====================================================================
+
+  const TYPES = {
+    cartaqr: {
+      icon: '🍽️', title: 'Restaurant, bar o cafeteria', desc: 'Carta digital amb QR a cada taula i comandes directes a cuina.', app: 'CartaQR',
+      logos: ['🍽️', '🍕', '🍔', '🥘', '🍣', '☕', '🍺', '🍷', '🥗', '🌮', '🍝', '⚓', '🔥', '🌿', '🍳', '🥐'],
+      itemEmojis: ['🍅', '🥟', '🥔', '🦑', '🥘', '🍚', '🌭', '🥗', '🍮', '🍰', '🍨', '💧', '🍸', '🍷', '🍺', '☕', '🥤', '🍕', '🍔', '🍟', '🥩', '🐟', '🦐', '🧀', '🥖', '🍝', '🍜', '🥪'],
+      catsLabel: 'Seccions de la carta', itemLabel: 'plat',
+      template: [
+        { name: 'Per picar', items: [['🍅', "Pa amb tomàquet", 3.5], ['🥔', 'Patates braves', 6.5], ['🥟', 'Croquetes (6 u.)', 7.9]] },
+        { name: 'Plats', items: [['🥗', 'Amanida de temporada', 10.5], ['🥘', "Arròs del dia", 14], ['🥩', 'Entrecot a la brasa', 19]] },
+        { name: 'Postres', items: [['🍮', 'Crema catalana', 5.5], ['🍰', 'Pastís de formatge', 5.5]] },
+        { name: 'Begudes', items: [['💧', 'Aigua', 2], ['🍷', 'Copa de vi', 3.5], ['☕', 'Cafè', 1.4]] }
+      ]
+    },
+    reservafacil: {
+      icon: '📅', title: 'Perruqueria, estètica, fisio…', desc: 'Els clients reserven cita sols, 24 hores, i tu ho veus tot a l\'agenda.', app: 'Tanda',
+      logos: ['✂️', '💇‍♀️', '💈', '💅', '💆', '🧖‍♀️', '🦷', '🩺', '🐾', '🧘', '💪', '🌸', '✨', '🪒', '👁️', '🏋️'],
+      itemEmojis: ['💇‍♀️', '💇‍♂️', '✨', '🎨', '🌟', '💅', '💖', '💆', '🧖‍♀️', '🪒', '🦶', '💪', '🩺', '🧘', '🐶', '👁️'],
+      staffEmojis: ['👩', '👨', '👩‍🦰', '🧔', '👱‍♀️', '👱', '👩‍🦱', '👨‍🦱', '👵', '🧑'],
+      catsLabel: 'Serveis', itemLabel: 'servei',
+      template: [
+        { name: 'Serveis', items: [['💇‍♀️', 'Tall + rentat', 22, 45], ['💇‍♂️', 'Tall home', 15, 30], ['🎨', 'Coloració', 45, 90], ['💅', 'Manicura', 18, 30]] }
+      ]
+    },
+    botigaexpress: {
+      icon: '🛍️', title: 'Botiga, forn, fruiteria…', desc: 'Botiga online: els clients compren i passen a recollir o els ho envies.', app: 'BotigaExpress',
+      logos: ['🛍️', '🥖', '🍎', '🧀', '🥩', '🐟', '🌷', '📚', '👕', '🍷', '🫒', '🧁', '🎁', '🪴', '☕', '🧴'],
+      itemEmojis: ['🍞', '🥖', '🥐', '🍩', '🎂', '🍎', '🍊', '🥬', '🍅', '🧀', '🥩', '🐟', '🫒', '🍷', '☕', '🌷', '🎁', '📚', '👕', '🧴', '🍯', '🥚'],
+      catsLabel: 'Seccions de la botiga', itemLabel: 'producte',
+      template: [
+        { name: 'Destacats', items: [['🍞', 'Producte estrella', 3.5], ['🎁', 'Lot de regal', 25]] },
+        { name: 'Novetats', items: [['✨', 'Novetat de la setmana', 6]] }
+      ]
+    }
+  };
+  TYPES.entradesqr = {
+    icon: '🎟️', title: 'Discoteca, concerts o esdeveniments', desc: 'Ven entrades online amb QR i controla qui entra des del mòbil.', app: 'EntradesQR',
+    logos: ['🪩', '🎉', '🎸', '🎤', '🎧', '🎆', '🎭', '🍸', '💃', '🎷', '🥂', '🎟️', '⭐', '🌙', '🔥', '🎪'],
+    itemEmojis: ['🎟️', '🍸', '🥂', '👑', '⭐', '🎫', '💃', '🎁'],
+    catsLabel: 'Esdeveniments', itemLabel: "tipus d'entrada",
+    template: [
+      { name: "Festa d'inauguració", inDays: 7, time: '23:30', items: [['🎟️', 'Entrada general', 12, 200], ['🍸', 'Entrada + consumició', 15, 150], ['👑', 'Taula VIP (6 persones)', 120, 6]] }
+    ]
+  };
+  const COLORS = ['#7c3aed', '#2563eb', '#0e7490', '#059669', '#b45309', '#dc2626', '#db2777', '#1f2937'];
+  const DAYS = [['1', 'Dilluns'], ['2', 'Dimarts'], ['3', 'Dimecres'], ['4', 'Dijous'], ['5', 'Divendres'], ['6', 'Dissabte'], ['0', 'Diumenge']];
+  const DURATIONS = [15, 20, 30, 45, 60, 75, 90, 120, 150, 180];
+  const durLabel = m => m < 60 ? m + ' min' : (m % 60 ? (m / 60).toFixed(1).replace('.', ',') : m / 60) + ' h';
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const $ = id => document.getElementById(id);
+  const uid = () => Math.random().toString(36).slice(2, 8);
+  const slugify = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 30) || 'negoci';
+
+  // Mode editar: ?editar=<slug> carrega una app ja publicada (del servidor) per canviar-la.
+  const EDIT = new URLSearchParams(location.search).get('editar');
+  const WKEY = EDIT ? 'creatuapp:edit:' + EDIT : 'creatuapp:wizard';
+  let editBase = null;   // configuració del servidor tal com era en obrir l'editor
+  const MINE = 'creatuapp:mine';
+  let S = EDIT ? { ...fresh(), editing: true, loadingEdit: true } : (load() || fresh());
+  function fresh() { return { step: 0, type: null, name: '', tagline: '', address: '', lang: LANG === 'es' ? 'es' : 'ca', logo: null, color: COLORS[0], cats: [], staff: [], hours: defaultHours(), orders: true, delivery: { on: true, price: 3.9, freeFrom: 35, minOrder: 15, area: '' }, pickup: true, pinOk: false, slug: null, bgfx: null, bgfxAmount: 2 }; }
+  function load() { try { return JSON.parse(localStorage.getItem(WKEY)); } catch (_) { return null; } }
+  function save() { try { localStorage.setItem(WKEY, JSON.stringify(S)); } catch (_) {} }
+  function defaultHours() {
+    const h = {};
+    DAYS.forEach(([k]) => { h[k] = k === '0' ? [] : k === '6' ? [['09:00', '14:00']] : [['09:00', '13:30'], ['16:30', '20:00']]; });
+    return h;
+  }
+  function applyTemplate(type) {
+    const T = TYPES[type];
+    const isoIn = n => { const d = new Date(); d.setDate(d.getDate() + n); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const ex = s => LANG === 'es' ? window.T(s) : s;
+    S.cats = T.template.map(c => ({ id: uid(), name: ex(c.name), ...(type === 'entradesqr' ? { date: isoIn(c.inDays || 7), time: c.time || '23:00' } : {}),
+      items: c.items.map(([emoji, name, price, extra]) => ({ id: uid(), emoji, name: ex(name), price, ...(type === 'entradesqr' ? { stock: extra ?? 100 } : { duration: extra || 30 }) })) }));
+    S.staff = type === 'reservafacil' ? [{ id: uid(), name: '', avatar: '👩' }] : [];
+    S.logo = T.logos[0];
+  }
+
+  // ---------- Passos ----------
+  const STEPS = () => {
+    const base = ['type', 'name', 'look', 'items'];
+    if (S.type === 'reservafacil') base.push('staff', 'hours');
+    if (S.type === 'botigaexpress') base.push('hours', 'delivery');
+    if (S.type === 'cartaqr') base.push('orders');
+    if (S.editing) return [...base.slice(1).filter(x => !(S.type === 'entradesqr' && x === 'items')), 'save', 'saved'];
+    return [...base, 'pin', 'account', 'pay', 'done'];
+  };
+  const stepId = () => STEPS()[S.step];
+
+  const VIEWS = {
+    type() {
+      const mine = (() => { try { return JSON.parse(localStorage.getItem(MINE)) || []; } catch (_) { return []; } })()
+        .filter(m => localStorage.getItem('creatuapp:draft:' + m.slug));
+      return `<h1>Creem l'app del teu negoci 🚀</h1>
+        <p class="lead">Són uns 10 minuts. No cal saber res de tecnologia: tot es fa tocant botons i escrivint el que ja saps del teu negoci. A la dreta veuràs com queda.</p>
+        ${mine.length ? `<div class="box"><h3>Les teves apps</h3><p class="hint">Ja n'has creat en aquest aparell:</p><div class="mine">${mine.map(m => `
+          <div class="it"><span class="lg" style="background:${esc(m.color)}">${esc(m.logo)}</span><div class="t"><b>${esc(m.name)}</b><small>${esc(TYPES[m.type].app)}</small></div>
+          <a href="../apps/${m.type}/admin.html?c=${encodeURIComponent(m.slug)}" target="_blank">Panell</a>
+          <a href="${appUrl(m.type, m.slug)}" target="_blank">App</a></div>`).join('')}</div></div>` : ''}
+        <div class="box"><h3>Quin tipus de negoci tens?</h3><p class="hint">Tria el que s'hi assembli més. Després ho podràs adaptar tot.</p>
+        <div class="types">${Object.entries(TYPES).map(([k, T]) => `
+          <button class="type ${S.type === k ? 'on' : ''}" onclick="pickType('${k}')"><span class="ico">${T.icon}</span><b>${T.title}</b><small>${T.desc}</small><span class="app">App: ${T.app}</span></button>`).join('')}
+          <div class="type soon"><span class="ico">⭐</span><b>Targeta de punts</b><small>Perquè els clients tornin. Molt aviat.</small></div>
+        </div></div>`;
+    },
+    name() {
+      const T = TYPES[S.type];
+      return `<h1>Com es diu el teu negoci?</h1><p class="lead">Ho veuran els teus clients a dalt de tot de l'app.</p>
+        <div class="box">
+          <label class="f" for="w-name">Nom del negoci</label><input class="in-text" id="w-name" maxlength="40" value="${esc(S.name)}" placeholder="${{ cartaqr: 'Ex: Bar Can Pep', reservafacil: 'Ex: Perruqueria Anna', botigaexpress: 'Ex: Forn de Cal Pons', entradesqr: 'Ex: Sala Nit Blava' }[S.type]}" oninput="S.name=this.value;changed()">
+          <label class="f" for="w-tag">Una frase curta <small>(opcional)</small></label><input class="in-text" id="w-tag" maxlength="60" value="${esc(S.tagline)}" placeholder="${{ cartaqr: 'Ex: Cuina casolana des de 1985', reservafacil: 'Ex: Perruqueria i estètica', botigaexpress: 'Ex: Pa artesà cada dia', entradesqr: 'Ex: Discoteca i concerts' }[S.type]}" oninput="S.tagline=this.value;changed()">
+          ${S.type !== 'cartaqr' ? `<label class="f" for="w-addr">On sou? <small>(adreça i població)</small></label><input class="in-text" id="w-addr" maxlength="80" value="${esc(S.address)}" placeholder="Ex: Carrer Major, 12 · Vic" oninput="S.address=this.value;changed()">` : ''}
+        </div>
+        <div class="box"><h3>En quin idioma vols l'app?</h3><p class="hint">Els botons de l'app sortiran en aquest idioma, i és en el que escriuràs els ${T.itemLabel}s.</p>
+          <div class="seg"><button class="${S.lang === 'ca' ? 'on' : ''}" onclick="S.lang='ca';changed(true)">Català</button><button class="${S.lang === 'es' ? 'on' : ''}" onclick="S.lang='es';changed(true)">Castellano</button></div></div>`;
+    },
+    look() {
+      const T = TYPES[S.type];
+      const imgBox = (key, title, hint, prevClass, bigLabel) => `<div class="box"><h3>${title} <small style="font-weight:400;color:var(--muted)">(opcional)</small></h3><p class="hint">${hint}</p>
+        ${S[key] ? `<div class="${prevClass}" style="background-image:url('${esc(S[key])}')"></div>
+            <div class="img-actions"><label class="upl">🔄 Canviar<input type="file" accept="image/*" onchange="pickImage(this,'${key}')"></label><button class="rm" onclick="S.${key}=null;changed(true)">✕ Treure</button></div>`
+          : `<label class="upl big">${bigLabel}<input type="file" accept="image/*" onchange="pickImage(this,'${key}')"></label>`}
+        <p class="err" id="err-${key}"></p></div>`;
+      return `<h1>Dona-li el teu estil</h1><p class="lead">Una foto del teu local, el teu logo i el color de la marca. Tot és opcional: si no tens fotos, queda bé igualment.</p>
+        ${imgBox('cover', 'Foto de portada', 'Una foto de la façana, de l\'interior o dels teus productes. Sortirà a dalt de tot de l\'app, darrere del nom.', 'cover-prev', '📷 Pujar una foto del negoci')}
+        ${imgBox('logoImg', 'El teu logo', 'Si tens logo, puja\'l i sortirà en lloc de la icona. Millor si és quadrat.', 'logo-prev', '🖼️ Pujar el logo')}
+        ${S.logoImg ? '' : `<div class="box"><h3>Icona</h3><p class="hint">Si no tens logo, tria una icona. Surt al costat del nom.</p>
+          <div class="emojis">${T.logos.map(e => `<button class="${S.logo === e ? 'on' : ''}" onclick="S.logo='${e}';changed(true)">${e}</button>`).join('')}</div></div>`}
+        <div class="box"><h3>Color</h3><p class="hint">Si tens un color de marca, tria'l amb "Un altre color".</p>
+          <div class="colors">${COLORS.map(c => `<button style="background:${c}" class="${S.color === c ? 'on' : ''}" aria-label="Color ${c}" onclick="S.color='${c}';changed(true)"></button>`).join('')}
+          <label>Un altre color <input type="color" value="${S.color}" onchange="S.color=this.value;changed(true)"></label></div>
+          <details style="margin-top:14px"${S.textColor || S.cardColor ? ' open' : ''}><summary style="cursor:pointer;font-weight:700;font-size:.95rem">🎨 Més colors (lletres i requadres)</summary>
+            <p class="hint" style="margin:10px 0 6px">Color de les lletres</p>
+            <div class="seg" style="gap:6px">${[['', 'Per defecte'], ['#111827', 'Negre'], ['#1e3a8a', 'Blau fosc'], ['#7c2d12', 'Marró'], ['#14532d', 'Verd fosc'], ['#ffffff', 'Blanc']].map(([c, n]) => `<button style="padding:8px 12px;font-size:.88rem" class="${(S.textColor || '') === c ? 'on' : ''}" onclick="S.textColor=${c ? `'${c}'` : 'null'};changed(true)">${c ? `<span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${c};border:1px solid #9ca3af;vertical-align:-2px;margin-right:6px"></span>` : ''}${n}</button>`).join('')}</div>
+            <p class="hint" style="margin:12px 0 6px">Color dels requadres (on surten els productes o serveis)</p>
+            <div class="seg" style="gap:6px">${[['', 'Blanc'], ['#fffbeb', 'Crema'], ['#f1f5f9', 'Gris clar'], ['#fdf2f8', 'Rosa clar'], ['#ecfeff', 'Blau clar'], ['#1f2937', 'Fosc']].map(([c, n]) => `<button style="padding:8px 12px;font-size:.88rem" class="${(S.cardColor || '') === c ? 'on' : ''}" onclick="S.cardColor=${c ? `'${c}'` : 'null'};changed(true)"><span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:${c || '#fff'};border:1px solid #9ca3af;vertical-align:-2px;margin-right:6px"></span>${n}</button>`).join('')}</div>
+            <p class="hint" style="margin-top:8px">Mira a la vista prèvia que es llegeixi bé.</p>
+          </details></div>
+        <div class="box"><h3>Fons animat <small style="font-weight:400;color:var(--muted)">(opcional)</small></h3><p class="hint">Unes figuretes que es mouen pel fons de l'app, darrere de tot. Ho pots canviar quan vulguis (per Nadal, a la tardor…).</p>
+          <div class="seg">${[['', 'Cap'], ...Object.entries(AppFX.KINDS).map(([k, v]) => [k, v.label])].map(([k, l]) =>
+            `<button class="${(S.bgfx || '') === k ? 'on' : ''}" onclick="S.bgfx=${k ? `'${k}'` : 'null'};changed(true)">${l}</button>`).join('')}</div>
+          ${S.bgfx ? `<p class="hint" style="margin:14px 0 8px">Quantitat</p><div class="seg">${[[1, 'Poques'], [2, 'Normal'], [3, 'Moltes']].map(([n, l]) =>
+            `<button class="${(S.bgfxAmount || 2) === n ? 'on' : ''}" onclick="S.bgfxAmount=${n};changed(true)">${l}</button>`).join('')}</div>` : ''}</div>`;
+    },
+    items() {
+      const T = TYPES[S.type];
+      const svc = S.type === 'reservafacil', evt = S.type === 'entradesqr';
+      return `<h1>${svc ? 'Quins serveis fas?' : S.type === 'cartaqr' ? 'Què hi ha a la carta?' : evt ? 'El teu primer esdeveniment' : 'Què vens?'}</h1>
+        ${evt ? `<p class="lead">Posa el nom, el dia i les entrades (preu i quantes en vols vendre). Després, des del panell, podràs crear-ne tants com vulguis.</p>` : ''}
+        <p class="lead">Hem posat uns exemples perquè vegis com funciona: canvia'ls pels teus, esborra els que no vulguis (✕) i afegeix-ne amb "＋". Toca la icona per canviar-la.</p>
+        ${S.cats.map((c, ci) => `<div class="cat">
+          <div class="cat-head"><input value="${esc(c.name)}" aria-label="${evt ? "Nom de l'esdeveniment" : 'Nom de la secció'}" oninput="S.cats[${ci}].name=this.value;changed()">
+            ${S.cats.length > 1 ? `<button class="copy-btn" onclick="removeCat(${ci})">Esborrar</button>` : ''}</div>
+          ${evt ? `<div style="display:flex;gap:8px;margin:4px 0 10px"><input class="in-text" type="date" value="${esc(c.date || '')}" aria-label="Dia" onchange="S.cats[${ci}].date=this.value;changed()" style="flex:1.4;padding:10px"><input class="in-text" type="time" value="${esc(c.time || '23:00')}" aria-label="Hora" onchange="S.cats[${ci}].time=this.value;changed()" style="flex:1;padding:10px"></div>` : ''}
+          <div class="head-row ${svc || evt ? 'svc' : ''}"><span></span><span>Nom</span><span>Preu</span>${svc ? '<span>Durada</span>' : evt ? '<span>Quantes</span>' : ''}<span></span></div>
+          ${c.items.map((it, ii) => `<div class="row ${svc || evt ? 'svc' : ''}">
+            <button class="em" onclick="pickItemEmoji(${ci},${ii})" aria-label="Canviar icona">${esc(it.emoji)}</button>
+            <input value="${esc(it.name)}" placeholder="Nom del ${T.itemLabel}" aria-label="Nom" oninput="S.cats[${ci}].items[${ii}].name=this.value;changed()">
+            <div class="price"><input type="number" inputmode="decimal" min="0" step="0.1" value="${it.price}" aria-label="Preu" oninput="S.cats[${ci}].items[${ii}].price=Math.max(0,parseFloat(this.value.replace(',','.'))||0);changed()"></div>
+            ${svc ? `<select class="dur" aria-label="Durada" onchange="S.cats[${ci}].items[${ii}].duration=+this.value;changed()">${DURATIONS.map(m => `<option value="${m}" ${m === it.duration ? 'selected' : ''}>${durLabel(m)}</option>`).join('')}</select>` : ''}
+            ${evt ? `<input type="number" inputmode="numeric" min="0" value="${it.stock ?? 100}" aria-label="Quantes entrades" oninput="S.cats[${ci}].items[${ii}].stock=Math.max(0,parseInt(this.value)||0);changed()">` : ''}
+            <button class="del" onclick="removeItem(${ci},${ii})" aria-label="Esborrar">✕</button>
+          </div>`).join('')}
+          <button class="add" onclick="addItem(${ci})">＋ Afegir ${T.itemLabel}</button>
+        </div>`).join('')}
+        ${svc ? '' : `<button class="add" style="background:#fff" onclick="addCat()">＋ ${evt ? 'Un altre esdeveniment' : 'Nova secció'}</button>`}
+        <p class="err" id="err"></p>`;
+    },
+    staff() {
+      return `<h1>Qui treballa amb tu?</h1><p class="lead">Els clients podran triar amb qui volen la cita, o "qui estigui lliure". Si treballes sol o sola, posa només el teu nom.</p>
+        <div class="box">${S.staff.map((p, i) => `<div class="staff">
+            <button class="em" onclick="pickStaffEmoji(${i})" aria-label="Canviar icona">${esc(p.avatar)}</button>
+            <input value="${esc(p.name)}" placeholder="Nom" aria-label="Nom" oninput="S.staff[${i}].name=this.value;changed()">
+            ${S.staff.length > 1 ? `<button class="del" onclick="S.staff.splice(${i},1);changed(true)" aria-label="Esborrar">✕</button>` : '<span></span>'}
+          </div>`).join('')}
+          <button class="add" onclick="S.staff.push({id:uid(),name:'',avatar:'👨'});changed(true)">＋ Afegir una persona</button></div>
+        <p class="err" id="err"></p>`;
+    },
+    hours() {
+      return `<h1>Quin horari feu?</h1><p class="lead">${S.type === 'reservafacil' ? 'Només es podran reservar hores dins d\'aquest horari.' : 'Els clients podran passar a recollir les comandes dins d\'aquest horari.'}</p>
+        <div class="box">${DAYS.map(([k, label]) => {
+          const r = S.hours[k];
+          return `<div class="day"><b>${label}</b><button class="switch ${r.length ? 'on' : ''}" aria-label="Obert o tancat" onclick="toggleDay('${k}')"></button>
+            <div class="ranges">${r.length ? r.map((x, j) => `${j ? '<span>i</span>' : ''}<span>de</span><input type="time" value="${x[0]}" onchange="setHour('${k}',${j},0,this.value)"><span>a</span><input type="time" value="${x[1]}" onchange="setHour('${k}',${j},1,this.value)">${j ? `<button class="rm" onclick="S.hours['${k}'].splice(${j},1);changed(true)">✕</button>` : ''}`).join('')
+              + (r.length < 2 ? `<button class="plus" onclick="S.hours['${k}'].push(['16:30','20:00']);changed(true)">＋ tarda</button>` : '') : '<span class="closed">Tancat</span>'}</div></div>`;
+        }).join('')}
+        <button class="copy-btn" onclick="copyMonday()">Copiar l'horari de dilluns a tots els dies laborables</button></div>`;
+    },
+    delivery() {
+      const d = S.delivery;
+      return `<h1>Com reben les comandes?</h1><p class="lead">Pots oferir les dues coses o només una.</p>
+        <div class="box"><div class="toggle-line"><div><h3>🏪 Recollir a la botiga</h3><p class="hint" style="margin:0">El client tria dia i hora i ho passa a buscar.</p></div>
+          <button class="switch ${S.pickup ? 'on' : ''}" onclick="S.pickup=!S.pickup;if(!S.pickup)S.delivery.on=true;changed(true)" aria-label="Recollida"></button></div></div>
+        <div class="box"><div class="toggle-line"><div><h3>🚚 Enviament a domicili</h3><p class="hint" style="margin:0">Tu o algú de la botiga ho porteu a casa.</p></div>
+          <button class="switch ${d.on ? 'on' : ''}" onclick="S.delivery.on=!S.delivery.on;if(!S.delivery.on)S.pickup=true;changed(true)" aria-label="Enviament"></button></div>
+          ${d.on ? `<label class="f">Quant costa l'enviament?</label><div class="price" style="max-width:180px"><input class="in-text" type="number" min="0" step="0.5" value="${d.price}" oninput="S.delivery.price=Math.max(0,parseFloat(this.value)||0);changed()"></div>
+            <label class="f">A partir de quin import és gratis? <small>(0 = mai)</small></label><div class="price" style="max-width:180px"><input class="in-text" type="number" min="0" step="1" value="${d.freeFrom}" oninput="S.delivery.freeFrom=Math.max(0,parseFloat(this.value)||0);changed()"></div>
+            <label class="f">Comanda mínima per enviar <small>(0 = cap mínim)</small></label><div class="price" style="max-width:180px"><input class="in-text" type="number" min="0" step="1" value="${d.minOrder}" oninput="S.delivery.minOrder=Math.max(0,parseFloat(this.value)||0);changed()"></div>
+            <label class="f">On repartiu?</label><input class="in-text" value="${esc(d.area)}" placeholder="Ex: Vic i pobles del voltant" oninput="S.delivery.area=this.value;changed()">` : ''}</div>`;
+    },
+    orders() {
+      return `<h1>Com ho fareu a les taules?</h1><p class="lead">Cada taula tindrà un QR. En escanejar-lo, el client veu la carta al mòbil.</p>
+        <div class="box"><div class="toggle-line"><div><h3>Que puguin demanar des del mòbil</h3><p class="hint" style="margin:0">La comanda arriba al teu panell al moment, amb el número de taula. Si ho apagues, la carta serà només per mirar.</p></div>
+          <button class="switch ${S.orders ? 'on' : ''}" onclick="S.orders=!S.orders;changed(true)" aria-label="Comandes des del mòbil"></button></div></div>
+        <div class="box"><h3>💡 Els QR</h3><p class="hint" style="margin:0">Quan acabis, al teu panell hi haurà una pestanya "QR de taula" per imprimir-los tots d'un cop.</p></div>`;
+    },
+    save() {
+      if (!acct.session) return `<h1>Desa els canvis</h1><div class="box"><p>Per desar-los has d'haver entrat al teu compte.</p>
+        <a class="btn main" style="display:block;text-align:center;margin-top:14px;text-decoration:none" href="../compte/">Entrar al meu compte</a></div>`;
+      return `<h1>Desa els canvis</h1><p class="lead">Quan toquis el botó, els canvis sortiran a l'instant als mòbils dels teus clients. <b>L'enllaç i el QR no canvien.</b></p>
+        <div class="box"><p>✅ El que has canviat al panell (preus, estoc, què està apagat, cada quant dones hora…) es manté.</p>
+        <button class="btn main" style="width:100%;margin-top:14px" onclick="publish()">💾 Desar els canvis</button><p class="err" id="err"></p></div>`;
+    },
+    saved() {
+      const slug = S.remote.slug;
+      return `<div class="done-hero"><div class="big">✅</div><h1>Canvis desats!</h1>
+          <p class="lead">${esc(S.name)} ja s'ha actualitzat. Els teus clients ja ho veuen.</p></div>
+        <div class="box" style="display:grid;gap:10px">
+          <a class="btn main" style="text-align:center;text-decoration:none" href="${esc(appUrl(S.type, slug))}" target="_blank">📱 Veure l'app</a>
+          <a class="btn sec" style="text-align:center;text-decoration:none" href="../apps/${S.type}/admin.html?c=${encodeURIComponent(slug)}" target="_blank">🛠️ Obrir el panell</a>
+          <a class="btn sec" style="text-align:center;text-decoration:none" href="../compte/">👤 Tornar a El meu compte</a>
+          <button class="copy-btn" onclick="go(0)">✏️ Seguir editant</button></div>`;
+    },
+    pin() {
+      return `<h1>Tria el teu PIN</h1><p class="lead">Són 4 números per entrar al teu panell (on ho gestiones tot i canvies preus). Com el del mòbil: fàcil de recordar per a tu, difícil d'endevinar per als altres.</p>
+        <div class="box"><label class="f" for="pin1">PIN</label><input class="pin-in" id="pin1" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" oninput="this.value=this.value.replace(/\\D/g,'');checkPin()">
+          <label class="f" for="pin2">Escriu-lo un altre cop</label><input class="pin-in" id="pin2" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" oninput="this.value=this.value.replace(/\\D/g,'');checkPin()">
+          <p class="err" id="err"></p></div>
+        <div class="box"><p class="hint" style="margin:0">🔒 Apunta'l en un lloc segur. ${S.pinOk ? '<b class="okmsg">Ja tens un PIN triat; si no escrius res, es manté.</b>' : ''}</p></div>`;
+    },
+    account() {
+      const pinAgain = !pinMem ? `<label class="f" for="pa1">Torna a escriure el teu PIN <small>(per seguretat no el guardem en aquest aparell)</small></label>
+          <input class="pin-in" id="pa1" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" oninput="this.value=this.value.replace(/\\D/g,'');pinMem=this.value.length===4?this.value:null">` : '';
+      if (S.remote && acct.session) return `<h1>Desa els canvis</h1><p class="lead">La teva app ja està publicada. Toca el botó i els canvis sortiran a l'instant als mòbils dels teus clients.</p>
+        <div class="box"><p>Has entrat com <b>${esc(acct.session.user.email)}</b>.</p>
+        <button class="btn main" style="width:100%;margin-top:14px" onclick="publish()">Desar els canvis</button><p class="err" id="err"></p></div>`;
+      if (acct.session) return `<h1>Publica la teva app</h1><p class="lead">Ja tens el compte a punt. Un clic i els teus clients ja la podran fer servir des de qualsevol mòbil.</p>
+        <div class="box"><p>Has entrat com <b>${esc(acct.session.user.email)}</b>.</p>${pinAgain}
+        <button class="btn main" style="width:100%;margin-top:14px" onclick="publish()">🚀 Publicar la meva app</button>
+        <p class="hint" style="margin-top:10px">Al pas següent tries com pagar: quota mensual amb <b>14 dies gratis</b>, o un pagament únic.</p>
+        <p class="err" id="err"></p>
+        <button class="copy-btn" onclick="logoutAcct()">No soc jo, entrar amb un altre compte</button></div>`;
+      if (acct.sentTo) return `<h1>Mira el teu correu 📧</h1><p class="lead">T'hem enviat un missatge a <b>${esc(acct.sentTo)}</b>.</p>
+        <div class="box"><ol style="padding-left:22px;color:var(--muted)">
+          <li>Obre el correu de <b>CreaTuApp</b> (si no el veus, mira a "correu brossa" o "spam").</li>
+          <li>Toca l'enllaç <b>"Confirmar"</b>.</li>
+          <li>Tornaràs a aquesta pàgina i l'app es publicarà sola.</li></ol>
+          <button class="copy-btn" onclick="acct.sentTo=null;acct.mode='login';render()">Ja l'he confirmat: vull entrar</button></div>`;
+      const login = acct.mode === 'login';
+      return `<h1>${login ? 'Entra al teu compte' : 'Crea el teu compte'}</h1>
+        <p class="lead">${login ? 'Entra amb el correu i la contrasenya que vas fer servir.' : 'Amb el correu i una contrasenya podràs entrar al teu panell des de qualsevol mòbil o ordinador.'}</p>
+        <div class="box"><form id="acct-form">
+          <label class="f" for="ac-email">El teu correu</label><input class="in-text" id="ac-email" type="email" autocomplete="email" required value="${esc(acct.email || '')}">
+          <label class="f" for="ac-pass">${login ? 'Contrasenya' : 'Tria una contrasenya'} ${login ? '' : '<small>(mínim 8 lletres o números)</small>'}</label>
+          <input class="in-text" id="ac-pass" type="password" autocomplete="${login ? 'current-password' : 'new-password'}" minlength="8" required>
+          <button type="button" class="copy-btn" style="margin-top:8px" onclick="const i=document.getElementById('ac-pass');const show=i.type==='password';i.type=show?'text':'password';this.textContent=show?'🙈 Amagar la contrasenya':'👁 Mostrar la contrasenya'">👁 Mostrar la contrasenya</button>
+          ${pinAgain}
+          <button class="btn main" type="submit" style="width:100%;margin-top:16px">${login ? 'Entrar i publicar' : 'Crear el compte i publicar'}</button>
+          ${login ? '' : `<p class="hint" style="margin-top:10px;font-size:.85rem">En crear el compte acceptes les <a href="../legal/#condicions" target="_blank">condicions d'ús</a> i la <a href="../legal/#privacitat" target="_blank">política de privacitat</a>.</p>`}
+          <p class="err" id="err"></p>
+        </form>
+        <button class="copy-btn" onclick="acct.mode='${login ? 'signup' : 'login'}';render()">${login ? 'Encara no tinc compte' : 'Ja tinc compte de CreaTuApp'}</button>
+        ${login ? '<br><button class="copy-btn" onclick="forgot()">He oblidat la contrasenya</button>' : ''}
+        </div>
+        <p class="hint">Al pas següent tries com pagar: quota mensual amb <b>14 dies gratis</b>, o un pagament únic.</p>`;
+    },
+    pay() {
+      const msg = payMsg === 'cancelat' ? `<div class="notice">No s'ha fet cap pagament. Quan vulguis, tria una opció per activar l'app.</div>` : '';
+      return `<h1>Activa la teva app</h1>
+        <p class="lead">L'app ja està creada i guardada. Tria com vols pagar i els teus clients la podran fer servir de seguida.</p>${msg}
+        <div class="types" style="grid-template-columns:1fr 1fr">
+          <button class="type on" onclick="startPay('checkout', this)">
+            <span class="ico">🎁</span><b>Quota mensual</b>
+            <small><b>14 dies gratis.</b> Després, 159 € de desenvolupament (un sol cop) i 19 €/mes. Cancel·les quan vulguis, sense permanència.</small>
+            <span class="app">Avui no es cobra res →</span></button>
+          <button class="type" onclick="startPay('onetime', this)">
+            <span class="ico">💎</span><b>Pagament únic: 399 €</b>
+            <small>Sense quotes mensuals. L'app és teva per sempre, amb el suport inclòs.</small>
+            <span class="app">Pagar una vegada →</span></button>
+        </div>
+        <div class="box" style="margin-top:14px"><h3>🤝 T'ha recomanat algun negoci? <small style="font-weight:400;color:var(--muted)">(opcional)</small></h3>
+          ${S.refName ? `<p class="hint" style="margin:0">✅ Recomanat per <b>${esc(S.refName)}</b>. Gràcies!</p>`
+            : `<p class="hint">Escriu el seu codi (el troben a «El meu compte»). Així el seu negoci tindrà un descompte.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><input class="in-text" id="ref-code" placeholder="Ex: cal-carlos-barber" style="flex:1;min-width:180px" autocapitalize="off">
+            <button class="btn sec" onclick="applyRef(this)">Aplicar</button></div><p class="err" id="err-ref"></p>`}</div>
+        <p class="hint" style="margin-top:14px">🔒 El pagament el fa <b>Stripe</b>, de manera segura. Nosaltres no veiem mai la teva targeta. Si tens un codi promocional, el podràs posar a la pàgina de pagament.</p>
+        <p class="err" id="err"></p>`;
+    },
+    done() {
+      const live = !!S.remote;
+      const slugNow = live ? S.remote.slug : S.slug;
+      const app = appUrl(S.type, slugNow, true), panel = new URL(`../apps/${S.type}/admin.html?c=${encodeURIComponent(slugNow)}`, location.href).href;
+      return `<div class="done-hero"><div class="big">🎉</div><h1>La teva app ja està feta!</h1>
+          <p class="lead">${esc(S.name)} ja té la seva ${esc(TYPES[S.type].app)}. Prova-la ara mateix: fes una ${S.type === 'reservafacil' ? 'reserva' : 'comanda'} des de l'app i mira com t'arriba al panell.</p></div>
+        <div class="done-grid">
+          <div class="done-card"><h3>📱 L'app dels teus clients</h3><p>És el que obren els clients des del mòbil.</p>
+            <div class="qr" id="qr"></div>
+            <a class="act" href="${esc(app)}" target="_blank">Obrir l'app</a></div>
+          <div class="done-card"><h3>🛠️ El teu panell</h3><p>Aquí veuràs ${S.type === 'reservafacil' ? 'les cites' : 'les comandes'}, canviaràs preus i apagaràs el que s'hagi acabat. Entra amb el teu PIN.</p>
+            <a class="act" href="${esc(panel)}" target="_blank">Obrir el panell</a>
+            ${live ? '<p style="font-size:.9rem">Des d\'un altre aparell, entra-hi amb el teu correu i contrasenya.</p>' : ''}
+            <button class="act sec" onclick="S.step=1;save();render()">✏️ Canviar alguna cosa</button></div>
+        </div>
+        ${live ? `<div class="notice" style="background:#ecfdf5;border-color:#a7f3d0;color:#065f46">✅ <b>Ja és a internet.</b> Els teus clients la poden obrir des de qualsevol mòbil amb l'enllaç o el QR. Els pagaments i la prova els pots veure al teu panell.</div>`
+          : `<div class="notice">⚠️ <b>Ara mateix l'app només funciona en aquest aparell.</b> Torna enrere per crear el teu compte i publicar-la.</div>`}
+        <div class="howto"><h3>📲 Posa el panell a la pantalla d'inici del mòbil o la tauleta</h3><ol>
+          <li>Obre el panell amb el botó de dalt.</li>
+          <li><b>iPhone o iPad:</b> toca el botó de compartir (el quadrat amb la fletxa) i després <b>"Afegir a la pantalla d'inici"</b>.</li>
+          <li><b>Android:</b> toca els tres puntets de dalt a la dreta i després <b>"Afegir a la pantalla d'inici"</b> o <b>"Instal·lar l'aplicació"</b>.</li>
+          <li>Ja està: tindràs una icona com qualsevol altra app.</li></ol>
+          <p style="margin-top:10px">👤 Totes les teves apps, el QR i els pagaments les tens sempre a <a href="../compte/" style="font-weight:700">El meu compte</a> (creatuap.com/compte).</p>
+          <p style="margin-top:10px">💡 <b>Els teus clients</b> també poden desar l'app al mòbil de la mateixa manera: sortirà amb <b>el teu logo i el nom del teu negoci</b>. Als mòbils Android, l'app mateixa els proposarà instal·lar-la.</p></div>
+        <p style="text-align:center;margin-top:18px"><button class="copy-btn" onclick="startOver()">Crear una altra app</button></p>`;
+    }
+  };
+
+  // ---------- Accions ----------
+  function pickType(k) {
+    if (S.type !== k) { S.type = k; S.slug = null; S.pinOk = false; applyTemplate(k); }
+    changed(true); go(1);
+  }
+  function addItem(ci) { const T = TYPES[S.type]; S.cats[ci].items.push({ id: uid(), emoji: T.itemEmojis[0], name: '', price: 0, duration: 30, stock: 100 }); changed(true); const ins = document.querySelectorAll('.cat')[ci].querySelectorAll('.row input:not([type=number])'); ins[ins.length - 1]?.focus(); }
+  function removeItem(ci, ii) {
+    if (S.cats.reduce((n, c) => n + c.items.length, 0) <= 1) return showErr('Ha de quedar com a mínim un ' + TYPES[S.type].itemLabel + '.');
+    S.cats[ci].items.splice(ii, 1);
+    if (!S.cats[ci].items.length && S.cats.length > 1) S.cats.splice(ci, 1);
+    changed(true);
+  }
+  function addCat() {
+    const evt = S.type === 'entradesqr', last = S.cats[S.cats.length - 1] || {};
+    S.cats.push({ id: uid(), name: (n => LANG === 'es' ? window.T(n) : n)(evt ? 'Nou esdeveniment' : 'Nova secció'), ...(evt ? { date: last.date || '', time: last.time || '23:00' } : {}),
+      items: [{ id: uid(), emoji: TYPES[S.type].itemEmojis[0], name: evt ? 'Entrada general' : '', price: evt ? 10 : 0, duration: 30, stock: 100 }] });
+    changed(true);
+  }
+  function removeCat(ci) { S.cats.splice(ci, 1); changed(true); }
+  function emojiModal(list, onPick) {
+    window.__pick = e => { closeModal(); onPick(e); };
+    openModal(`<h3>Tria una icona</h3><div class="emojis">${list.map(e => `<button onclick="__pick('${e}')">${e}</button>`).join('')}</div>
+      <p style="margin-top:14px"><button class="btn sec" style="width:100%" onclick="closeModal()">Tornar</button></p>`);
+  }
+  function pickItemEmoji(ci, ii) { emojiModal(TYPES[S.type].itemEmojis, e => { S.cats[ci].items[ii].emoji = e; changed(true); }); }
+  function pickStaffEmoji(i) { emojiModal(TYPES.reservafacil.staffEmojis, e => { S.staff[i].avatar = e; changed(true); }); }
+  function toggleDay(k) { S.hours[k] = S.hours[k].length ? [] : [['09:00', '13:30'], ['16:30', '20:00']]; changed(true); }
+  function setHour(k, j, side, v) { if (v) { S.hours[k][j][side] = v; changed(); } }
+  function copyMonday() { ['2', '3', '4', '5'].forEach(k => { S.hours[k] = S.hours['1'].map(r => [...r]); }); changed(true); Panel.toast && Panel.toast('Horari copiat'); }
+  function checkPin() {
+    const a = $('pin1').value, b = $('pin2').value;
+    $('err').textContent = a.length === 4 && b.length === 4 && a !== b ? 'Els dos PIN no coincideixen.' : '';
+    $('err').className = 'err';
+    if (a.length === 4 && a === b) { $('err').textContent = '✓ Perfecte'; $('err').className = 'okmsg'; }
+    updateNav();
+  }
+  function showErr(m) { const e = $('err'); if (e) { e.textContent = m; setTimeout(() => { if (e.textContent === m) e.textContent = ''; }, 3500); } }
+  function startOver() { S = fresh(); save(); render(); }
+
+  // ---------- Validació de cada pas ----------
+  function problem() {
+    switch (stepId()) {
+      case 'type': return S.type ? '' : 'Tria el tipus de negoci.';
+      case 'name': return S.name.trim().length >= 2 ? '' : 'Escriu el nom del negoci.';
+      case 'items': {
+        const all = S.cats.flatMap(c => c.items);
+        if (all.some(i => !i.name.trim())) return 'Hi ha algun ' + TYPES[S.type].itemLabel + ' sense nom: posa-li nom o esborra\'l amb ✕.';
+        if (S.cats.some(c => !c.name.trim())) return 'Alguna secció no té nom.';
+        return all.length ? '' : 'Afegeix com a mínim un ' + TYPES[S.type].itemLabel + '.';
+      }
+      case 'staff': return S.staff.some(p => !p.name.trim()) ? 'Posa el nom a cada persona (o esborra-la amb ✕).' : '';
+      case 'hours': {
+        if (!Object.values(S.hours).some(r => r.length)) return 'Obre com a mínim un dia.';
+        const bad = Object.values(S.hours).flat().some(([a, b]) => !a || !b || a >= b);
+        return bad ? 'Hi ha alguna hora on l\'inici és més tard que el final.' : '';
+      }
+      case 'pin': {
+        const a = $('pin1')?.value || '', b = $('pin2')?.value || '';
+        if (!a && !b && S.pinOk) return '';
+        return a.length === 4 && a === b ? '' : 'Escriu el mateix PIN de 4 números a les dues caselles.';
+      }
+    }
+    return '';
+  }
+
+  // ---------- Construir la configuració de l'app ----------
+  function config(forPreview) {
+    const L = S.lang, f = t => ({ [L]: t, ca: t });
+    const slug = S.slug;
+    const base = { name: S.name.trim() || 'El teu negoci', tagline: f(S.tagline.trim()), logo: S.logo, color: S.color, languages: [L], slug };
+    if (S.cover) base.cover = S.cover;
+    if (S.logoImg) base.logoImg = S.logoImg;
+    if (S.bgfx) { base.bgfx = S.bgfx; base.bgfxAmount = S.bgfxAmount || 2; }
+    if (S.textColor) base.textColor = S.textColor;
+    if (S.cardColor) base.cardColor = S.cardColor;
+    const cats = S.cats.map((c, i) => ({ id: 'c' + i, name: f(c.name.trim() || 'Secció') }));
+    const items = S.cats.flatMap((c, i) => c.items.filter(it => forPreview || it.name.trim()).map((it, j) => ({ ...it, cat: 'c' + i, key: `p${i}-${j}` })));
+    if (S.type === 'cartaqr') return { ...base, modules: { comandes: S.orders }, categories: cats,
+      products: items.map(it => ({ id: it.key, cat: it.cat, emoji: it.emoji, price: it.price, available: true, allergens: [], tags: [], name: f(it.name.trim() || '…'), desc: f('') })) };
+    if (S.type === 'entradesqr') return { ...base, address: S.address.trim(), doorPay: true,
+      categories: S.cats.map((c, i) => ({ id: 'c' + i, name: f(c.name.trim() || 'Esdeveniment'), date: c.date || '', time: c.time || '23:00', end: '', emoji: S.logo, desc: f(''), active: true })),
+      products: items.map(it => ({ id: it.key, cat: it.cat, emoji: it.emoji, price: it.price, stock: it.stock ?? 100, active: true, name: f(it.name.trim() || '…'), desc: f('') })) };
+    const hours = JSON.parse(JSON.stringify(S.hours));
+    if (S.type === 'reservafacil') {
+      const services = items.map(it => ({ id: it.key, cat: it.cat, emoji: it.emoji, duration: it.duration, price: it.price, active: true, name: f(it.name.trim() || '…'), desc: f('') }));
+      return { ...base, address: S.address.trim(), slotMinutes: 15, daysAhead: 21, minNoticeMinutes: 60, hours, categories: cats, services,
+        staff: S.staff.map((p, i) => ({ id: 's' + i, name: p.name.trim() || 'Jo', avatar: p.avatar, role: f(''), services: services.map(s => s.id) })) };
+    }
+    const d = S.delivery;
+    return { ...base, address: S.address.trim(), currency: 'EUR',
+      pickup: { enabled: S.pickup, slotMinutes: 30, minNoticeMinutes: 60, daysAhead: 6, hours },
+      delivery: { enabled: d.on, price: d.price, freeFrom: d.freeFrom || null, minOrder: d.minOrder, area: f(d.area.trim() || S.address.trim() || '—'), eta: f(L === 'es' ? 'Al día siguiente' : "L'endemà") },
+      categories: cats, products: items.map(it => ({ id: it.key, cat: it.cat, emoji: it.emoji, price: it.price, stock: null, active: true, name: f(it.name.trim() || '…'), desc: f('') })) };
+  }
+  // ---------- Mode editar ----------
+  // Configuració publicada → estat de l'assistent (mantenint els identificadors de cada cosa).
+  function fromConfig(b) {
+    const c = b.config || {}, L = (c.languages && c.languages[0]) || 'ca';
+    const t = v => typeof v === 'string' ? v : (v && (v[L] || v.ca)) || '';
+    const list = (b.app === 'reservafacil' ? c.services : c.products) || [];
+    const catIds = (c.categories || []).map(k => k.id);
+    const cats = (c.categories || []).map((k, i) => ({ id: k.id, name: t(k.name),
+      items: list.filter(p => p.cat === k.id || (i === 0 && !catIds.includes(p.cat)))
+        .map(p => ({ id: p.id, emoji: p.emoji || TYPES[b.app].itemEmojis[0], name: t(p.name), price: p.price ?? 0, duration: p.duration || 30 })) }));
+    const hours = b.app === 'reservafacil' ? c.hours : b.app === 'botigaexpress' ? (c.pickup && c.pickup.hours) : null;
+    const d = c.delivery || {};
+    return { ...fresh(), step: 0, type: b.app, name: c.name || '', tagline: t(c.tagline), address: c.address || '', lang: L,
+      logo: c.logo || TYPES[b.app].logos[0], logoImg: c.logoImg || null, cover: c.cover || null, color: c.color || COLORS[0], bgfx: c.bgfx || null, bgfxAmount: c.bgfxAmount || 2, textColor: c.textColor || null, cardColor: c.cardColor || null,
+      cats: cats.length ? cats : [{ id: uid(), name: 'Secció', items: [] }],
+      staff: (c.staff || []).map(p => ({ id: p.id, name: p.name || '', avatar: p.avatar || '👤' })),
+      hours: hours ? JSON.parse(JSON.stringify(hours)) : defaultHours(),
+      orders: !(c.modules && c.modules.comandes === false),
+      delivery: { on: !!d.enabled, price: d.price ?? 0, freeFrom: d.freeFrom || 0, minOrder: d.minOrder || 0, area: t(d.area) === '—' ? '' : t(d.area) },
+      pickup: !c.pickup || c.pickup.enabled !== false,
+      pinOk: true, slug: 'local-edit-' + b.slug, remote: { slug: b.slug }, editing: true, paid: true };
+  }
+  // Estat de l'assistent → configuració, barrejada amb la del servidor: només canvia el que es veu a
+  // l'assistent i es manté tota la resta (estoc, actiu/apagat, al·lèrgens, variants, cada quant es
+  // dona hora, què fa cada persona de l'equip, la icona…).
+  function mergeConfig(cur) {
+    cur = JSON.parse(JSON.stringify(cur || {}));
+    const L = S.lang, svc = S.type === 'reservafacil';
+    const setL = (old, text) => { const o = old && typeof old === 'object' ? { ...old } : {}; o[L] = text; if (!o.ca) o.ca = text; return o; };
+    const oldList = (svc ? cur.services : cur.products) || [];
+    const byId = new Map(oldList.map(p => [p.id, p]));
+    const cats = S.cats.map(c => { const o = (cur.categories || []).find(k => k.id === c.id) || {}; return { ...o, id: c.id, name: setL(o.name, c.name.trim() || 'Secció') }; });
+    const blank = () => ({ [L]: '', ca: '' });
+    const items = S.cats.flatMap(c => c.items.filter(it => it.name.trim()).map(it => {
+      const o = byId.get(it.id);
+      const base = o ? { ...o } : svc ? { active: true, desc: blank() } : S.type === 'cartaqr' ? { available: true, allergens: [], tags: [], desc: blank() } : { stock: null, active: true, desc: blank() };
+      return { ...base, id: it.id, cat: c.id, emoji: it.emoji, price: it.price, ...(svc ? { duration: it.duration } : {}), name: setL(o && o.name, it.name.trim()) };
+    }));
+    const out = { ...cur, name: S.name.trim() || cur.name, tagline: setL(cur.tagline, S.tagline.trim()), logo: S.logo, color: S.color, languages: [L], ...(S.type === 'entradesqr' ? {} : { categories: cats }) };
+    if (S.cover) out.cover = S.cover; else delete out.cover;
+    if (S.logoImg) out.logoImg = S.logoImg; else delete out.logoImg;
+    if (S.bgfx) { out.bgfx = S.bgfx; out.bgfxAmount = S.bgfxAmount || 2; } else { delete out.bgfx; delete out.bgfxAmount; }
+    for (const k of ['textColor', 'cardColor']) { if (S[k]) out[k] = S[k]; else delete out[k]; }
+    if (svc) {
+      const ids = items.map(i => i.id), newIds = items.filter(i => !byId.has(i.id)).map(i => i.id);
+      Object.assign(out, { address: S.address.trim(), hours: JSON.parse(JSON.stringify(S.hours)), services: items,
+        staff: S.staff.map(p => {
+          const o = (cur.staff || []).find(s => s.id === p.id);
+          return o ? { ...o, name: p.name.trim() || 'Jo', avatar: p.avatar, services: [...(o.services || []).filter(id => ids.includes(id)), ...newIds] }
+            : { id: p.id, name: p.name.trim() || 'Jo', avatar: p.avatar, role: blank(), services: ids };
+        }) });
+    } else if (S.type === 'entradesqr') {
+      out.address = S.address.trim();   // esdeveniments i entrades: es mantenen tal com són (es porten des del panell)
+    } else if (S.type === 'cartaqr') {
+      Object.assign(out, { modules: { ...(cur.modules || {}), comandes: S.orders }, products: items });
+    } else {
+      const d = S.delivery, cd = cur.delivery || {};
+      Object.assign(out, { address: S.address.trim(), products: items,
+        pickup: { slotMinutes: 30, minNoticeMinutes: 60, daysAhead: 6, ...(cur.pickup || {}), enabled: S.pickup, hours: JSON.parse(JSON.stringify(S.hours)) },
+        delivery: { ...cd, enabled: d.on, price: d.price, freeFrom: d.freeFrom || null, minOrder: d.minOrder, area: setL(cd.area, d.area.trim() || S.address.trim() || '—') } });
+    }
+    delete out.slug; delete out.adminPinHash;
+    return out;
+  }
+  async function loadForEdit() {
+    const { data: { session } } = await sbAuth().getSession();
+    acct.session = session;
+    if (!session) { S.editError = 'login'; return render(); }
+    await Remote.claimInvites();
+    const { data: b } = await Remote.client().from('businesses').select('slug, app, config').eq('slug', EDIT).maybeSingle();
+    if (!b) { S.editError = 'notfound'; return render(); }
+    editBase = b.config;
+    S = fromConfig(b); save(); render(); refreshPreview();
+  }
+
+  // L'adreça de l'app surt del nom; es fixa quan l'app ja s'ha creat (per no trencar enllaços).
+  function ensureSlug() {
+    if (!S.sid) S.sid = uid().slice(0, 4);
+    if (S.pinOk && S.slug) return;
+    const s = 'local-' + slugify(S.name || 'negoci') + '-' + S.sid;
+    if (S.slug && S.slug !== s) localStorage.removeItem('creatuapp:draft:' + S.slug);
+    S.slug = s;
+  }
+  function writeDraft(forPreview) {
+    if (!S.type) return;
+    ensureSlug();
+    const cfg = S.editing && editBase ? { ...mergeConfig(editBase), slug: S.slug } : config(forPreview);
+    const prev = (() => { try { return JSON.parse(localStorage.getItem('creatuapp:draft:' + S.slug)); } catch (_) { return null; } })();
+    if (prev && prev.adminPinHash) cfg.adminPinHash = prev.adminPinHash;
+    localStorage.setItem('creatuapp:draft:' + S.slug, JSON.stringify(cfg));
+    // Els canvis fets abans des del panell (preus, serveis) no han de tapar els de l'assistent.
+    ['products', 'services'].forEach(k => localStorage.removeItem(`${S.type}:${S.slug}:${k}`));
+  }
+  function finish() {
+    const a = $('pin1')?.value;
+    writeDraft(false);
+    const cfg = JSON.parse(localStorage.getItem('creatuapp:draft:' + S.slug));
+    if (a && a.length === 4) cfg.adminPinHash = Panel.pinHash(S.slug, a);
+    localStorage.setItem('creatuapp:draft:' + S.slug, JSON.stringify(cfg));
+    // El qui l'ha creat ja ha posat el PIN: el panell s'obre directament en aquest aparell.
+    try { localStorage.setItem(`panel:${S.type}:${S.slug}:ok`, cfg.adminPinHash); } catch (_) {}
+    S.pinOk = true;
+    const mine = (() => { try { return JSON.parse(localStorage.getItem(MINE)) || []; } catch (_) { return []; } })().filter(m => m.slug !== S.slug);
+    mine.unshift({ slug: S.slug, type: S.type, name: cfg.name, logo: cfg.logo, color: cfg.color });
+    localStorage.setItem(MINE, JSON.stringify(mine));
+  }
+  function appUrl(type, slug, abs) {
+    const rel = `../apps/${type}/index.html?c=${encodeURIComponent(slug)}${type === 'cartaqr' ? '&taula=1' : ''}`;
+    return abs ? new URL(rel, location.href).href : rel;
+  }
+
+  // ---------- Vista prèvia en directe ----------
+  let pvTimer, pvView = 'app';
+  function refreshPreview() {
+    if (!S.type) { $('ph').hidden = false; $('frame').removeAttribute('src'); $('switcher').hidden = true; return; }
+    writeDraft(true);
+    const url = pvView === 'panel' ? `../apps/${S.type}/admin.html?c=${encodeURIComponent(S.slug)}` : appUrl(S.type, S.slug);
+    $('ph').hidden = true; $('switcher').hidden = !S.pinOk;
+    const fr = $('frame');
+    if (fr.dataset.url === url) fr.contentWindow?.location.reload(); else { fr.src = url; fr.dataset.url = url; }
+  }
+  function changed(rerender) {
+    save();
+    clearTimeout(pvTimer); pvTimer = setTimeout(refreshPreview, rerender ? 50 : 600);
+    if (rerender) render(); else updateNav();
+  }
+  $('switcher').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; pvView = b.dataset.v; $('switcher').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); refreshPreview(); });
+  function openMobilePreview() { writeDraft(true); $('frame-m').src = appUrl(S.type, S.slug); $('preview-m').classList.add('open'); }
+  function closeMobilePreview() { $('preview-m').classList.remove('open'); $('frame-m').removeAttribute('src'); }
+  $('prev-m').onclick = openMobilePreview;
+
+  function openModal(html) { $('modal').innerHTML = html; $('modal-back').classList.add('open'); }
+  function closeModal() { $('modal-back').classList.remove('open'); }
+  $('modal-back').addEventListener('click', e => { if (e.target.id === 'modal-back') closeModal(); });
+
+  // ---------- Navegació ----------
+  function go(n) { S.step = Math.max(0, Math.min(n, STEPS().length - 1)); save(); render(); window.scrollTo({ top: 0 }); }
+  $('back').onclick = () => go(S.step - 1);
+  $('next').onclick = () => {
+    const p = problem();
+    if (p) { showErr(p) || (!$('err') && alertBox(p)); return; }
+    if (stepId() === 'pin') { const v = $('pin1')?.value; if (v && v.length === 4) pinMem = v; finish(); refreshPreview(); }
+    go(S.step + 1);
+  };
+  function alertBox(m) { openModal(`<h3>Un moment</h3><p>${esc(m)}</p><p style="margin-top:14px"><button class="btn main" style="width:100%" onclick="closeModal()">D'acord</button></p>`); }
+  function updateNav() {
+    const id = stepId(), steps = STEPS();
+    $('back').style.visibility = S.step === 0 || id === 'done' ? 'hidden' : 'visible';
+    $('next').hidden = id === 'type' || id === 'done' || id === 'account' || id === 'pay' || id === 'save' || id === 'saved';
+    document.querySelector('.nav').hidden = id === 'done' || id === 'saved';
+    $('next').textContent = id === 'pin' ? 'Últim pas: el teu compte →' : S.editing && STEPS()[S.step + 1] === 'save' ? 'Revisar i desar →' : 'Continuar →';
+    $('prev-m').hidden = !S.type || id === 'done';
+    const total = steps.length - 1;
+    $('progress').innerHTML = S.type && id !== 'done' ? `<div class="bar"><div class="fill" style="width:${Math.round(S.step / total * 100)}%"></div></div><small>Pas ${S.step + 1} de ${total}</small>` : '';
+  }
+  function render() {
+    if (S.editing && (S.loadingEdit || S.editError)) {
+      $('step').innerHTML = S.editError === 'login'
+        ? `<h1>Editar l'app</h1><div class="box"><p>Per editar la teva app has d'entrar al teu compte.</p><a class="btn main" style="display:block;text-align:center;margin-top:14px;text-decoration:none" href="../compte/">Entrar al meu compte</a></div>`
+        : S.editError ? `<h1>No s'ha trobat l'app</h1><div class="box"><p>Aquesta app no existeix o el teu compte no la pot editar.</p><a class="btn main" style="display:block;text-align:center;margin-top:14px;text-decoration:none" href="../compte/">Tornar a El meu compte</a></div>`
+        : '<h1>Carregant la teva app…</h1>';
+      document.querySelector('.nav').hidden = true;
+      return;
+    }
+    document.querySelector('.nav').hidden = false;
+    if (S.step >= STEPS().length) S.step = 0;
+    if (!S.type && S.step) S.step = 0;
+    $('step').innerHTML = VIEWS[stepId()]();
+    updateNav();
+    document.documentElement.style.setProperty('--brand', S.type ? S.color : '#7c3aed');
+    if (stepId() === 'done') {
+      const box = $('qr');
+      if (box && window.QRCode) new QRCode(box, { text: appUrl(S.type, S.remote ? S.remote.slug : S.slug, true), width: 150, height: 150, correctLevel: QRCode.CorrectLevel.M });
+    }
+    const f = $('acct-form');
+    if (f) f.onsubmit = submitAccount;
+  }
+
+  // ---------- Fotos ----------
+  // Es redueixen al mateix mòbil abans de guardar-les: carreguen ràpid i no gasten dades.
+  async function pickImage(input, key) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const err = m => { const e = $('err-' + key); if (e) e.textContent = m; };
+    if (!/^image\//.test(file.type)) return err('Aquest fitxer no és una imatge.');
+    if (file.size > 25 * 1024 * 1024) return err('La foto és massa gran (més de 25 MB).');
+    err('Preparant la foto…');
+    try {
+      S[key] = await shrinkImage(file, key === 'logoImg' ? { max: 320, square: true } : { max: 1400, square: false });
+      err(''); changed(true);
+    } catch (_) { err('No s\'ha pogut llegir la foto. Prova amb una altra.'); }
+  }
+  function shrinkImage(file, { max, square }) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        let sx = 0, sy = 0, sw = img.naturalWidth, sh = img.naturalHeight;
+        if (square) { const m = Math.min(sw, sh); sx = (sw - m) / 2; sy = (sh - m) / 2; sw = sh = m; }
+        const scale = Math.min(1, max / Math.max(sw, sh));
+        const c = document.createElement('canvas');
+        c.width = Math.round(sw * scale); c.height = Math.round(sh * scale);
+        const ctx = c.getContext('2d');
+        if (!square) { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); }
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        // El logo en PNG (pot tenir fons transparent); la portada en JPEG (molt més lleuger).
+        resolve(square && file.type === 'image/png' ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', 0.8));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('img')); };
+      img.src = url;
+    });
+  }
+  async function uploadImage(dataUrl, uid, slug, name) {
+    const blob = await (await fetch(dataUrl)).blob();
+    const path = `${uid}/${slug}/${name}-${Date.now()}.${blob.type === 'image/png' ? 'png' : 'jpg'}`;
+    const bucket = Remote.client().storage.from('media');
+    const { error } = await bucket.upload(path, blob, { contentType: blob.type, upsert: true });
+    if (error) throw error;
+    return bucket.getPublicUrl(path).data.publicUrl;
+  }
+
+  // ---------- Compte i publicació al servidor ----------
+  let pinMem = null;                       // el PIN només viu en memòria, mai es desa
+  const acct = { session: null, mode: 'signup', sentTo: null, email: '' };
+  const sbAuth = () => Remote.client().auth;
+  async function submitAccount(e) {
+    e.preventDefault();
+    const email = $('ac-email').value.trim(), pass = $('ac-pass').value;
+    acct.email = email;
+    if (!pinMem) return showErr('Torna a escriure el teu PIN de 4 números.');
+    if (pass.length < 8) return showErr('La contrasenya ha de tenir com a mínim 8 lletres o números.');
+    const btn = e.target.querySelector('button[type=submit]'); btn.disabled = true; btn.textContent = 'Un moment…';
+    try {
+      if (acct.mode === 'login') {
+        const { data, error } = await sbAuth().signInWithPassword({ email, password: pass });
+        if (error) throw new Error(/confirm/i.test(error.message) ? 'Encara no has confirmat el correu. Busca el missatge de CreaTuApp a la safata d\'entrada.' : 'El correu o la contrasenya no són correctes.');
+        acct.session = data.session;
+        return publish();
+      }
+      const { data, error } = await sbAuth().signUp({ email, password: pass, options: { emailRedirectTo: location.origin + location.pathname } });
+      if (error) {
+        if (/registered|exists/i.test(error.message)) { acct.mode = 'login'; render(); return showErr('Aquest correu ja té compte. Entra amb la teva contrasenya.'); }
+        if (/rate|limit/i.test(error.message)) throw new Error('S\'han enviat massa correus. Torna-ho a provar d\'aquí a una hora.');
+        if (/password/i.test(error.message)) throw new Error('Aquesta contrasenya és massa fàcil. Prova\'n una de més llarga.');
+        throw new Error('No s\'ha pogut crear el compte. Revisa el correu i torna-ho a provar.');
+      }
+      if (data.session) { acct.session = data.session; return publish(); }
+      acct.sentTo = email; save(); render();
+    } catch (err) { showErr(err.message); btn.disabled = false; btn.textContent = acct.mode === 'login' ? 'Entrar i publicar' : 'Crear el compte i publicar'; }
+  }
+  async function forgot() {
+    const email = $('ac-email').value.trim();
+    if (!email) return showErr('Escriu el teu correu a dalt i torna a tocar aquí.');
+    try { localStorage.setItem('creatuapp:tornar', location.origin + location.pathname); } catch (_) {}
+    const { error } = await sbAuth().resetPasswordForEmail(email, { redirectTo: location.origin + '/contrasenya/' });
+    showErr(error ? 'No s\'ha pogut enviar. Torna-ho a provar més tard.' : '📧 T\'hem enviat un correu per canviar la contrasenya.');
+  }
+  async function logoutAcct() { await sbAuth().signOut(); acct.session = null; acct.mode = 'login'; render(); }
+  // Una adreça curta i lliure per a l'app, a partir del nom (bar-can-pep, bar-can-pep-2…).
+  async function freeSlug() {
+    const base = slugify(S.name).slice(0, 40).replace(/-$/, '') || 'negoci';
+    for (let i = 1; i < 30; i++) {
+      const cand = i === 1 ? (base.length < 3 ? base + '-app' : base) : `${base}-${i}`;
+      if (await Remote.rpc('slug_available', { p_slug: cand })) return cand;
+    }
+    return base + '-' + uid().slice(0, 4);
+  }
+  let publishing = false;
+  async function publish() {
+    if (publishing) return;
+    if (!pinMem && !S.remote) { render(); return showErr('Torna a escriure el teu PIN de 4 números.'); }
+    publishing = true;
+    try {
+      const uid = acct.session.user.id;
+      const slugForFiles = S.remote ? S.remote.slug : (S.pendingSlug = S.pendingSlug || await freeSlug());
+      // Les fotos noves (encara al navegador) es pugen al servidor i ens quedem amb la seva adreça.
+      for (const key of ['cover', 'logoImg']) {
+        if (S[key] && S[key].startsWith('data:')) { S[key] = await uploadImage(S[key], uid, slugForFiles, key); save(); }
+      }
+      const cfg = config(false);
+      delete cfg.slug; delete cfg.adminPinHash;
+      const db = Remote.client().from('businesses');
+      if (S.remote) {
+        // Sempre sobre la versió més nova del servidor, per no esborrar el que s'hagi canviat al panell.
+        const { data: curRow } = await db.select('config').eq('slug', S.remote.slug).maybeSingle();
+        const upd = { config: S.editing && curRow ? mergeConfig(curRow.config) : cfg };
+        if (pinMem) upd.pin_hash = Panel.pinHash(S.remote.slug, pinMem);
+        const { error } = await db.update(upd).eq('slug', S.remote.slug);
+        if (error) throw error;
+      } else {
+        let slug = S.pendingSlug;
+        if (!(await Remote.rpc('slug_available', { p_slug: slug }))) slug = await freeSlug();
+        const pin_hash = Panel.pinHash(slug, pinMem);
+        const { error } = await db.insert({ slug, app: S.type, owner_id: acct.session.user.id, config: cfg, pin_hash });
+        if (error) throw error;
+        S.remote = { slug }; S.pendingSlug = null; S.paid = false;
+        // Els administradors de CreaTuApp no paguen: el servidor ja l'ha activada.
+        const { data: row } = await db.select('status').eq('slug', slug).maybeSingle();
+        S.paid = !!row && row.status === 'active';
+        try { localStorage.setItem(`panel:${S.type}:${slug}:ok`, pin_hash); } catch (_) {}
+      }
+      publishing = false;
+      if (S.editing) { editBase = (await db.select('config').eq('slug', S.remote.slug).maybeSingle()).data?.config || editBase; save(); return go(STEPS().indexOf('saved')); }
+      save(); go(STEPS().indexOf(S.paid ? 'done' : 'pay'));
+    } catch (err) {
+      publishing = false;
+      const em = String((err && err.message) || '');
+      showErr(/disposable_email/.test(em) ? 'Aquest correu és temporal. Crea el compte amb un correu de veritat (Gmail, Outlook o el del teu negoci).'
+        : /too_many_pending/.test(em) ? 'Ja tens 2 apps pendents d’activar. Activa-les des de creatuap.com/compte abans de crear-ne una altra.'
+        : 'No s\'ha pogut publicar. Revisa la connexió i torna-ho a provar.');
+    }
+  }
+  // ---------- Pagament (Stripe) ----------
+  let payMsg = null;
+  async function applyRef(el) {
+    const code = ($('ref-code').value || '').trim().toLowerCase(), err = $('err-ref');
+    if (!code) { err.textContent = 'Escriu el codi.'; return; }
+    el.disabled = true;
+    const { data, error } = await Remote.client().rpc('set_referrer', { p_slug: S.remote.slug, p_code: code });
+    el.disabled = false;
+    if (error) {
+      const m = error.message;
+      err.textContent = /bad_code/.test(m) ? 'Aquest codi no existeix o aquell negoci no està actiu.' : /self/.test(m) ? 'No et pots recomanar a tu mateix 😉'
+        : /already/.test(m) ? 'Aquesta app ja té una recomanació o ja està pagada.' : 'No s’ha pogut aplicar. Torna-ho a provar.';
+      return;
+    }
+    S.refName = data || code; save(); render();
+  }
+  async function startPay(kind, el) {
+    el.disabled = true;
+    try { await Remote.billing(kind, S.remote.slug); }
+    catch (_) { el.disabled = false; showErr('Ara mateix no es pot obrir el pagament. Torna-ho a provar d\'aquí a una estona.'); }
+  }
+  {
+    const q = new URLSearchParams(location.search).get('pagament');
+    if (q && S.remote) {
+      history.replaceState(null, '', location.pathname);
+      if (q === 'ok') { S.paid = true; save(); S.step = STEPS().indexOf('done'); }
+      else { payMsg = 'cancelat'; S.step = STEPS().indexOf('pay'); }
+    }
+  }
+
+  // En tornar de l'enllaç del correu (o si ja hi havia sessió), continuem on érem.
+  sbAuth().getSession().then(({ data }) => {
+    acct.session = data.session;
+    if (stepId() === 'account') render();
+  });
+  sbAuth().onAuthStateChange((ev, session) => {
+    acct.session = session;
+    if (session && stepId() === 'account') { acct.sentTo = null; render(); }
+  });
+
+  // Si venen del catàleg amb una app triada (?tipus=reservafacil), comencem directament per aquí.
+  const tipusUrl = new URLSearchParams(location.search).get('tipus');
+  if (tipusUrl && TYPES[tipusUrl] && S.step === 0 && !S.remote && !EDIT) pickType(tipusUrl);
+  render();
+  if (EDIT) loadForEdit(); else refreshPreview();
+</script>
+</body>
+</html>

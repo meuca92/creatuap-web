@@ -1,0 +1,26 @@
+{
+  "name": "Sala Nit Blava",
+  "tagline": { "ca": "Discoteca i concerts · Vic", "es": "Discoteca y conciertos · Vic" },
+  "adminPinHash": "7a5c4f6af070461220372fce94c28807372e381a7ed24651725c8f129fc6ae3e",
+  "logo": "🪩",
+  "color": "#7c3aed",
+  "cover": "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=800&q=70",
+  "bgfx": "stars",
+  "bgfxAmount": 1,
+  "address": "Carrer de la Riera, 14 · Vic",
+  "languages": ["ca", "es"],
+  "demoSeed": true,
+  "doorPay": true,
+  "categories": [
+    { "id": "e1", "dayOffset": 1, "time": "23:30", "end": "06:00", "emoji": "🪩", "name": { "ca": "Nit Remember 90s", "es": "Noche Remember 90s" }, "desc": { "ca": "Els millors temes dels 90 amb DJ Toni Vila. Dress code: 90s!", "es": "Los mejores temas de los 90 con DJ Toni Vila. Dress code: ¡90s!" } },
+    { "id": "e2", "dayOffset": 8, "time": "21:00", "end": "00:30", "emoji": "🎸", "name": { "ca": "Concert: Els Pirates del Ter", "es": "Concierto: Els Pirates del Ter" }, "desc": { "ca": "Rock en català en directe. Obertura de portes a les 20:30.", "es": "Rock en catalán en directo. Apertura de puertas a las 20:30." } },
+    { "id": "e3", "yearly": "12-31", "time": "23:00", "end": "07:00", "emoji": "🎆", "name": { "ca": "Festa de Cap d'Any", "es": "Fiesta de Nochevieja" }, "desc": { "ca": "Raïm de la sort, confeti i barra lliure les dues primeres hores.", "es": "Uvas de la suerte, confeti y barra libre las dos primeras horas." } }
+  ],
+  "products": [
+    { "id": "e1-gen", "cat": "e1", "price": 12, "stock": 180, "active": true, "name": { "ca": "Entrada general", "es": "Entrada general" }, "desc": { "ca": "Inclou una consumició", "es": "Incluye una consumición" } },
+    { "id": "e1-vip", "cat": "e1", "price": 120, "stock": 6, "active": true, "name": { "ca": "Reserva de taula VIP (6 persones)", "es": "Reserva de mesa VIP (6 personas)" }, "desc": { "ca": "Taula, ampolla i entrada per a 6", "es": "Mesa, botella y entrada para 6" } },
+    { "id": "e2-ant", "cat": "e2", "price": 15, "stock": 250, "active": true, "name": { "ca": "Entrada anticipada", "es": "Entrada anticipada" }, "desc": { "ca": "A taquilla costarà 20 €", "es": "En taquilla costará 20 €" } },
+    { "id": "e3-gen", "cat": "e3", "price": 35, "stock": 300, "active": true, "name": { "ca": "Entrada Cap d'Any", "es": "Entrada Nochevieja" }, "desc": { "ca": "Amb cotilló i 2 consumicions", "es": "Con cotillón y 2 consumiciones" } },
+    { "id": "e3-vip", "cat": "e3", "price": 250, "stock": 8, "active": true, "name": { "ca": "Taula VIP Cap d'Any (8 persones)", "es": "Mesa VIP Nochevieja (8 personas)" }, "desc": { "ca": "Taula, 2 ampolles i entrada per a 8", "es": "Mesa, 2 botellas y entrada para 8" } }
+  ]
+}

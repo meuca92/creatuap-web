@@ -1,0 +1,15 @@
+{
+  "name": "EntradesQR",
+  "short_name": "Entrades",
+  "display": "standalone",
+  "background_color": "#0f0b1a",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

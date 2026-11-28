@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Entrades</title>
+<meta name="theme-color" content="#7c3aed">
+<link rel="manifest" href="manifest.json">
+<script src="../shared/manifest.js?v=6087a0f"></script>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
+<style>
+  :root { --brand: #7c3aed; --bg: #f6f4fb; --card: #ffffff; --text: #18122b; --muted: #6e6886; --border: #e6e1f2; --radius: 16px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.45; padding-bottom: 110px; }
+  button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  .hero { background: var(--brand); color: #fff; padding: 22px 0 24px; }
+  .hero.has-cover { padding-top: 96px; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+  .hero-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,.18); display: grid; place-items: center; font-size: 1.7rem; overflow: hidden; }
+  .brand h1 { font-size: 1.35rem; line-height: 1.15; }
+  .brand p { opacity: .85; font-size: .9rem; }
+  .langs { display: flex; gap: 4px; background: rgba(0,0,0,.18); border-radius: 999px; padding: 3px; }
+  .langs button { padding: 5px 10px; border-radius: 999px; font-size: .78rem; font-weight: 700; text-transform: uppercase; opacity: .75; }
+  .langs button.on { background: #fff; color: var(--brand); opacity: 1; }
+  .hero-links { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.18); padding: 6px 12px; border-radius: 999px; font-size: .85rem; font-weight: 500; color: #fff; }
+  h2.sec { font-size: 1.2rem; margin: 22px 0 12px; }
+  .ev { display: flex; gap: 14px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 12px; width: 100%; text-align: left; align-items: center; }
+  .ev .date { flex-shrink: 0; width: 64px; border-radius: 14px; background: color-mix(in srgb, var(--brand) 12%, #fff); color: var(--brand); text-align: center; padding: 8px 0; }
+  .ev .date small { display: block; font-size: .7rem; font-weight: 700; text-transform: uppercase; }
+  .ev .date b { font-size: 1.5rem; line-height: 1.1; display: block; }
+  .ev .info { flex: 1; min-width: 0; }
+  .ev h3 { font-size: 1.05rem; line-height: 1.25; }
+  .ev p { color: var(--muted); font-size: .88rem; }
+  .ev .from { font-weight: 700; color: var(--brand); white-space: nowrap; }
+  .ev .soldout { font-size: .78rem; font-weight: 700; background: #e7e5e4; color: #57534e; border-radius: 999px; padding: 2px 9px; }
+  .empty { text-align: center; color: var(--muted); padding: 40px 10px; }
+  .back { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; font-weight: 700; color: var(--muted); }
+  .evhead { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-top: 12px; }
+  .evhead .emo { font-size: 2.6rem; }
+  .evhead h2 { font-size: 1.35rem; margin: 4px 0; }
+  .evhead .when { font-weight: 700; color: var(--brand); }
+  .evhead p { color: var(--muted); margin-top: 6px; }
+  .tk { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 10px; }
+  .tk b { display: block; }
+  .tk small { color: var(--muted); display: block; }
+  .tk .price { font-weight: 700; margin-top: 2px; }
+  .tk.off { opacity: .55; }
+  .qty { display: flex; align-items: center; gap: 10px; }
+  .qty button { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-size: 1.25rem; font-weight: 700; background: var(--bg); border: 1px solid var(--border); }
+  .qty button.plus { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .qty button:disabled { opacity: .35; }
+  .qty span { min-width: 20px; text-align: center; font-weight: 700; }
+  .box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-top: 14px; }
+  .box h3 { font-size: 1rem; margin-bottom: 10px; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .seg button { padding: 14px 12px; border: 1px solid var(--border); border-radius: 12px; text-align: left; background: var(--bg); }
+  .seg button b { display: block; }
+  .seg button small { color: var(--muted); }
+  .seg button.on { border-color: var(--brand); background: color-mix(in srgb, var(--brand) 8%, #fff); }
+  label { display: block; font-size: .85rem; font-weight: 700; margin: 12px 0 6px; }
+  input { width: 100%; font: inherit; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); }
+  input:focus { outline: 2px solid var(--brand); outline-offset: -1px; }
+  .note { font-size: .85rem; color: var(--muted); margin-top: 8px; }
+  .err { color: #b91c1c; font-size: .9rem; margin-top: 10px; }
+  .primary { width: 100%; background: var(--brand); color: #fff; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 1rem; margin-top: 18px; }
+  .primary:disabled { opacity: .5; }
+  .ghost { width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; border: 1px solid var(--border); background: var(--card); margin-top: 10px; }
+  .buybar { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--bg) 30%); z-index: 30; }
+  .buybar button { width: 100%; max-width: 728px; margin: 0 auto; display: flex; justify-content: space-between; background: var(--brand); color: #fff; padding: 16px 20px; border-radius: 14px; font-weight: 700; font-size: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+  /* Entrada amb QR */
+  .ticket { background: var(--card); border-radius: 22px; margin-top: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(24,18,43,.12); border: 1px solid var(--border); }
+  .ticket .t-top { background: var(--brand); color: #fff; padding: 16px 18px; }
+  .ticket .t-top b { font-size: 1.15rem; display: block; }
+  .ticket .t-qr { display: grid; place-items: center; padding: 20px 0 10px; border-bottom: 2px dashed var(--border); position: relative; }
+  .ticket .t-qr canvas, .ticket .t-qr img { width: 210px !important; height: 210px !important; }
+  .ticket .t-qr.used::after { content: attr(data-used); position: absolute; inset: 0; display: grid; place-items: center; background: rgba(255,255,255,.82); font-weight: 800; font-size: 1.3rem; color: #57534e; }
+  .ticket .t-body { padding: 14px 18px 18px; }
+  .ticket .t-body div { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; }
+  .ticket .t-body span { color: var(--muted); }
+  .ticket .num { font-size: 1.4rem; font-weight: 800; letter-spacing: .04em; text-align: center; margin-top: 6px; }
+  .demo-pay { text-align: center; }
+  .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 40; display: none; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: var(--card); border-radius: 22px 22px 0 0; max-height: 88vh; overflow-y: auto; padding: 18px 20px calc(24px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform .25s ease; max-width: 640px; margin: 0 auto; }
+  .sheet.open { transform: none; }
+  footer { text-align: center; color: var(--muted); font-size: .78rem; padding: 30px 0 10px; }
+  .error { padding: 60px 20px; text-align: center; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="backdrop" id="backdrop" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"><div id="sheet-body"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+<script src="../shared/config.js?v=6087a0f"></script>
+<script src="../shared/remote.js?v=6087a0f"></script>
+<script src="core.js?v=6087a0f"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('c') || 'demo';
+  const UI = {
+    ca: { events: 'Pròxims esdeveniments', myTickets: 'Les meves entrades', from: 'des de', soldout: 'Esgotat', none: 'Ara mateix no hi ha cap esdeveniment a la venda.',
+      back: 'Tornar', tickets: 'Entrades', left: n => `Queden ${n}`, buy: (n, t) => `Comprar ${n} ${n === 1 ? 'entrada' : 'entrades'} · ${t}`, choose: 'Tria les entrades',
+      you: 'Les teves dades', name: 'Nom i cognoms', phone: 'Telèfon', email: 'Correu (opcional)', emailCard: 'Correu (t\'hi enviem les entrades)', emailDoor: 'Correu (opcional, t\'hi enviem les entrades)', pay: 'Pagament', card: 'Targeta, Apple Pay o Google Pay', cardSub: 'Pagament segur',
+      door: 'Pagar a la porta', doorSub: 'En arribar', fill: 'Posa el nom i el telèfon.', fillMail: 'Posa el teu correu: és on t\'enviarem les entrades.', mailed: m => `📧 T'hem enviat les entrades a ${m}.`, mailFail: 'No hem pogut enviar el correu, però aquí tens les entrades.', one: 'La teva entrada', notFound: 'No hem trobat aquesta entrada.', payBtn: t => `Pagar ${t}`, reserveBtn: t => `Reservar · ${t}`,
+      demoTitle: 'Pagament de demostració', demoText: "A l'app real aquí s'obre el pagament segur de Stripe. En aquesta demo no cal posar cap targeta.", demoOk: 'Simular pagament correcte', cancel: 'Cancel·lar',
+      thanks: 'Ja tens les entrades!', showQR: "Ensenya aquest QR a la porta. També el trobaràs a «Les meves entrades».", order: 'Entrada', persons: n => `${n} ${n === 1 ? 'persona' : 'persones'}`,
+      payDoor: 'Es paga a la porta', paid: 'Pagada', used: 'Ja s\'ha fet servir', cancelled: 'Cancel·lada', lookup: 'Escriu el telèfon amb què vas comprar les entrades.', search: 'Buscar',
+      noTickets: 'No hem trobat cap entrada amb aquest telèfon.', stockErr: (n, l) => `De «${n}» només en queden ${l}.`, payErr: 'Ara mateix no es pot obrir el pagament. Torna-ho a provar.',
+      payCancel: "No s'ha fet el pagament. Les entrades han quedat reservades: pots tornar-ho a provar.", retry: 'Tornar a pagar', saved: 'Les entrades que has comprat en aquest mòbil:' },
+    es: { events: 'Próximos eventos', myTickets: 'Mis entradas', from: 'desde', soldout: 'Agotado', none: 'Ahora mismo no hay ningún evento a la venta.',
+      back: 'Volver', tickets: 'Entradas', left: n => `Quedan ${n}`, buy: (n, t) => `Comprar ${n} ${n === 1 ? 'entrada' : 'entradas'} · ${t}`, choose: 'Elige las entradas',
+      you: 'Tus datos', name: 'Nombre y apellidos', phone: 'Teléfono', email: 'Correo (opcional)', emailCard: 'Correo (te enviamos las entradas)', emailDoor: 'Correo (opcional, te enviamos las entradas)', pay: 'Pago', card: 'Tarjeta, Apple Pay o Google Pay', cardSub: 'Pago seguro',
+      door: 'Pagar en la puerta', doorSub: 'Al llegar', fill: 'Pon el nombre y el teléfono.', fillMail: 'Pon tu correo: es donde te enviaremos las entradas.', mailed: m => `📧 Te hemos enviado las entradas a ${m}.`, mailFail: 'No hemos podido enviar el correo, pero aquí tienes las entradas.', one: 'Tu entrada', notFound: 'No hemos encontrado esta entrada.', payBtn: t => `Pagar ${t}`, reserveBtn: t => `Reservar · ${t}`,
+      demoTitle: 'Pago de demostración', demoText: 'En la app real aquí se abre el pago seguro de Stripe. En esta demo no hace falta ninguna tarjeta.', demoOk: 'Simular pago correcto', cancel: 'Cancelar',
+      thanks: '¡Ya tienes las entradas!', showQR: 'Enseña este QR en la puerta. También lo encontrarás en «Mis entradas».', order: 'Entrada', persons: n => `${n} ${n === 1 ? 'persona' : 'personas'}`,
+      payDoor: 'Se paga en la puerta', paid: 'Pagada', used: 'Ya se ha usado', cancelled: 'Cancelada', lookup: 'Escribe el teléfono con el que compraste las entradas.', search: 'Buscar',
+      noTickets: 'No hemos encontrado ninguna entrada con este teléfono.', stockErr: (n, l) => `De «${n}» solo quedan ${l}.`, payErr: 'Ahora mismo no se puede abrir el pago. Vuelve a probarlo.',
+      payCancel: 'No se ha hecho el pago. Las entradas han quedado reservadas: puedes volver a probarlo.', retry: 'Volver a pagar', saved: 'Las entradas que has comprado en este móvil:' }
+  };
+  let client, lang = 'ca', view = 'events', evId = null, cart = {}, msg = '', note = '', lastOrder = null, myList = null, paidBack = false;
+  const validMail = m => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((m || '').trim());
+  let co = { name: '', phone: '', email: '', payment: 'targeta' };
+  const t = (k, ...a) => { const v = (UI[lang] || UI.ca)[k]; return typeof v === 'function' ? v(...a) : v; };
+  const $ = id => document.getElementById(id);
+  const locale = () => lang === 'es' ? 'es-ES' : 'ca-ES';
+  const cardOk = () => !Store.remote || !!client.cardPayments;
+  const ev = id => (client.categories || []).find(e => e.id === id);
+  const savedKey = () => `entradesqr:${slug}:mine`;
+  const saveMine = o => { try { const l = JSON.parse(localStorage.getItem(savedKey()) || '[]').filter(x => x.id !== o.id); l.unshift(o); localStorage.setItem(savedKey(), JSON.stringify(l.slice(0, 30))); } catch (_) {} };
+  const mineSaved = () => { try { return JSON.parse(localStorage.getItem(savedKey()) || '[]'); } catch (_) { return []; } };
+  const fmtDate = (iso, o) => fromISODate(iso).toLocaleDateString(locale(), o);
+
+  function header() {
+    return `<header ${Brand.hero(client)}><div class="wrap">
+      <div class="hero-top"><div class="brand"><div class="logo">${Brand.logo(client)}</div><div><h1>${esc(client.name)}</h1><p>${esc(tr(client.tagline, lang))}</p></div></div>
+        ${client.languages && client.languages.length > 1 ? `<div class="langs">${client.languages.map(l => `<button class="${l === lang ? 'on' : ''}" onclick="lang='${l}';render()">${l}</button>`).join('')}</div>` : ''}</div>
+      <div class="hero-links"><button class="pill" onclick="go('events')">🎟️ ${t('events')}</button><button class="pill" onclick="go('mine')">🎫 ${t('myTickets')}</button>
+        ${client.address ? `<span class="pill">📍 ${esc(client.address)}</span>` : ''}</div>
+    </div></header>`;
+  }
+  let single = false;   // s'ha obert una sola entrada des de l'enllaç del correu
+  function go(v, id) { view = v; if (id) evId = id; msg = ''; if (v !== 'done') note = ''; render(); window.scrollTo({ top: 0 }); }
+
+  // ---------- Llista d'esdeveniments ----------
+  function viewEvents() {
+    const list = upcoming(client);
+    return `<main class="wrap"><h2 class="sec">${t('events')}</h2>${list.length ? list.map(e => {
+      const tks = ticketsOf(client, e.id).filter(p => p.active !== false);
+      const avail = tks.filter(p => p.stock == null || p.stock > 0);
+      const min = avail.length ? Math.min(...avail.map(p => p.price)) : null;
+      const d = fromISODate(e.date);
+      return `<button class="ev" onclick="go('event','${e.id}')"><div class="date"><small>${esc(d.toLocaleDateString(locale(), { month: 'short' }))}</small><b>${d.getDate()}</b><small>${esc(d.toLocaleDateString(locale(), { weekday: 'short' }))}</small></div>
+        <div class="info"><h3>${esc(e.emoji || '🎟️')} ${esc(tr(e.name, lang))}</h3><p>${esc(e.time || '')}${e.end ? ' – ' + esc(e.end) : ''}</p></div>
+        ${min == null ? `<span class="soldout">${t('soldout')}</span>` : `<span class="from"><small style="font-weight:500;color:var(--muted)">${t('from')}</small><br>${fmtPrice(min)}</span>`}</button>`;
+    }).join('') : `<p class="empty">🌙<br>${t('none')}</p>`}</main>`;
+  }
+
+  // ---------- Un esdeveniment: triar entrades i pagar ----------
+  function viewEvent() {
+    const e = ev(evId); if (!e) { view = 'events'; return viewEvents(); }
+    const tks = ticketsOf(client, e.id).filter(p => p.active !== false);
+    const n = Object.values(cart).reduce((s, q) => s + q, 0);
+    const lines = Object.entries(cart).filter(([, q]) => q > 0).map(([productId, qty]) => ({ productId, qty }));
+    const tot = totals(client, lines);
+    if (!cardOk() && co.payment === 'targeta') co.payment = 'porta';
+    if (client.doorPay === false && co.payment === 'porta' && cardOk()) co.payment = 'targeta';
+    return `<main class="wrap"><button class="back" onclick="cart={};go('events')">← ${t('back')}</button>
+      <div class="evhead"><div class="emo">${esc(e.emoji || '🎟️')}</div><h2>${esc(tr(e.name, lang))}</h2>
+        <div class="when">${esc(fmtDate(e.date, { weekday: 'long', day: 'numeric', month: 'long' }))} · ${esc(e.time || '')}${e.end ? ' – ' + esc(e.end) : ''}</div>
+        ${tr(e.desc, lang) ? `<p>${esc(tr(e.desc, lang))}</p>` : ''}</div>
+      <h2 class="sec">${t('choose')}</h2>
+      ${tks.map(p => { const q = cart[p.id] || 0, out = p.stock != null && p.stock <= 0;
+        return `<div class="tk ${out ? 'off' : ''}"><div><b>${esc(tr(p.name, lang))}</b>${tr(p.desc, lang) ? `<small>${esc(tr(p.desc, lang))}</small>` : ''}
+          <div class="price">${fmtPrice(p.price)} ${out ? `<small style="display:inline">· ${t('soldout')}</small>` : p.stock != null && p.stock <= 20 ? `<small style="display:inline">· ${t('left', p.stock)}</small>` : ''}</div></div>
+          <div class="qty"><button ${q ? '' : 'disabled'} onclick="add('${p.id}',-1)" aria-label="-">−</button><span>${q}</span><button class="plus" ${out || (p.stock != null && q >= p.stock) || q >= 20 ? 'disabled' : ''} onclick="add('${p.id}',1)" aria-label="+">+</button></div></div>`; }).join('')}
+      ${n ? `<div class="box"><h3>${t('you')}</h3>
+        <label for="cn">${t('name')}</label><input id="cn" value="${esc(co.name)}" oninput="co.name=this.value" autocomplete="name">
+        <label for="cp">${t('phone')}</label><input id="cp" type="tel" inputmode="tel" value="${esc(co.phone)}" oninput="co.phone=this.value" autocomplete="tel">
+        <label for="ce">${Store.remote ? t(co.payment === 'targeta' ? 'emailCard' : 'emailDoor') : t('email')}</label><input id="ce" type="email" inputmode="email" value="${esc(co.email)}" oninput="co.email=this.value" autocomplete="email"></div>
+      <div class="box"><h3>${t('pay')}</h3><div class="seg">
+        ${cardOk() ? `<button class="${co.payment === 'targeta' ? 'on' : ''}" onclick="co.payment='targeta';render()"><b>💳 ${t('card')}</b><small>${t('cardSub')}</small></button>` : ''}
+        ${client.doorPay !== false || !cardOk() ? `<button class="${co.payment === 'porta' ? 'on' : ''}" onclick="co.payment='porta';render()"><b>🚪 ${t('door')}</b><small>${t('doorSub')}</small></button>` : ''}</div></div>
+      ${msg ? `<p class="err">${esc(msg)}</p>` : ''}` : ''}
+    </main>
+    ${n ? `<div class="buybar"><button onclick="buy()"><span>${co.payment === 'targeta' ? t('payBtn', fmtPrice(tot.total)) : t('reserveBtn', fmtPrice(tot.total))}</span><span>${n} 🎟️</span></button></div>` : ''}`;
+  }
+  function add(id, d) { cart[id] = Math.max(0, (cart[id] || 0) + d); render(); }
+  function buy() {
+    if (!co.name.trim() || normPhone(co.phone).length < 6) { msg = t('fill'); render(); $('cn') && $('cn').scrollIntoView({ block: 'center' }); return; }
+    // Amb targeta el correu és obligatori: si el navegador no torna de Stripe, les entrades li arriben igualment.
+    if (co.payment === 'targeta' && Store.remote && !validMail(co.email)) { msg = t('fillMail'); render(); $('ce') && $('ce').scrollIntoView({ block: 'center' }); return; }
+    if (co.email.trim() && !validMail(co.email)) { msg = t('fillMail'); render(); $('ce') && $('ce').scrollIntoView({ block: 'center' }); return; }
+    if (co.payment === 'targeta' && Store.remote) return finish(true);
+    if (co.payment === 'targeta') {
+      $('sheet-body').innerHTML = `<div class="demo-pay"><h2>${t('demoTitle')}</h2><div style="font-size:2rem;margin:10px 0">💳 🍎 🅖</div><p class="note">${t('demoText')}</p>
+        <button class="primary" onclick="closeSheet();finish()">${t('demoOk')}</button><button class="ghost" onclick="closeSheet()">${t('cancel')}</button></div>`;
+      $('sheet').classList.add('open'); $('backdrop').style.display = 'block';
+    } else finish();
+  }
+  function closeSheet() { $('sheet').classList.remove('open'); $('backdrop').style.display = 'none'; }
+  async function finish(realCard) {
+    client = await Store.loadClient(slug);
+    const e = ev(evId);
+    const lines = Object.entries(cart).filter(([, q]) => q > 0).map(([productId, qty]) => {
+      const p = client.products.find(x => x.id === productId);
+      return { productId, qty, name: `${tr(e.name, 'ca')} · ${tr(p.name, 'ca')}`, price: p.price };
+    });
+    const tot = totals(client, lines);
+    const res = await Store.placeOrder(client, {
+      lines, ...tot, eventId: e.id, payment: co.payment, ...(realCard ? { paidAt: null, payStatus: 'pending' } : {}),
+      customer: { name: co.name.trim(), phone: co.phone.trim(), email: co.email.trim() }, lang
+    }).catch(() => ({ error: 'network' }));
+    if (res.error) {
+      const p = client.products.find(x => x.id === res.productId);
+      msg = res.error === 'stock' && p ? t('stockErr', tr(p.name, lang), res.left || 0) : t('payErr');
+      return render();
+    }
+    lastOrder = res.order; saveMine(lastOrder); cart = {};
+    if (realCard) {
+      try { sessionStorage.setItem('entradesqr:pending:' + slug, JSON.stringify(lastOrder)); } catch (_) {}
+      return payNow();
+    }
+    go('done');
+    sendMail(lastOrder);
+  }
+  // Envia les entrades al correu del client (si n'ha posat) i ho diu a la pantalla.
+  async function sendMail(o) {
+    if (!o || !Store.remote || !validMail(o.customer && o.customer.email)) return;
+    const r = await Store.mailTicket(slug, o.id).catch(() => ({ error: 'network' }));
+    note = r && r.ok ? t('mailed', o.customer.email) : t('mailFail');
+    if (view === 'done') render();
+  }
+  async function payNow() {
+    try { await Remote.payOrder(slug, lastOrder.id); } catch (_) { msg = t('payErr'); view = 'done'; render(); }
+  }
+
+  // ---------- L'entrada amb QR ----------
+  function ticketHTML(o) {
+    const e = eventOf(client, o) || {};
+    const used = o.status === 'validada', cancel = o.status === 'cancel·lada';
+    return `<div class="ticket"><div class="t-top"><b>${esc(e.emoji || '🎟️')} ${esc(tr(e.name, lang) || '')}</b>${e.date ? esc(fmtDate(e.date, { weekday: 'long', day: 'numeric', month: 'long' })) + ' · ' + esc(e.time || '') : ''}</div>
+      <div class="t-qr ${used || cancel ? 'used' : ''}" data-used="${used ? t('used') : t('cancelled')}"><div data-qr="${esc(qrText(o))}"></div><div class="num">#${esc(o.num)}</div></div>
+      <div class="t-body">${(o.lines || []).map(l => `<div><span>${l.qty} × ${esc((l.name || '').split(' · ').pop())}</span><b>${fmtPrice(l.price * l.qty)}</b></div>`).join('')}
+        <div><span>${esc(o.customer ? o.customer.name : '')} · ${t('persons', people(o))}</span><b>${o.payment === 'porta' ? t('payDoor') : (o.payStatus === 'pending' && !paidBack ? '⏳' : t('paid'))}</b></div></div></div>`;
+  }
+  function drawQRs() {
+    document.querySelectorAll('[data-qr]').forEach(el => {
+      if (el.dataset.done || !window.QRCode) return; el.dataset.done = 1;
+      new QRCode(el, { text: el.dataset.qr, width: 420, height: 420, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M });
+    });
+  }
+  function viewDone() {
+    const o = lastOrder;
+    if (single) return `<main class="wrap"><h2 class="sec">${t('one')}</h2>${o ? ticketHTML(o) : `<p class="empty">${t('notFound')}</p>`}
+      <button class="ghost" onclick="single=false;go('events')">${t('events')}</button></main>`;
+    return `<main class="wrap"><div style="text-align:center;padding:22px 0 0"><div style="font-size:3rem">🎉</div><h2>${t('thanks')}</h2><p class="note">${t('showQR')}</p></div>
+      ${msg ? `<p class="err">${esc(msg)}</p>` : ''}${note ? `<p class="note" style="text-align:center;margin:10px 0 0">${esc(note)}</p>` : ''}${o ? ticketHTML(o) : ''}
+      ${o && o.payment === 'targeta' && Store.remote && o.payStatus === 'pending' && !paidBack ? `<button class="primary" onclick="payNow()">💳 ${t('retry')}</button>` : ''}
+      <button class="ghost" onclick="go('events')">${t('events')}</button></main>`;
+  }
+
+  // ---------- Les meves entrades ----------
+  function viewMine() {
+    const list = myList || mineSaved();
+    return `<main class="wrap"><h2 class="sec">${t('myTickets')}</h2>
+      <form id="lk" class="box"><label for="lp" style="margin-top:0">${t('lookup')}</label><input id="lp" type="tel" inputmode="tel" value="${esc(co.phone)}" required>
+        <button class="primary" style="margin-top:10px">${t('search')}</button></form>
+      ${list.length ? `<p class="note" style="margin-top:14px">${myList ? '' : t('saved')}</p>${list.slice().sort((a, b) => b.createdAt - a.createdAt).map(ticketHTML).join('')}` : myList ? `<p class="empty">${t('noTickets')}</p>` : ''}</main>`;
+  }
+  async function lookup(phone) {
+    co.phone = phone;
+    myList = await Store.findMine(slug, phone).catch(() => []);
+    render();
+  }
+
+  function render() {
+    $('app').innerHTML = header() + ({ events: viewEvents, event: viewEvent, done: viewDone, mine: viewMine }[view] || viewEvents)()
+      + `<footer>${esc(client.name)} · EntradesQR by CreaTuApp</footer>`;
+    if ($('lk')) $('lk').onsubmit = ev2 => { ev2.preventDefault(); lookup($('lp').value); };
+    drawQRs();
+  }
+
+  Store.loadClient(slug).then(async c => {
+    client = c;
+    if (Store.remote) Brand.homeScreen(c, false);
+    document.title = `${c.name} · Entrades`;
+    document.documentElement.style.setProperty('--brand', c.color);
+    document.querySelector('meta[name=theme-color]').content = c.color;
+    lang = (c.languages || ['ca']).includes((navigator.language || 'ca').slice(0, 2)) ? navigator.language.slice(0, 2) : (c.languages || ['ca'])[0];
+    if (params.get('esdeveniment')) { view = 'event'; evId = params.get('esdeveniment'); }
+    // Enllaç «Veure l'entrada» del correu: ?entrada=<id>
+    if (params.get('entrada')) {
+      single = true; view = 'done';
+      const o = await Store.getTicket(slug, params.get('entrada')).catch(() => null);
+      lastOrder = o; paidBack = !!(o && o.payStatus === 'paid');
+      if (o) saveMine(o);
+    }
+    render();
+    // Tornada de la pàgina de pagament de Stripe.
+    if (params.has('pagat') || params.get('pagament') === 'cancelat') {
+      try { lastOrder = JSON.parse(sessionStorage.getItem('entradesqr:pending:' + slug)); } catch (_) { lastOrder = null; }
+      history.replaceState(null, '', location.pathname + '?c=' + encodeURIComponent(slug));
+      if (lastOrder) {
+        paidBack = params.get('pagat') === lastOrder.id;
+        if (paidBack) {
+          lastOrder.payStatus = 'paid'; saveMine(lastOrder);
+          try { sessionStorage.removeItem('entradesqr:pending:' + slug); } catch (_) {}
+          // Primer el servidor confirma el pagament; després ja pot enviar el correu.
+          Remote.confirmOrder(slug, lastOrder.id, params.get('sessio')).catch(() => false).then(() => sendMail(lastOrder));
+        } else msg = t('payCancel');
+        view = 'done'; render();
+      }
+    }
+    Store.onChange(async () => { client = await Store.loadClient(slug); if (view !== 'event') render(); });
+  }).catch(err => {
+    $('app').innerHTML = err && err.message === 'not_live'
+      ? `<div class="error"><h2>${esc(err.businessName || '')}</h2><p>La venda d'entrades no està disponible ara mateix.</p></div>`
+      : "<div class=\"error\"><h2>No hem trobat aquesta pàgina</h2><p>Revisa l'enllaç que t'han passat.</p></div>";
+  });
+</script>
+</body>
+</html>

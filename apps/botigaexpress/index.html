@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Botiga online</title>
+<meta name="theme-color" content="#b45309">
+<link rel="manifest" href="manifest.json">
+<script src="../shared/manifest.js?v=6087a0f"></script>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand: #b45309;
+    --bg: #faf7f2;
+    --card: #ffffff;
+    --text: #1f1a14;
+    --muted: #7a7064;
+    --border: #ebe4d8;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.45; padding-bottom: 110px; }
+  button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+
+  .hero { background: var(--brand); color: #fff; padding: 22px 0 24px; }
+  .hero.has-cover { padding-top: 96px; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+  .logo { overflow: hidden; }
+  .hero-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,.18); display: grid; place-items: center; font-size: 1.7rem; }
+  .brand h1 { font-size: 1.35rem; line-height: 1.15; }
+  .brand p { opacity: .85; font-size: .9rem; }
+  .langs { display: flex; gap: 4px; background: rgba(0,0,0,.18); border-radius: 999px; padding: 3px; }
+  .langs button { padding: 5px 10px; border-radius: 999px; font-size: .78rem; font-weight: 700; text-transform: uppercase; opacity: .75; }
+  .langs button.on { background: #fff; color: var(--brand); opacity: 1; }
+  .hero-links { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.18); padding: 6px 12px; border-radius: 999px; font-size: .85rem; font-weight: 500; color: #fff; }
+
+  .cats { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--border); }
+  .cats-row { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; scrollbar-width: none; max-width: 760px; margin: 0 auto; }
+  .cats-row::-webkit-scrollbar { display: none; }
+  .chip { white-space: nowrap; padding: 8px 14px; border-radius: 999px; background: var(--card); border: 1px solid var(--border); font-weight: 500; font-size: .9rem; }
+  .chip.on { background: var(--text); color: #fff; border-color: var(--text); }
+
+  section { padding-top: 22px; scroll-margin-top: 64px; }
+  section h2 { font-size: 1.2rem; margin-bottom: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 12px; }
+  .prod { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; text-align: left; }
+  .prod .img { aspect-ratio: 4 / 3; display: grid; place-items: center; font-size: 3.2rem; background: color-mix(in srgb, var(--brand) 8%, #fff); position: relative; }
+  .prod .badge { position: absolute; top: 8px; left: 8px; font-size: .72rem; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #fff; }
+  .prod .badge.out { background: #e7e5e4; color: #57534e; }
+  .prod .badge.low { background: #fef3c7; color: #92400e; }
+  .prod .body { padding: 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .prod h3 { font-size: .98rem; line-height: 1.25; }
+  .prod p { font-size: .82rem; color: var(--muted); flex: 1; }
+  .prod .foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .prod .price { font-weight: 700; }
+  .prod .price small { font-weight: 500; color: var(--muted); }
+  .add { width: 34px; height: 34px; border-radius: 50%; background: var(--brand); color: #fff; font-size: 1.2rem; font-weight: 700; display: grid; place-items: center; }
+  .add:disabled { background: #d6d3d1; }
+  .prod.off { opacity: .6; }
+  .incart { font-size: .78rem; font-weight: 700; color: var(--brand); }
+
+  .cartbar { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--bg) 30%); z-index: 30; }
+  .cartbar button { width: 100%; max-width: 728px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; background: var(--brand); color: #fff; padding: 16px 20px; border-radius: 14px; font-weight: 700; font-size: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+  .cartbar .count { background: rgba(255,255,255,.22); border-radius: 8px; padding: 2px 9px; margin-right: 10px; }
+
+  .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 40; display: none; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: var(--card); border-radius: 22px 22px 0 0; max-height: 88vh; overflow-y: auto; padding: 10px 20px calc(24px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform .25s ease; max-width: 640px; margin: 0 auto; }
+  .sheet.open { transform: none; }
+  .grip { width: 40px; height: 5px; border-radius: 9px; background: var(--border); margin: 0 auto 16px; }
+  .sheet h2 { font-size: 1.3rem; margin-bottom: 6px; }
+  .big-emoji { font-size: 4rem; text-align: center; padding: 10px 0; background: color-mix(in srgb, var(--brand) 8%, #fff); border-radius: 16px; margin-bottom: 14px; }
+  .muted { color: var(--muted); }
+  .variants { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .variant { padding: 12px; border: 1px solid var(--border); border-radius: 12px; text-align: left; }
+  .variant b { display: block; }
+  .variant.on { border-color: var(--brand); background: color-mix(in srgb, var(--brand) 8%, #fff); }
+  .qtyrow { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; }
+  .qty { display: flex; align-items: center; gap: 10px; }
+  .qty button { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-size: 1.2rem; font-weight: 700; background: var(--bg); border: 1px solid var(--border); }
+  .qty span { min-width: 18px; text-align: center; font-weight: 700; }
+  .line { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .line .n { flex: 1; min-width: 0; }
+  .line small { color: var(--muted); display: block; }
+  .sum { padding: 10px 0; }
+  .sum div { display: flex; justify-content: space-between; padding: 4px 0; }
+  .sum .tot { font-size: 1.15rem; font-weight: 700; border-top: 1px solid var(--border); margin-top: 6px; padding-top: 10px; }
+  .primary { width: 100%; background: var(--brand); color: #fff; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 1rem; margin-top: 18px; }
+  .primary:disabled { opacity: .5; }
+  .ghost { width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; border: 1px solid var(--border); background: var(--card); margin-top: 10px; }
+
+  /* Pagament / checkout */
+  .step-title { display: flex; align-items: center; gap: 10px; margin: 18px 0 6px; }
+  .backbtn { width: 34px; height: 34px; border-radius: 50%; background: var(--card); border: 1px solid var(--border); display: grid; place-items: center; font-size: 1.1rem; }
+  .box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-top: 14px; }
+  .box h3 { font-size: 1rem; margin-bottom: 10px; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .seg button { padding: 14px 12px; border: 1px solid var(--border); border-radius: 12px; text-align: left; background: var(--bg); }
+  .seg button b { display: block; }
+  .seg button small { color: var(--muted); }
+  .seg button.on { border-color: var(--brand); background: color-mix(in srgb, var(--brand) 8%, #fff); }
+  .seg button:disabled { opacity: .45; cursor: default; }
+  .days { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 10px; scrollbar-width: none; }
+  .day { flex-shrink: 0; width: 60px; padding: 8px 0; border-radius: 12px; background: var(--bg); border: 1px solid var(--border); text-align: center; }
+  .day small { display: block; font-size: .7rem; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .day b { font-size: 1.15rem; }
+  .day.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .day.on small { color: rgba(255,255,255,.85); }
+  .day:disabled { opacity: .4; }
+  .slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .slot { padding: 10px 0; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); font-weight: 700; font-size: .9rem; }
+  .slot.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+  label { display: block; font-size: .85rem; font-weight: 700; margin: 12px 0 6px; }
+  input, textarea { width: 100%; font: inherit; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); }
+  input:focus, textarea:focus { outline: 2px solid var(--brand); outline-offset: -1px; }
+  .row2 { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
+  .note { font-size: .85rem; color: var(--muted); margin-top: 8px; }
+  .warn { background: #fef3c7; color: #92400e; padding: 10px 12px; border-radius: 10px; font-size: .88rem; margin-top: 10px; }
+  .err { color: #b91c1c; font-size: .9rem; margin-top: 10px; }
+  .demo-pay { text-align: center; }
+  .demo-pay .card-icons { font-size: 2rem; letter-spacing: 6px; margin: 10px 0; }
+
+  .done { text-align: center; padding: 26px 0 6px; }
+  .done .big { font-size: 3.4rem; }
+  .done h2 { margin: 8px 0 4px; }
+  .done p { color: var(--muted); }
+  .done .num { display: inline-block; margin-top: 12px; font-size: 1.6rem; font-weight: 700; background: var(--card); border: 1px solid var(--border); padding: 8px 20px; border-radius: 12px; }
+  .track { display: flex; gap: 4px; margin: 12px 0 6px; }
+  .track span { flex: 1; height: 6px; border-radius: 6px; background: var(--border); }
+  .track span.on { background: var(--brand); }
+  .track-labels { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); }
+  .track-labels b { color: var(--text); }
+  .order-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 12px; }
+  .order-card .top { display: flex; justify-content: space-between; gap: 10px; }
+  .order-card small { color: var(--muted); }
+  .st { display: inline-block; font-size: .78rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: color-mix(in srgb, var(--brand) 12%, #fff); color: var(--brand); }
+  .st.cancel { background: #e7e5e4; color: #57534e; }
+
+  footer { text-align: center; color: var(--muted); font-size: .78rem; padding: 30px 0 10px; }
+  .error { padding: 60px 20px; text-align: center; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet"><div class="grip"></div><div id="sheet-body"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+<script src="../shared/config.js?v=6087a0f"></script>
+<script src="../shared/remote.js?v=6087a0f"></script>
+<script src="core.js?v=6087a0f"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('c') || 'demo';
+
+  const UI = {
+    ca: {
+      shop: 'Botiga', myOrders: 'Les meves comandes', all: 'Tot', from: 'des de', soldOut: 'Esgotat', left: n => `Només en queden ${n}`, featured: 'Destacat',
+      add: 'Afegir a la cistella', inCart: n => `${n} a la cistella`, viewCart: 'Veure cistella', cart: 'La teva cistella', empty: 'La cistella és buida.',
+      subtotal: 'Subtotal', shipping: 'Enviament', free: 'Gratis', total: 'Total', checkout: 'Continuar', back: 'Tornar',
+      how: 'Com la vols?', pickup: 'Recollir a la botiga', pickupSub: 'Gratis', delivery: 'Enviament a casa', deliverySub: (p, f) => `${p}${f ? ' · gratis des de ' + f : ''}`,
+      when: 'Quan la passaràs a buscar?', noSlots: 'Aquest dia ja no queden hores. Tria un altre dia.', address: 'Adreça', street: 'Carrer i número', town: 'Població',
+      area: a => `Repartim a: ${a}.`, minOrder: m => `L'enviament a domicili és per a comandes a partir de ${m}.`, freeLeft: x => `Afegeix ${x} més i l'enviament et sortirà gratis.`,
+      you: 'Les teves dades', name: 'Nom i cognom', phone: 'Telèfon', email: 'Email (opcional)', emailRemote: "Email (opcional, t'hi enviem la confirmació)", mailed: m => `📧 T'hem enviat la confirmació a ${m}.`, comment: 'Algun comentari?', commentPh: 'Ex: el pa poc cuit, si us plau',
+      pay: 'Pagament', card: 'Targeta, Apple Pay o Google Pay', cardSub: 'Pagament segur', atShop: 'Pagar a la botiga', atShopSub: 'En recollir-la',
+      payBtn: t => `Pagar ${t}`, orderBtn: t => `Fer la comanda · ${t}`, chooseSlot: 'Tria l\'hora de recollida.', fill: 'Omple el nom, el telèfon i l\'adreça.',
+      demoTitle: 'Pagament de demostració', demoText: 'A la botiga real, aquí s\'obre la pantalla de pagament segur (Stripe) per pagar amb targeta, Apple Pay o Google Pay. En aquesta demo no cal posar cap targeta.',
+      payAtDoor: 'Pagar en rebre-la', payAtDoorSub: 'Al repartidor', payCancel: 'No s\'ha fet el pagament. La comanda ha quedat pendent.', payRetry: 'Tornar a pagar', payErr: 'Ara mateix no es pot obrir el pagament. Torna-ho a provar o tria pagar a la botiga.', paidOk: '✅ Pagament rebut', payPending: 'Pendent de pagament',
+      demoOk: 'Simular pagament correcte', cancel: 'Cancel·lar',
+      stockErr: (n, l) => l > 0 ? `Del producte «${n}» només en queden ${l}. Hem ajustat la cistella.` : `«${n}» s'acaba d'esgotar. L'hem tret de la cistella.`,
+      thanks: 'Comanda feta!', thanksPickup: (d, h) => `Te l'esperem ${d} a les ${h}.`, thanksDelivery: e => `Te la portem: ${e}.`, orderNum: 'Comanda',
+      followHint: 'Pots seguir-ne l\'estat a "Les meves comandes".', continueShop: 'Tornar a la botiga',
+      lookup: 'Escriu el telèfon amb què vas fer la comanda.', search: 'Buscar', none: 'No hem trobat cap comanda amb aquest telèfon.', paid: 'Pagada', payAtShop: 'Es paga a la botiga',
+      pickupAt: (d, h) => `Recollida ${d} · ${h}`, deliveryTo: a => `Enviament a ${a}`
+    },
+    es: {
+      shop: 'Tienda', myOrders: 'Mis pedidos', all: 'Todo', from: 'desde', soldOut: 'Agotado', left: n => `Solo quedan ${n}`, featured: 'Destacado',
+      add: 'Añadir a la cesta', inCart: n => `${n} en la cesta`, viewCart: 'Ver cesta', cart: 'Tu cesta', empty: 'La cesta está vacía.',
+      subtotal: 'Subtotal', shipping: 'Envío', free: 'Gratis', total: 'Total', checkout: 'Continuar', back: 'Volver',
+      how: '¿Cómo lo quieres?', pickup: 'Recoger en tienda', pickupSub: 'Gratis', delivery: 'Envío a casa', deliverySub: (p, f) => `${p}${f ? ' · gratis desde ' + f : ''}`,
+      when: '¿Cuándo pasarás a buscarlo?', noSlots: 'Este día ya no quedan horas. Elige otro día.', address: 'Dirección', street: 'Calle y número', town: 'Población',
+      area: a => `Repartimos en: ${a}.`, minOrder: m => `El envío a domicilio es para pedidos a partir de ${m}.`, freeLeft: x => `Añade ${x} más y el envío te saldrá gratis.`,
+      you: 'Tus datos', name: 'Nombre y apellido', phone: 'Teléfono', email: 'Email (opcional)', emailRemote: 'Email (opcional, te enviamos la confirmación)', mailed: m => `📧 Te hemos enviado la confirmación a ${m}.`, comment: '¿Algún comentario?', commentPh: 'Ej: el pan poco hecho, por favor',
+      pay: 'Pago', card: 'Tarjeta, Apple Pay o Google Pay', cardSub: 'Pago seguro', atShop: 'Pagar en tienda', atShopSub: 'Al recogerlo',
+      payBtn: t => `Pagar ${t}`, orderBtn: t => `Hacer el pedido · ${t}`, chooseSlot: 'Elige la hora de recogida.', fill: 'Rellena el nombre, el teléfono y la dirección.',
+      demoTitle: 'Pago de demostración', demoText: 'En la tienda real, aquí se abre la pantalla de pago seguro (Stripe) para pagar con tarjeta, Apple Pay o Google Pay. En esta demo no hace falta poner ninguna tarjeta.',
+      payAtDoor: 'Pagar al recibirlo', payAtDoorSub: 'Al repartidor', payCancel: 'No se ha hecho el pago. El pedido ha quedado pendiente.', payRetry: 'Volver a pagar', payErr: 'Ahora mismo no se puede abrir el pago. Vuelve a probarlo o elige pagar en tienda.', paidOk: '✅ Pago recibido', payPending: 'Pendiente de pago',
+      demoOk: 'Simular pago correcto', cancel: 'Cancelar',
+      stockErr: (n, l) => l > 0 ? `Del producto «${n}» solo quedan ${l}. Hemos ajustado la cesta.` : `«${n}» se acaba de agotar. Lo hemos quitado de la cesta.`,
+      thanks: '¡Pedido hecho!', thanksPickup: (d, h) => `Te esperamos ${d} a las ${h}.`, thanksDelivery: e => `Te lo llevamos: ${e}.`, orderNum: 'Pedido',
+      followHint: 'Puedes seguir su estado en "Mis pedidos".', continueShop: 'Volver a la tienda',
+      lookup: 'Escribe el teléfono con el que hiciste el pedido.', search: 'Buscar', none: 'No hemos encontrado ningún pedido con este teléfono.', paid: 'Pagado', payAtShop: 'Se paga en tienda',
+      pickupAt: (d, h) => `Recogida ${d} · ${h}`, deliveryTo: a => `Envío a ${a}`
+    }
+  };
+
+  let client, lang;
+  let view = 'shop', cat = 'all', lookupPhone = '', lastOrder = null, msg = '', paidBack = false;
+  let co = { method: 'recollida', date: null, time: null, payment: 'targeta' };
+  let cart = []; // [{ productId, variantId, qty }]
+  const $ = id => document.getElementById(id);
+  const t = (key, ...a) => { const v = UI[lang][key]; return typeof v === 'function' ? v(...a) : v; };
+  const locale = () => lang === 'es' ? 'es-ES' : 'ca-ES';
+  const prod = id => client.products.find(p => p.id === id);
+  const fmtDay = (iso, o = { weekday: 'long', day: 'numeric', month: 'long' }) => fromISODate(iso).toLocaleDateString(locale(), o);
+  const cartKey = () => Store.key(slug, 'cart');
+  const saveCart = () => Store.write(cartKey(), cart);
+  const cartCount = () => cart.reduce((s, l) => s + l.qty, 0);
+  const qtyOf = id => cart.filter(l => l.productId === id).reduce((s, l) => s + l.qty, 0);
+  const lineName = l => { const p = prod(l.productId); const v = l.variantId && (p.variants || []).find(x => x.id === l.variantId); return tr(p.name, lang) + (v ? ' · ' + tr(v.name, lang) : ''); };
+  const maxFor = p => p.stock == null ? 99 : p.stock;
+
+  function pickLang() {
+    const saved = (() => { try { return localStorage.getItem('botigaexpress:lang'); } catch (_) { return null; } })();
+    const nav = (navigator.language || 'ca').slice(0, 2);
+    return [saved, nav].find(l => l && client.languages.includes(l)) || client.languages[0];
+  }
+  function setLang(l) { lang = l; try { localStorage.setItem('botigaexpress:lang', l); } catch (_) {} document.documentElement.lang = l; render(); }
+  function go(v) { view = v; msg = ''; render(); window.scrollTo({ top: 0 }); }
+
+  // Treu de la cistella el que ja no es pot comprar (desactivat o sense estoc).
+  function fixCart() {
+    cart = cart.filter(l => { const p = prod(l.productId); return p && p.active !== false; });
+    for (const p of client.products) {
+      if (p.stock == null) continue;
+      let left = p.stock;
+      cart.forEach(l => { if (l.productId === p.id) { l.qty = Math.min(l.qty, Math.max(left, 0)); left -= l.qty; } });
+    }
+    cart = cart.filter(l => l.qty > 0);
+    saveCart();
+  }
+
+  function header() {
+    return `<header ${Brand.hero(client)}><div class="wrap">
+      <div class="hero-top">
+        <div class="brand"><div class="logo">${Brand.logo(client)}</div><div><h1>${esc(client.name)}</h1><p>${esc(tr(client.tagline, lang))}</p></div></div>
+        ${client.languages.length > 1 ? `<div class="langs">${client.languages.map(l => `<button class="${l === lang ? 'on' : ''}" onclick="setLang('${l}')">${l}</button>`).join('')}</div>` : ''}
+      </div>
+      <div class="hero-links">
+        <button class="pill" onclick="go('shop')">🛍️ ${t('shop')}</button>
+        <button class="pill" onclick="go('orders')">📦 ${t('myOrders')}</button>
+        ${client.address ? `<span class="pill">📍 ${esc(client.address)}</span>` : ''}
+      </div>
+    </div></header>`;
+  }
+
+  // ---------- Botiga ----------
+  function viewShop() {
+    const active = client.products.filter(p => p.active !== false);
+    const cats = client.categories.filter(c => active.some(p => p.cat === c.id));
+    const card = p => {
+      const out = p.stock === 0;
+      const inCart = qtyOf(p.id);
+      const price = p.variants ? `<small>${t('from')}</small> ${fmtPrice(Math.min(...p.variants.map(v => v.price)))}` : fmtPrice(p.price);
+      const badge = out ? `<span class="badge out">${t('soldOut')}</span>` : p.stock != null && p.stock <= 5 ? `<span class="badge low">${t('left', p.stock)}</span>` : p.featured ? `<span class="badge">⭐ ${t('featured')}</span>` : '';
+      return `<div class="prod ${out ? 'off' : ''}">
+        <button class="img" onclick="openProduct('${p.id}')" aria-label="${esc(tr(p.name, lang))}">${esc(p.emoji)}${badge}</button>
+        <div class="body"><h3>${esc(tr(p.name, lang))}</h3><p>${esc(tr(p.desc, lang))}</p>
+          <div class="foot"><span class="price">${price}</span>
+            <button class="add" ${out || inCart >= maxFor(p) ? 'disabled' : ''} aria-label="${t('add')}" onclick="${p.variants ? `openProduct('${p.id}')` : `addToCart('${p.id}', null, 1)`}">+</button></div>
+          ${inCart ? `<span class="incart">${t('inCart', inCart)}</span>` : ''}
+        </div></div>`;
+    };
+    return `<nav class="cats"><div class="cats-row">
+        <button class="chip ${cat === 'all' ? 'on' : ''}" onclick="cat='all';render()">${t('all')}</button>
+        ${cats.map(c => `<button class="chip ${cat === c.id ? 'on' : ''}" onclick="cat='${c.id}';render();document.getElementById('s-${c.id}').scrollIntoView({behavior:'smooth'})">${esc(tr(c.name, lang))}</button>`).join('')}
+      </div></nav>
+      <main class="wrap">${cats.map(c => `<section id="s-${c.id}"><h2>${esc(tr(c.name, lang))}</h2>
+        <div class="grid">${active.filter(p => p.cat === c.id).map(card).join('')}</div></section>`).join('')}</main>
+      ${cartCount() ? `<div class="cartbar"><button onclick="openCart()"><span><span class="count">${cartCount()}</span>${t('viewCart')}</span><span>${fmtPrice(totals(client, cart, 'recollida').subtotal)}</span></button></div>` : ''}`;
+  }
+
+  let sel = { id: null, variantId: null, qty: 1 };
+  function openProduct(id) {
+    const p = prod(id);
+    sel = { id, variantId: p.variants ? p.variants[0].id : null, qty: 1 };
+    renderProductSheet();
+    openSheet();
+  }
+  function renderProductSheet() {
+    const p = prod(sel.id);
+    const out = p.stock === 0;
+    const room = maxFor(p) - qtyOf(p.id);
+    $('sheet-body').innerHTML = `<div class="big-emoji">${esc(p.emoji)}</div>
+      <h2>${esc(tr(p.name, lang))}</h2><p class="muted">${esc(tr(p.desc, lang))}</p>
+      ${p.stock != null && p.stock > 0 && p.stock <= 5 ? `<p class="warn">${t('left', p.stock)}</p>` : ''}
+      ${p.variants ? `<div class="variants">${p.variants.map(v => `<button class="variant ${v.id === sel.variantId ? 'on' : ''}" onclick="sel.variantId='${v.id}';renderProductSheet()"><b>${esc(tr(v.name, lang))}</b>${fmtPrice(v.price)}</button>`).join('')}</div>` : ''}
+      <div class="qtyrow"><div class="qty">
+        <button onclick="sel.qty=Math.max(1,sel.qty-1);renderProductSheet()" aria-label="−">−</button><span>${sel.qty}</span>
+        <button onclick="sel.qty=Math.min(${Math.max(room, 1)},sel.qty+1);renderProductSheet()" aria-label="+">+</button></div>
+        <b>${fmtPrice(unitPrice(p, sel.variantId) * sel.qty)}</b></div>
+      <button class="primary" ${out || room < 1 ? 'disabled' : ''} onclick="addToCart('${p.id}', ${sel.variantId ? `'${sel.variantId}'` : 'null'}, sel.qty);closeSheet()">${out ? t('soldOut') : t('add')}</button>`;
+  }
+  function addToCart(productId, variantId, qty) {
+    const p = prod(productId);
+    qty = Math.min(qty, maxFor(p) - qtyOf(productId));
+    if (qty < 1) return;
+    const line = cart.find(l => l.productId === productId && l.variantId === variantId);
+    if (line) line.qty += qty; else cart.push({ productId, variantId, qty });
+    saveCart(); render();
+  }
+  function changeQty(i, d) {
+    const l = cart[i];
+    if (d > 0 && qtyOf(l.productId) >= maxFor(prod(l.productId))) return;
+    l.qty += d;
+    if (l.qty < 1) cart.splice(i, 1);
+    saveCart(); render();
+    if (cart.length) renderCartSheet(); else closeSheet();
+  }
+
+  function openCart() { renderCartSheet(); openSheet(); }
+  function renderCartSheet() {
+    const tot = totals(client, cart, 'recollida');
+    $('sheet-body').innerHTML = `<h2>${t('cart')}</h2>` + (cart.length ? cart.map((l, i) => {
+      const p = prod(l.productId);
+      return `<div class="line"><span style="font-size:1.6rem">${esc(p.emoji)}</span><div class="n"><b>${esc(lineName(l))}</b><small>${fmtPrice(unitPrice(p, l.variantId))}</small></div>
+        <div class="qty"><button onclick="changeQty(${i},-1)">−</button><span>${l.qty}</span><button onclick="changeQty(${i},1)">+</button></div></div>`;
+    }).join('') + `<div class="sum"><div class="tot"><span>${t('subtotal')}</span><span>${fmtPrice(tot.subtotal)}</span></div></div>
+      <button class="primary" onclick="closeSheet();go('checkout')">${t('checkout')} →</button>` : `<p class="muted">${t('empty')}</p>`);
+  }
+
+  // ---------- Finalitzar compra ----------
+  function viewCheckout() {
+    if (!cart.length) return `<main class="wrap"><p class="muted" style="padding:30px 0">${t('empty')}</p></main>`;
+    const d = client.delivery || {};
+    const pk = client.pickup || {};
+    const tot = totals(client, cart, co.method);
+    const deliveryOk = d.enabled && tot.subtotal >= (d.minOrder || 0);
+    if (pk.enabled === false) co.method = 'enviament';
+    else if (co.method === 'enviament' && !deliveryOk) co.method = 'recollida';
+    const cardOk = !Store.remote || !!client.cardPayments;   // botiga real: només si el negoci ha connectat Stripe
+    if (!cardOk) co.payment = 'botiga';
+    else if (co.method === 'enviament' && co.payment === 'botiga') co.payment = 'targeta';
+
+    let when = '';
+    if (co.method === 'recollida') {
+      const days = [];
+      for (let i = 0; i <= (pk.daysAhead || 6); i++) { const iso = toISODate(addDays(new Date(), i)); days.push({ iso, n: pickupSlots(client, iso).length }); }
+      if (!co.date || !days.some(x => x.iso === co.date && x.n)) { co.date = (days.find(x => x.n) || days[0]).iso; co.time = null; }
+      const slots = pickupSlots(client, co.date);
+      when = `<div class="box"><h3>${t('when')}</h3>
+        <div class="days">${days.map(x => { const dt = fromISODate(x.iso); return `<button class="day ${x.iso === co.date ? 'on' : ''}" ${x.n ? '' : 'disabled'} onclick="co.date='${x.iso}';co.time=null;render()"><small>${esc(dt.toLocaleDateString(locale(), { weekday: 'short' }))}</small><b>${dt.getDate()}</b></button>`; }).join('')}</div>
+        ${slots.length ? `<div class="slots">${slots.map(s => `<button class="slot ${s === co.time ? 'on' : ''}" onclick="co.time='${s}';render()">${s}</button>`).join('')}</div>` : `<p class="muted">${t('noSlots')}</p>`}
+      </div>`;
+    } else {
+      when = `<div class="box"><h3>${t('address')}</h3>
+        <div class="row2"><div><label for="st">${t('street')}</label><input id="st" value="${esc(co.street || '')}" oninput="co.street=this.value" autocomplete="street-address"></div>
+        <div><label for="tw">${t('town')}</label><input id="tw" value="${esc(co.town || '')}" oninput="co.town=this.value" autocomplete="address-level2"></div></div>
+        <p class="note">${esc(t('area', tr(d.area, lang)))} ${esc(tr(d.eta, lang))}.</p></div>`;
+    }
+    const freeLeft = d.freeFrom && co.method === 'enviament' && tot.shipping > 0 ? d.freeFrom - tot.subtotal : 0;
+
+    return `<main class="wrap">
+      <div class="step-title"><button class="backbtn" onclick="go('shop')" aria-label="${t('back')}">←</button><h2>${t('how')}</h2></div>
+      <div class="box"><div class="seg">
+        ${pk.enabled !== false ? `<button class="${co.method === 'recollida' ? 'on' : ''}" onclick="co.method='recollida';render()"><b>🏪 ${t('pickup')}</b><small>${t('pickupSub')}</small></button>` : ''}
+        ${d.enabled ? `<button class="${co.method === 'enviament' ? 'on' : ''}" ${deliveryOk ? '' : 'disabled'} onclick="co.method='enviament';render()"><b>🚚 ${t('delivery')}</b><small>${t('deliverySub', fmtPrice(d.price), d.freeFrom ? fmtPrice(d.freeFrom) : '')}</small></button>` : ''}
+      </div>${d.enabled && !deliveryOk ? `<p class="note">${t('minOrder', fmtPrice(d.minOrder))}</p>` : ''}</div>
+      ${when}
+      <div class="box"><h3>${t('you')}</h3>
+        <label for="cn">${t('name')}</label><input id="cn" value="${esc(co.name || '')}" oninput="co.name=this.value" autocomplete="name">
+        <label for="cp">${t('phone')}</label><input id="cp" type="tel" inputmode="tel" value="${esc(co.phone || '')}" oninput="co.phone=this.value" autocomplete="tel">
+        <label for="ce">${t(Store.remote ? 'emailRemote' : 'email')}</label><input id="ce" type="email" value="${esc(co.email || '')}" oninput="co.email=this.value" autocomplete="email">
+        <label for="cc">${t('comment')}</label><textarea id="cc" rows="2" placeholder="${esc(t('commentPh'))}" oninput="co.note=this.value">${esc(co.note || '')}</textarea>
+      </div>
+      <div class="box"><h3>${t('pay')}</h3><div class="seg">
+        ${cardOk ? `<button class="${co.payment === 'targeta' ? 'on' : ''}" onclick="co.payment='targeta';render()"><b>💳 ${t('card')}</b><small>${t('cardSub')}</small></button>` : ''}
+        ${co.method === 'recollida' || !cardOk ? `<button class="${co.payment === 'botiga' ? 'on' : ''}" onclick="co.payment='botiga';render()"><b>${co.method === 'recollida' ? '🏪 ' + t('atShop') : '🚚 ' + t('payAtDoor')}</b><small>${co.method === 'recollida' ? t('atShopSub') : t('payAtDoorSub')}</small></button>` : ''}
+      </div></div>
+      <div class="box"><div class="sum">
+        ${cart.map(l => `<div><span>${l.qty} × ${esc(lineName(l))}</span><span>${fmtPrice(unitPrice(prod(l.productId), l.variantId) * l.qty)}</span></div>`).join('')}
+        <div><span>${t('shipping')}</span><span>${co.method === 'enviament' ? (tot.shipping ? fmtPrice(tot.shipping) : t('free')) : t('free')}</span></div>
+        <div class="tot"><span>${t('total')}</span><span>${fmtPrice(tot.total)}</span></div>
+      </div>${freeLeft > 0 ? `<p class="warn">${t('freeLeft', fmtPrice(freeLeft))}</p>` : ''}</div>
+      ${msg ? `<p class="err">${esc(msg)}</p>` : ''}
+      <button class="primary" onclick="submitOrder()">${co.payment === 'targeta' ? t('payBtn', fmtPrice(tot.total)) : t('orderBtn', fmtPrice(tot.total))}</button>
+    </main>`;
+  }
+
+  function submitOrder() {
+    if (co.method === 'recollida' && !co.time) { msg = t('chooseSlot'); return render(); }
+    const d = client.delivery || {};
+    if (co.method === 'enviament' && totals(client, cart, 'enviament').subtotal < (d.minOrder || 0)) { msg = t('minOrder', fmtPrice(d.minOrder)); return render(); }
+    if (!(co.name || '').trim() || normPhone(co.phone).length < 6 || (co.method === 'enviament' && (!(co.street || '').trim() || !(co.town || '').trim()))) { msg = t('fill'); return render(); }
+    if (co.payment === 'targeta' && Store.remote) return finishOrder(true);
+    if (co.payment === 'targeta') {
+      $('sheet-body').innerHTML = `<div class="demo-pay"><h2>${t('demoTitle')}</h2><div class="card-icons">💳 🍎 🅖</div><p class="muted">${t('demoText')}</p>
+        <button class="primary" onclick="closeSheet();finishOrder()">${t('demoOk')}</button><button class="ghost" onclick="closeSheet()">${t('cancel')}</button></div>`;
+      openSheet();
+    } else finishOrder();
+  }
+
+  async function finishOrder(realCard) {
+    client = await Store.loadClient(slug); // estoc actualitzat (pot haver comprat algú altre)
+    const tot = totals(client, cart, co.method);
+    const res = await Store.placeOrder(client, {
+      lines: cart.map(l => ({ ...l, name: lineName(l), price: unitPrice(prod(l.productId), l.variantId) })),
+      method: co.method, ...tot, payment: co.payment, ...(realCard ? { paidAt: null, payStatus: 'pending' } : {}),
+      pickup: co.method === 'recollida' ? { date: co.date, time: co.time } : null,
+      address: co.method === 'enviament' ? { street: co.street.trim(), town: co.town.trim() } : null,
+      customer: { name: co.name.trim(), phone: co.phone.trim(), email: (co.email || '').trim() }, note: (co.note || '').trim(), lang
+    }).catch(() => ({ error: 'network' }));
+    if (res.error) {
+      const p = prod(res.productId);
+      fixCart();
+      msg = t('stockErr', p ? tr(p.name, lang) : '', res.left || 0);
+      return render();
+    }
+    lastOrder = res.order;
+    lookupPhone = co.phone;
+    cart = []; saveCart();
+    co = { ...co, time: null, note: '' };
+    if (realCard) {
+      // Es desa per quan torni de la pàgina de pagament de Stripe.
+      try { sessionStorage.setItem('botiga:pending:' + slug, JSON.stringify(lastOrder)); } catch (_) {}
+      return payNow();
+    }
+    go('done');
+    sendMail(lastOrder);
+  }
+  // Confirmació per correu (si el client n'ha posat). Ho diu a la pantalla quan s'ha enviat.
+  let mailNote = '';
+  async function sendMail(o) {
+    const em = o && o.customer && (o.customer.email || '').trim();
+    mailNote = '';
+    if (!o || !Store.remote || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em || '')) return;
+    const r = await Store.mailOrder(slug, o.id).catch(() => null);
+    if (r && r.ok) { mailNote = t('mailed', em); if (view === 'done') render(); }
+  }
+
+  async function payNow() {
+    try { await Remote.payOrder(slug, lastOrder.id); }
+    catch (_) { msg = t('payErr'); view = 'done'; render(); }
+  }
+
+  function tracker(o) {
+    const steps = o.method === 'enviament' ? ['nova', 'preparant', 'enviada', 'lliurada'] : ['nova', 'preparant', 'a-punt', 'lliurada'];
+    if (o.status === 'cancel·lada') return `<span class="st cancel">${esc(tr(STATUSES['cancel·lada'], lang))}</span>`;
+    const idx = steps.indexOf(o.status);
+    return `<div class="track">${steps.map((s, i) => `<span class="${i <= idx ? 'on' : ''}"></span>`).join('')}</div>
+      <div class="track-labels">${steps.map((s, i) => i === idx ? `<b>${esc(tr(STATUSES[s], lang))}</b>` : `<span>${i === 0 || i === steps.length - 1 ? esc(tr(STATUSES[s], lang)) : ''}</span>`).join('')}</div>`;
+  }
+
+  function viewDone() {
+    const o = Store.getOrders(slug).find(x => x.id === lastOrder.id) || lastOrder;
+    const d = client.delivery || {};
+    return `<main class="wrap"><div class="done"><div class="big">🎉</div><h2>${t('thanks')}</h2>
+      <p>${o.method === 'recollida' ? t('thanksPickup', fmtDay(o.pickup.date), o.pickup.time) : t('thanksDelivery', tr(d.eta, lang).toLowerCase())}</p>
+      <div class="num">${t('orderNum')} #${o.num}</div>
+      ${o.payment === 'targeta' && Store.remote ? `<p style="margin-top:12px;font-weight:700">${o.payStatus === 'pending' && !paidBack ? '⏳ ' + t('payPending') : t('paidOk')}</p>` : ''}</div>
+      ${msg ? `<p class="err">${esc(msg)}</p>` : ''}
+      ${o.payment === 'targeta' && Store.remote && o.payStatus === 'pending' && !paidBack ? `<button class="primary" onclick="payNow()">💳 ${t('payRetry')}</button>` : ''}
+      ${mailNote ? `<p class="note" style="text-align:center">${esc(mailNote)}</p>` : ''}
+      <div class="order-card">${tracker(o)}<p class="note">${t('followHint')}</p></div>
+      <button class="primary" onclick="go('shop')">${t('continueShop')}</button></main>`;
+  }
+
+  function viewOrders() {
+    const phone = normPhone(lookupPhone);
+    const mine = phone && myOrders ? myOrders.slice().sort((a, b) => b.createdAt - a.createdAt).slice(0, 10) : [];
+    return `<main class="wrap"><div class="step-title"><button class="backbtn" onclick="go('shop')" aria-label="${t('back')}">←</button><h2>${t('myOrders')}</h2></div>
+      <form id="lk"><label for="lp">${t('lookup')}</label><input id="lp" type="tel" inputmode="tel" value="${esc(lookupPhone)}" required>
+      <button class="primary" type="submit">${t('search')}</button></form>
+      ${phone && myOrders ? (mine.length ? mine.map(o => `<div class="order-card"><div class="top"><div><b>${t('orderNum')} #${o.num}</b>
+          <small style="display:block">${esc(new Date(o.createdAt).toLocaleDateString(locale(), { day: 'numeric', month: 'short' }))} · ${o.lines.reduce((s, l) => s + l.qty, 0)} u. · ${o.payment === 'targeta' ? t('paid') : t('payAtShop')}</small></div><b>${fmtPrice(o.total)}</b></div>
+          <small>${o.method === 'recollida' ? esc(t('pickupAt', fmtDay(o.pickup.date, { weekday: 'short', day: 'numeric', month: 'short' }), o.pickup.time)) : esc(t('deliveryTo', o.address.street + ', ' + o.address.town))}</small>
+          ${tracker(o)}</div>`).join('') : `<p class="muted" style="margin-top:16px">${t('none')}</p>`) : ''}</main>`;
+  }
+
+  let myOrders = null;
+  async function lookupOrders() { myOrders = await Store.findMine(slug, lookupPhone).catch(() => []); render(); }
+
+  // ---------- Fulls ----------
+  function openSheet() { $('backdrop').style.display = 'block'; requestAnimationFrame(() => $('sheet').classList.add('open')); }
+  function closeSheet() { $('sheet').classList.remove('open'); $('backdrop').style.display = 'none'; }
+  $('backdrop').onclick = closeSheet;
+
+  function render() {
+    const views = { shop: viewShop, checkout: viewCheckout, done: viewDone, orders: viewOrders };
+    $('app').innerHTML = header() + views[view]() + `<footer>${esc(client.name)} · BotigaExpress by CreaTuApp</footer>`;
+    if ($('lk')) $('lk').onsubmit = e => { e.preventDefault(); lookupPhone = $('lp').value; lookupOrders(); };
+  }
+
+  Store.loadClient(slug).then(c => {
+    client = c;
+    if (Store.remote) Brand.homeScreen(c, false);
+    document.title = `${c.name} · Botiga online`;
+    document.documentElement.style.setProperty('--brand', c.color);
+    document.querySelector('meta[name=theme-color]').content = c.color;
+    cart = Store.read(cartKey(), []);
+    fixCart();
+    setLang(pickLang());
+    // Canvis des del panell (estoc, preus, estat de les comandes): s'actualitza sol.
+    // Tornada de la pàgina de pagament de Stripe (?pagat=<comanda> o ?pagament=cancelat).
+    const q = new URLSearchParams(location.search);
+    if (q.has('pagat') || q.get('pagament') === 'cancelat') {
+      try { lastOrder = JSON.parse(sessionStorage.getItem('botiga:pending:' + slug)); } catch (_) { lastOrder = null; }
+      history.replaceState(null, '', location.pathname + '?c=' + encodeURIComponent(slug));
+      if (lastOrder) {
+        paidBack = q.has('pagat') && q.get('pagat') === lastOrder.id;
+        if (paidBack) {
+          lastOrder.payStatus = 'paid'; try { sessionStorage.removeItem('botiga:pending:' + slug); } catch (_) {}
+          // El servidor ho comprova i la marca pagada; després ja es pot enviar el correu de confirmació.
+          Remote.confirmOrder(slug, lastOrder.id, q.get('sessio')).catch(() => false).then(() => sendMail(lastOrder));
+        }
+        view = 'done'; render(); if (!paidBack) { msg = t('payCancel'); render(); }
+      }
+    }
+    Store.onChange(async e => {
+      client = await Store.loadClient(slug);
+      fixCart();
+      if (!$('sheet').classList.contains('open') && view !== 'checkout') render();
+    });
+    }).catch(err => {
+    document.getElementById('app').innerHTML = err && err.message === 'not_live'
+      ? `<div class="error"><h2>${esc(err.businessName || '')}</h2><p>La botiga online no està disponible ara mateix.</p></div>`
+      : '<div class="error"><h2>No hem trobat aquesta botiga</h2><p>Revisa l\'enllaç que t\'han passat.</p></div>';
+  });
+</script>
+</body>
+</html>

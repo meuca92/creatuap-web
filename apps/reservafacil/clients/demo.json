@@ -1,0 +1,63 @@
+{
+  "name": "Perruqueria Laia",
+  "tagline": { "ca": "Perruqueria i estètica", "es": "Peluquería y estética" },
+  "adminPinHash": "7a5c4f6af070461220372fce94c28807372e381a7ed24651725c8f129fc6ae3e",
+  "logo": "✂️",
+  "color": "#7c3aed",
+  "cover": "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=800&q=70",
+  "address": "Carrer Major, 12 · Vic",
+  "languages": ["ca", "es"],
+  "demoSeed": true,
+  "slotMinutes": 15,
+  "daysAhead": 21,
+  "minNoticeMinutes": 60,
+  "hours": {
+    "1": [],
+    "2": [["09:00", "13:30"], ["16:00", "20:00"]],
+    "3": [["09:00", "13:30"], ["16:00", "20:00"]],
+    "4": [["09:00", "13:30"], ["16:00", "20:00"]],
+    "5": [["09:00", "20:00"]],
+    "6": [["09:00", "14:00"]],
+    "0": []
+  },
+  "categories": [
+    { "id": "cabell", "name": { "ca": "Cabell", "es": "Cabello" } },
+    { "id": "color", "name": { "ca": "Color", "es": "Color" } },
+    { "id": "estetica", "name": { "ca": "Estètica", "es": "Estética" } }
+  ],
+  "services": [
+    { "id": "tall-dona", "cat": "cabell", "emoji": "💇‍♀️", "duration": 45, "price": 22, "active": true,
+      "name": { "ca": "Tall + rentat", "es": "Corte + lavado" },
+      "desc": { "ca": "Rentat, tall i assecat.", "es": "Lavado, corte y secado." } },
+    { "id": "tall-home", "cat": "cabell", "emoji": "💇‍♂️", "duration": 30, "price": 15, "active": true,
+      "name": { "ca": "Tall home", "es": "Corte hombre" },
+      "desc": { "ca": "Tall a tisora o màquina.", "es": "Corte a tijera o máquina." } },
+    { "id": "pentinat", "cat": "cabell", "emoji": "✨", "duration": 45, "price": 25, "active": true,
+      "name": { "ca": "Pentinat d'esdeveniment", "es": "Peinado de evento" },
+      "desc": { "ca": "Recollits, ones i pentinats per a ocasions especials.", "es": "Recogidos, ondas y peinados para ocasiones especiales." } },
+    { "id": "coloracio", "cat": "color", "emoji": "🎨", "duration": 90, "price": 45, "active": true,
+      "name": { "ca": "Coloració", "es": "Coloración" },
+      "desc": { "ca": "Color complet amb rentat i assecat.", "es": "Color completo con lavado y secado." } },
+    { "id": "metxes", "cat": "color", "emoji": "🌟", "duration": 120, "price": 65, "active": true,
+      "name": { "ca": "Metxes / balayage", "es": "Mechas / balayage" },
+      "desc": { "ca": "Il·luminació a mà alçada. Inclou matisador.", "es": "Iluminación a mano alzada. Incluye matizador." } },
+    { "id": "manicura", "cat": "estetica", "emoji": "💅", "duration": 30, "price": 18, "active": true,
+      "name": { "ca": "Manicura", "es": "Manicura" },
+      "desc": { "ca": "Llimat, cutícules i esmalt.", "es": "Limado, cutículas y esmalte." } },
+    { "id": "semipermanent", "cat": "estetica", "emoji": "💖", "duration": 45, "price": 25, "active": true,
+      "name": { "ca": "Esmalt semipermanent", "es": "Esmalte semipermanente" },
+      "desc": { "ca": "Dura fins a 3 setmanes.", "es": "Dura hasta 3 semanas." } }
+  ],
+  "staff": [
+    { "id": "laia", "name": "Laia", "avatar": "👩‍🦰", "role": { "ca": "Estilista", "es": "Estilista" },
+      "services": ["tall-dona", "tall-home", "pentinat", "coloracio", "metxes"] },
+    { "id": "marc", "name": "Marc", "avatar": "🧔", "role": { "ca": "Barber i estilista", "es": "Barbero y estilista" },
+      "services": ["tall-dona", "tall-home", "coloracio"] },
+    { "id": "nuria", "name": "Núria", "avatar": "👩", "role": { "ca": "Estètica", "es": "Estética" },
+      "services": ["manicura", "semipermanent", "pentinat"],
+      "hours": {
+        "2": [["16:00", "20:00"]], "3": [["09:00", "13:30"], ["16:00", "20:00"]], "4": [["16:00", "20:00"]],
+        "5": [["09:00", "20:00"]], "6": [["09:00", "14:00"]], "1": [], "0": []
+      } }
+  ]
+}

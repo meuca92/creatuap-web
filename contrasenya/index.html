@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Canvia la contrasenya · CreaTuApp</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#06070c">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<script src="../i18n/core.js?v=6087a0f"></script>
+<script src="../i18n/contrasenya.js?v=6087a0f"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --brand: #7c3aed; --grad: linear-gradient(110deg, #22d3ee, #8b5cf6 55%, #ec4899); --bg: #f6f5fb; --text: #1b1830; --muted: #6b6880; --border: #e5e2ef; --ok: #16a34a; --bad: #dc2626; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.45; min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 32px 26px; width: 100%; max-width: 420px; box-shadow: 0 10px 40px rgba(60, 40, 120, .08); }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .14em; margin-bottom: 22px; text-decoration: none; color: inherit; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, #f97316, #ec4899 55%, #8b5cf6); }
+  h1 { font-size: 1.5rem; line-height: 1.2; margin-bottom: 8px; }
+  p.lead { color: var(--muted); margin-bottom: 20px; }
+  label { display: block; font-weight: 700; font-size: .95rem; margin: 14px 0 6px; }
+  input { font: inherit; width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 12px; background: #fff; }
+  input:focus { outline: none; border-color: var(--brand); }
+  .btn { font: inherit; font-weight: 700; width: 100%; margin-top: 20px; padding: 15px; border: 0; border-radius: 12px; background: var(--brand); color: #fff; cursor: pointer; font-size: 1.05rem; }
+  .btn:disabled { opacity: .6; cursor: default; }
+  .link { font: inherit; background: none; border: 0; color: var(--brand); font-weight: 700; cursor: pointer; margin-top: 8px; text-decoration: underline; }
+  .msg { margin-top: 14px; font-weight: 500; min-height: 1.2em; }
+  .msg.bad { color: var(--bad); } .msg.ok { color: var(--ok); }
+  .done { text-align: center; } .done .big { font-size: 3rem; margin-bottom: 8px; }
+  [hidden] { display: none !important; }
+
+  /* ===== Mode fosc (com la portada de creatuap.com) ===== */
+  :root { color-scheme: dark; --brand: #8b5cf6; --bg: #06070c; --card: #10121c; --text: #eef1f8; --muted: #8b93a7; --border: rgba(255,255,255,.12); --soft: #171a27; --on: rgba(139,92,246,.18); --bad: #f87171; --ok: #4ade80; }
+  body { background: radial-gradient(1200px 600px at 80% -10%, rgba(139,92,246,.16), transparent 60%), radial-gradient(900px 500px at -10% 10%, rgba(34,211,238,.08), transparent 60%), var(--bg) fixed; color: var(--text); }
+  .top, .nav { background: rgba(6,7,12,.82) !important; backdrop-filter: blur(14px); }
+  .box, .type, .done-card, .howto, .mine .it, .modal, .card, .login, .app, .empty, .account, .p-modal { background: var(--card) !important; color: var(--text); }
+  .in-text, .seg button, .emojis button, .upl, .row input, .row select, .row .em, .staff .em, .cat-head input:hover, .cat-head input:focus,
+  input, select, textarea, .who button, .btn.sec, .preview-m button, .p-modal input, .p-modal select, .p-modal textarea { background: var(--soft) !important; color: var(--text); }
+  input::placeholder, textarea::placeholder { color: #6b7286; }
+  .type.on, .seg button.on, .emojis button.on { background: var(--on) !important; }
+  .seg button.on { color: #c4b5fd; }
+  .cat { background: rgba(255,255,255,.025); }
+  .colors button { border-color: var(--card); }
+  .switch { background: #3a3f52; }
+  .preview .switcher button.on { background: var(--soft); color: var(--text); }
+  .notice { background: rgba(251,146,60,.12); border-color: rgba(251,146,60,.35); color: #fdba74; }
+  .row .del:hover { background: rgba(239,68,68,.15); }
+  .pill.ok { background: rgba(52,211,153,.15); color: #6ee7b7; } .pill.warn { background: rgba(251,191,36,.15); color: #fcd34d; }
+  .pill.bad { background: rgba(239,68,68,.15); color: #fca5a5; } .pill.info { background: rgba(139,92,246,.2); color: #c4b5fd; }
+  .actions a, .actions button, .link-row, .p-btn.sec { background: var(--soft); color: var(--text); }
+  .actions a.primary { background: var(--brand); color: #fff; }
+  .p-tip { background: rgba(251,191,36,.12); color: #fcd34d; } .p-tip button { background: #fbbf24; color: #1b1406; }
+  .p-toast { background: #eef1f8; color: #06070c; }
+  .p-backdrop, .modal-back { background: rgba(0,0,0,.7); }
+  .linkbtn, .link { color: #a78bfa; }
+</style>
+</head>
+<body>
+<main class="card">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><a class="logo" href="/"><span class="logo-mark"></span>CREATUAPP</a><div id="langs"></div></div>
+
+  <!-- Mentre mirem si l'enllaç del correu és bo -->
+  <section id="v-wait"><p class="lead">Un moment…</p></section>
+
+  <!-- Arriba de l'enllaç del correu: tria una contrasenya nova -->
+  <form id="v-new" hidden>
+    <h1>Tria una contrasenya nova</h1>
+    <p class="lead">Escriu-la dues vegades. Ha de tenir com a mínim 8 caràcters.</p>
+    <label for="p1">Contrasenya nova</label>
+    <input id="p1" type="password" autocomplete="new-password" minlength="8" required>
+    <label for="p2">Torna-la a escriure</label>
+    <input id="p2" type="password" autocomplete="new-password" minlength="8" required>
+    <button class="link" type="button" id="show">👁 Mostrar la contrasenya</button>
+    <button class="btn" type="submit">Desar la contrasenya</button>
+    <p class="msg" id="m-new"></p>
+  </form>
+
+  <!-- Sense enllaç (o enllaç caducat): demanar-ne un de nou -->
+  <form id="v-ask" hidden>
+    <h1>Has oblidat la contrasenya?</h1>
+    <p class="lead" id="ask-lead">Escriu el correu del teu compte i t'enviarem un enllaç per triar-ne una de nova.</p>
+    <label for="em">El teu correu</label>
+    <input id="em" type="email" autocomplete="email" required>
+    <button class="btn" type="submit">Enviar l'enllaç</button>
+    <p class="msg" id="m-ask"></p>
+  </form>
+
+  <!-- Fet -->
+  <section id="v-done" class="done" hidden>
+    <div class="big">✅</div>
+    <h1>Contrasenya canviada</h1>
+    <p class="lead">Ja pots entrar amb la contrasenya nova.</p>
+    <a class="btn" id="back" href="/compte/" style="display:block;text-decoration:none">Continuar</a>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+<script src="../apps/shared/config.js?v=6087a0f"></script>
+<script src="../apps/shared/remote.js?v=6087a0f"></script>
+<script>
+  i18nStart();
+  const $ = id => document.getElementById(id);
+  const show = id => ['v-wait', 'v-new', 'v-ask', 'v-done'].forEach(v => $(v).hidden = v !== id);
+  const msg = (id, t, kind) => { $(id).textContent = t; $(id).className = 'msg ' + (kind || ''); };
+  const sb = Remote.client();
+
+  // On tornar quan acabi: la pàgina des d'on es va demanar el canvi (només del mateix web).
+  function backUrl() {
+    try {
+      const u = new URL(localStorage.getItem('creatuapp:tornar') || '/compte/', location.origin);
+      return u.origin === location.origin ? u.href : '/compte/';
+    } catch (_) { return '/compte/'; }
+  }
+
+  // L'enllaç del correu porta l'error a l'adreça si ha caducat o ja s'havia fet servir.
+  const params = new URLSearchParams(location.hash.slice(1) + '&' + location.search.slice(1));
+  const linkError = params.get('error_code') || params.get('error');
+
+  let decided = false;
+  function decide(session, badLink) {
+    if (decided) return;
+    decided = true;
+    if (session) { show('v-new'); $('p1').focus(); return; }
+    if (linkError || badLink) $('ask-lead').textContent = 'Aquest enllaç ja no funciona (caduca al cap d\'una hora i només es pot fer servir un cop). Demana\'n un de nou:';
+    show('v-ask');
+  }
+  sb.auth.onAuthStateChange((event, session) => {
+    if (!params.get('token_hash') && (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session))) decide(session);
+  });
+  // L'enllaç del correu porta un codi d'un sol ús (token_hash): funciona encara que el correu
+  // s'obri en un altre navegador o al mòbil, perquè no depèn de res guardat abans.
+  const tokenHash = params.get('token_hash');
+  if (tokenHash) {
+    // Invitació a l'equip (type=invite) o canvi de contrasenya (recovery): el mateix formulari.
+    const otpType = params.get('type') === 'invite' ? 'invite' : 'recovery';
+    if (otpType === 'invite') {
+      document.querySelector('#v-new h1').textContent = 'Benvingut/da! Tria la teva contrasenya';
+      document.querySelector('#v-new .lead').textContent = 'Amb aquest correu i aquesta contrasenya entraràs al panell del negoci. Ha de tenir com a mínim 8 caràcters.';
+    }
+    sb.auth.verifyOtp({ token_hash: tokenHash, type: otpType }).then(({ data, error }) => {
+      history.replaceState(null, '', location.pathname);
+      if (error) { decided = false; decide(null, true); return; }
+      decide(data.session);
+    });
+  } else {
+    // Enllaços antics (?code= o #access_token=) els resol la mateixa llibreria; si no n'hi ha,
+    // qui ja ha entrat al seu panell en aquest navegador també pot canviar-la directament.
+    const fromEmail = /access_token|code=|type=recovery/.test(location.hash + location.search);
+    setTimeout(async () => decide((await sb.auth.getSession()).data.session), fromEmail ? 2500 : 0);
+  }
+
+  $('show').onclick = e => {
+    const vis = $('p1').type === 'password';
+    ['p1', 'p2'].forEach(id => $(id).type = vis ? 'text' : 'password');
+    e.target.textContent = vis ? '🙈 Amagar la contrasenya' : '👁 Mostrar la contrasenya';
+  };
+
+  $('v-new').onsubmit = async e => {
+    e.preventDefault();
+    const p = $('p1').value;
+    if (p.length < 8) return msg('m-new', 'Ha de tenir com a mínim 8 caràcters.', 'bad');
+    if (p !== $('p2').value) return msg('m-new', 'Les dues contrasenyes no són iguals.', 'bad');
+    const btn = e.target.querySelector('.btn'); btn.disabled = true;
+    msg('m-new', 'Desant…');
+    const { error } = await sb.auth.updateUser({ password: p });
+    btn.disabled = false;
+    if (error) {
+      return msg('m-new', /different|same/i.test(error.message)
+        ? 'Ha de ser diferent de la contrasenya d\'abans.'
+        : 'No s\'ha pogut desar. Torna-ho a provar, o demana un enllaç nou.', 'bad');
+    }
+    localStorage.removeItem('creatuapp:tornar');
+    $('back').href = backUrl();
+    history.replaceState(null, '', location.pathname);
+    show('v-done');
+  };
+
+  $('v-ask').onsubmit = async e => {
+    e.preventDefault();
+    const email = $('em').value.trim();
+    const btn = e.target.querySelector('.btn'); btn.disabled = true;
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/contrasenya/' });
+    btn.disabled = false;
+    msg('m-ask', error ? 'No s\'ha pogut enviar. Torna-ho a provar d\'aquí a una estona.'
+      : '📧 Fet! Mira el teu correu (i la carpeta de correu brossa) i toca el botó del missatge.', error ? 'bad' : 'ok');
+  };
+</script>
+</body>
+</html>

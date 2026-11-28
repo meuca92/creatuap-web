@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panell · BotigaExpress</title>
+<meta name="theme-color" content="#b45309">
+<link rel="manifest" href="manifest-admin.json">
+<script src="../shared/manifest.js?v=6087a0f"></script>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/panel.css?v=6087a0f">
+<style>
+  /* Pensat per a gent poc avesada a la tecnologia: lletra gran, botons grans,
+     una sola acció principal per comanda i res amagat en menús. */
+  :root {
+    --brand: #b45309;
+    --bg: #f5f3f0;
+    --card: #fff;
+    --text: #1c1917;
+    --muted: #6b6560;
+    --border: #e7e2dc;
+    --new: #dc2626;
+    --prep: #d97706;
+    --ready: #16a34a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.45; padding-bottom: 96px; }
+  button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+
+  .top { background: var(--brand); color: #fff; padding: 14px 0; }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,.2); display: grid; place-items: center; font-size: 1.4rem; }
+  .brand b { display: block; font-size: 1.1rem; }
+  .brand small { opacity: .85; }
+  .top-actions { display: flex; gap: 8px; }
+  .top-actions a, .top-actions button { background: rgba(255,255,255,.18); color: #fff; padding: 10px 14px; border-radius: 12px; font-weight: 700; font-size: .9rem; text-decoration: none; }
+
+  /* Barra de pestanyes inferior, com una app de mòbil */
+  .tabbar { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; border-top: 1px solid var(--border); display: flex; justify-content: center; z-index: 30; padding-bottom: env(safe-area-inset-bottom); }
+  .tabbar button { flex: 1; max-width: 220px; padding: 10px 4px 12px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-weight: 700; font-size: .85rem; color: var(--muted); position: relative; }
+  .tabbar button span { font-size: 1.5rem; }
+  .tabbar button.on { color: var(--brand); }
+  .tabbar .dot { position: absolute; top: 6px; left: calc(50% + 8px); min-width: 22px; height: 22px; border-radius: 11px; background: var(--new); color: #fff; font-size: .78rem; display: grid; place-items: center; padding: 0 6px; }
+
+  main { padding: 18px 0 30px; }
+  h2 { font-size: 1.4rem; margin-bottom: 4px; }
+  .sub { color: var(--muted); margin-bottom: 16px; }
+
+  /* Comandes */
+  .group-title { display: flex; align-items: center; gap: 10px; font-size: 1.05rem; font-weight: 700; margin: 22px 0 10px; }
+  .group-title .n { background: var(--text); color: #fff; border-radius: 999px; padding: 0 10px; font-size: .9rem; }
+  .orders { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .order { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 16px; border-top: 6px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+  .order.nova { border-top-color: var(--new); }
+  .order.preparant { border-top-color: var(--prep); }
+  .order.a-punt, .order.enviada { border-top-color: var(--ready); }
+  .order.flash { animation: flash 1s ease 3; }
+  @keyframes flash { 50% { box-shadow: 0 0 0 5px rgba(220,38,38,.35); } }
+  .o-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .o-num { font-size: 1.35rem; font-weight: 700; }
+  .o-name { font-weight: 700; }
+  .o-meta { color: var(--muted); font-size: .92rem; }
+  .o-when { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; padding: 6px 10px; border-radius: 10px; background: var(--bg); font-size: .95rem; }
+  .o-lines { list-style: none; border-top: 1px dashed var(--border); border-bottom: 1px dashed var(--border); padding: 8px 0; }
+  .o-lines li { display: flex; gap: 10px; padding: 3px 0; font-size: 1.05rem; }
+  .o-lines .q { font-weight: 700; min-width: 34px; }
+  .o-note { background: #fef9c3; border-radius: 10px; padding: 8px 10px; font-size: .95rem; }
+  .o-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: var(--muted); font-size: .92rem; }
+  .o-foot b { color: var(--text); font-size: 1.1rem; }
+  .paid { font-weight: 700; padding: 3px 8px; border-radius: 8px; font-size: .82rem; }
+  .paid.yes { background: #dcfce7; color: #166534; }
+  .paid.no { background: #fee2e2; color: #991b1b; }
+  .bigbtn { width: 100%; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 1.1rem; color: #fff; }
+  .bigbtn.nova { background: var(--prep); }
+  .bigbtn.preparant { background: var(--ready); }
+  .bigbtn.a-punt, .bigbtn.enviada { background: var(--text); }
+  .smallrow { display: flex; gap: 8px; }
+  .smallrow button { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid var(--border); font-weight: 700; font-size: .9rem; color: var(--muted); background: #fff; }
+  .empty { background: var(--card); border: 2px dashed var(--border); border-radius: 18px; padding: 34px 16px; text-align: center; color: var(--muted); font-size: 1.05rem; }
+  .empty span { font-size: 2.4rem; display: block; margin-bottom: 6px; }
+
+  /* Productes */
+  .plist { display: grid; gap: 10px; }
+  .pitem { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 14px; display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: center; }
+  .pitem.off { opacity: .55; }
+  .pemoji { width: 56px; height: 56px; border-radius: 14px; background: var(--bg); display: grid; place-items: center; font-size: 1.8rem; }
+  .pname { font-weight: 700; font-size: 1.05rem; }
+  .pprice { color: var(--muted); }
+  .pprice button { color: var(--brand); font-weight: 700; text-decoration: underline; margin-left: 6px; }
+  .stock { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .stock .st-btn { width: 44px; height: 44px; border-radius: 12px; background: var(--bg); border: 1px solid var(--border); font-size: 1.4rem; font-weight: 700; }
+  .stock .st-n { min-width: 40px; text-align: center; font-weight: 700; font-size: 1.2rem; }
+  .stock .st-label { color: var(--muted); font-size: .9rem; }
+  .stock .unl { padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); font-weight: 700; font-size: .85rem; background: #fff; }
+  .stock .unl.on { background: var(--text); color: #fff; border-color: var(--text); }
+  .sell { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: .8rem; font-weight: 700; color: var(--muted); }
+  .switch { width: 62px; height: 36px; border-radius: 999px; background: #d6d3d1; position: relative; }
+  .switch::after { content: ''; position: absolute; top: 4px; left: 4px; width: 28px; height: 28px; border-radius: 50%; background: #fff; transition: left .15s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  .switch.on { background: var(--ready); }
+  .switch.on::after { left: 30px; }
+
+  /* Resum */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 16px; }
+  .kpi small { color: var(--muted); font-weight: 500; }
+  .kpi b { display: block; font-size: 1.7rem; }
+  .bars { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 16px; margin-top: 12px; }
+  .bar { display: grid; grid-template-columns: 150px 1fr 40px; gap: 10px; align-items: center; padding: 6px 0; }
+  .bar .track { height: 14px; background: var(--bg); border-radius: 7px; overflow: hidden; }
+  .bar .fill { height: 100%; background: var(--brand); border-radius: 7px; }
+  .bar span:last-child { text-align: right; font-weight: 700; }
+  .history { background: var(--card); border: 1px solid var(--border); border-radius: 18px; margin-top: 12px; }
+  .history div { display: flex; justify-content: space-between; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .history div:last-child { border: 0; }
+  .history small { color: var(--muted); display: block; }
+  .help { margin-top: 18px; background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 16px; color: var(--muted); }
+  .help b { color: var(--text); }
+
+  /* Finestreta */
+  .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 40; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .backdrop.open { display: flex; }
+  .modal { background: #fff; border-radius: 20px; width: 100%; max-width: 420px; padding: 22px; }
+  .modal h3 { font-size: 1.25rem; margin-bottom: 8px; }
+  .modal p { color: var(--muted); }
+  .modal input { width: 100%; font: inherit; font-size: 1.5rem; font-weight: 700; padding: 14px; border: 2px solid var(--border); border-radius: 14px; margin-top: 14px; text-align: center; }
+  .modal .row { display: flex; gap: 10px; margin-top: 16px; }
+  .modal .row button { flex: 1; padding: 15px; border-radius: 14px; font-weight: 700; font-size: 1.05rem; }
+  .btn-main { background: var(--brand); color: #fff; }
+  .btn-sec { background: var(--bg); }
+  .btn-bad { background: var(--new); color: #fff; }
+
+  .toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%) translateY(-120px); background: var(--text); color: #fff; padding: 14px 20px; border-radius: 14px; font-weight: 700; z-index: 60; transition: transform .3s; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .sound-tip { background: #fef3c7; color: #92400e; border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .sound-tip button { background: #92400e; color: #fff; padding: 8px 12px; border-radius: 10px; font-weight: 700; white-space: nowrap; }
+
+  @media (max-width: 600px) {
+    .top-actions .hide-m { display: none; }
+    .bar { grid-template-columns: 110px 1fr 34px; }
+  }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand"><div class="logo" id="logo">🛍️</div><div><b id="bname">…</b><small>Panell de la botiga</small></div></div>
+  <div class="top-actions">
+    <a id="public-link" class="hide-m" target="_blank">Veure la botiga ↗</a>
+    <button id="reset-demo" class="hide-m" hidden onclick="resetDemo()">Reiniciar demo</button>
+    <button onclick="Panel.logout('botigaexpress', slug)" aria-label="Tancar el panell">🔒</button>
+  </div>
+</div></header>
+
+<main class="wrap" id="main"></main>
+
+<nav class="tabbar" id="tabbar">
+  <button data-tab="comandes" class="on"><span>📦</span>Comandes<i class="dot" id="dot" hidden></i></button>
+  <button data-tab="productes"><span>🥖</span>Productes</button>
+  <button data-tab="caixa"><span>💶</span>Caixa</button>
+  <button data-tab="resum"><span>📊</span>Resum</button>
+</nav>
+
+<div class="backdrop" id="backdrop"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+<script src="../shared/config.js?v=6087a0f"></script>
+<script src="../shared/remote.js?v=6087a0f"></script>
+<script src="core.js?v=6087a0f"></script>
+<script src="../shared/panel.js?v=6087a0f"></script>
+<script src="../shared/caixa.js?v=6087a0f"></script>
+<script>
+  const slug = new URLSearchParams(location.search).get('c') || 'demo';
+  const L = 'ca';
+  let client, tab = 'comandes', showDone = false, soundOn = false, knownIds = null, flashIds = new Set();
+  const $ = id => document.getElementById(id);
+  const fmtDay = (iso, o = { weekday: 'long', day: 'numeric', month: 'long' }) => fromISODate(iso).toLocaleDateString('ca-ES', o);
+  const today = () => toISODate(new Date());
+
+  // Què vol dir el botó gran de cada comanda: sempre el següent pas, i res més.
+  const NEXT = {
+    nova: { to: 'preparant', label: '👩‍🍳 Començar a preparar' },
+    preparant: { to: o => o.method === 'enviament' ? 'enviada' : 'a-punt', label: o => o.method === 'enviament' ? '🚚 Ja ha sortit' : '✅ Ja està a punt' },
+    'a-punt': { to: 'lliurada', label: '🤝 L\'han vingut a buscar' },
+    enviada: { to: 'lliurada', label: '🏠 Ja s\'ha entregat' }
+  };
+  const val = (x, o) => typeof x === 'function' ? x(o) : x;
+
+  // ---------- Comandes ----------
+  function whenText(o) {
+    if (o.method === 'enviament') return `🚚 A domicili · ${esc(o.address.town)}`;
+    const d = o.pickup.date === today() ? 'Avui' : o.pickup.date === toISODate(addDays(new Date(), 1)) ? 'Demà' : fmtDay(o.pickup.date, { weekday: 'short', day: 'numeric', month: 'short' });
+    return `🏪 Recull: ${d} a les ${o.pickup.time}`;
+  }
+  function orderCard(o) {
+    const n = NEXT[o.status];
+    return `<div class="order ${o.status} ${flashIds.has(o.id) ? 'flash' : ''}">
+      <div class="o-head"><div><div class="o-num">#${o.num}</div><div class="o-name">${esc(o.customer.name)}</div>
+        <div class="o-meta">Fa ${ago(o.createdAt)} · <a href="tel:${esc(o.customer.phone)}">📞 ${esc(o.customer.phone)}</a></div></div>
+        <span class="paid ${o.payment === 'targeta' && o.payStatus !== 'pending' ? 'yes' : 'no'}">${o.payment !== 'targeta' ? (o.method === 'enviament' ? 'Cobrar en lliurar-la' : 'Cobrar a la botiga') : o.payStatus === 'pending' ? '⏳ Esperant el pagament amb targeta' : 'Pagada amb targeta'}</span></div>
+      <span class="o-when">${whenText(o)}</span>
+      ${o.method === 'enviament' ? `<div class="o-meta">📍 ${esc(o.address.street)}, ${esc(o.address.town)}</div>` : ''}
+      <ul class="o-lines">${o.lines.map(l => `<li><span class="q">${l.qty}×</span><span>${esc(l.name || lineLabel(l))}</span></li>`).join('')}</ul>
+      ${o.note ? `<div class="o-note">💬 ${esc(o.note)}</div>` : ''}
+      <div class="o-foot"><span>Total</span><b>${fmtPrice(o.total)}</b></div>
+      ${n ? `<button class="bigbtn ${o.status}" onclick="advance('${o.id}')">${val(n.label, o)}</button>` : ''}
+      ${o.status !== 'cancel·lada' ? `<div class="smallrow">${o.status !== 'nova' && o.status !== 'lliurada' ? `<button onclick="back('${o.id}')">↩ Desfer</button>` : ''}<button onclick="askMail('${o.id}')">📧 ${o.mailedAt ? 'Reenviar' : 'Correu'}</button>${o.status !== 'lliurada' ? `<button onclick="askCancel('${o.id}')">Cancel·lar</button>` : ''}</div>` : ''}
+    </div>`;
+  }
+  function lineLabel(l) { const p = client.products.find(x => x.id === l.productId); return p ? tr(p.name, L) : l.productId; }
+  function ago(ts) {
+    const m = Math.round((Date.now() - ts) / 60000);
+    if (m < 1) return 'un moment'; if (m < 60) return m + ' min';
+    const h = Math.round(m / 60); if (h < 24) return h + (h === 1 ? ' hora' : ' hores');
+    const d = Math.round(h / 24); return d + (d === 1 ? ' dia' : ' dies');
+  }
+
+  function viewComandes() {
+    const orders = Store.getOrders(slug).sort((a, b) => a.createdAt - b.createdAt);
+    const groups = [
+      { title: '🔴 Noves: comença per aquí', list: orders.filter(o => o.status === 'nova'), empty: 'Cap comanda nova. Quan n\'entri una, sonarà i apareixerà aquí.' },
+      { title: '🟠 Preparant', list: orders.filter(o => o.status === 'preparant') },
+      { title: '🟢 A punt / en camí', list: orders.filter(o => o.status === 'a-punt' || o.status === 'enviada') }
+    ];
+    const done = orders.filter(o => (o.status === 'lliurada' || o.status === 'cancel·lada') && toISODate(new Date(o.createdAt)) === today()).reverse();
+    return `${Panel.soundTip()}
+      ${Panel.trialBanner(Store.biz)}<h2>Comandes</h2><p class="sub">Toca el botó gran de cada comanda quan passis al pas següent.</p>
+      ${groups.map(g => (g.list.length || g.empty) ? `<div class="group-title">${g.title} <span class="n">${g.list.length}</span></div>
+        ${g.list.length ? `<div class="orders">${g.list.map(orderCard).join('')}</div>` : `<div class="empty"><span>☕</span>${g.empty}</div>`}` : '').join('')}
+      <div class="group-title">✔️ Acabades avui <span class="n">${done.length}</span>
+        ${done.length ? `<button style="margin-left:auto;font-weight:700;color:var(--brand)" onclick="showDone=!showDone;render()">${showDone ? 'Amagar' : 'Mostrar'}</button>` : ''}</div>
+      ${showDone ? `<div class="orders">${done.map(orderCard).join('')}</div>` : ''}`;
+  }
+
+  function advance(id) {
+    const o = Store.getOrders(slug).find(x => x.id === id);
+    const n = o && NEXT[o.status];
+    if (!n) return;
+    const to = val(n.to, o);
+    Store.setStatus(slug, id, to).then(render, () => toast('⚠️ No s\'ha pogut desar. Revisa la connexió.'));
+    // Si s'havia de pagar a la botiga i ja se l'ha endut, la donem per cobrada (es pot desfer a Caixa).
+    const collect = to === 'lliurada' && !Caixa.paidAt(o);
+    if (collect) Store.setPaid(slug, id, Date.now(), o).then(render, () => toast('⚠️ No s\'ha pogut marcar com a cobrada.'));
+    toast(to === 'lliurada' ? (collect ? '👏 Acabada i cobrada' : '👏 Comanda acabada') : 'Fet!');
+    render();
+  }
+  function back(id) {
+    const o = Store.getOrders(slug).find(x => x.id === id);
+    const prev = { preparant: 'nova', 'a-punt': 'preparant', enviada: 'preparant' }[o.status];
+    if (prev) Store.setStatus(slug, id, prev).then(render, () => toast('⚠️ No s\'ha pogut desar.'));
+  }
+  // Enviar (o tornar a enviar) la confirmació de la comanda al correu del client; es pot posar un correu nou.
+  function askMail(id) {
+    const o = Store.getOrders(slug).find(x => x.id === id); if (!o) return;
+    const sent = o.mailedAt ? `Ja se li va enviar ${new Date(o.mailedAt).toLocaleString('ca-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}.` : 'Encara no se li ha enviat.';
+    Panel.modal(`<h3>📧 Confirmació de la comanda #${o.num}</h3><p>${esc(o.customer.name)} · ${fmtPrice(o.total)}. ${sent}</p>
+      <label for="mail-to">Correu del client</label><input id="mail-to" type="email" inputmode="email" value="${esc(o.customer.email || '')}" placeholder="nom@correu.com">
+      <p id="mail-err" style="color:#dc2626;min-height:1em;font-size:.9rem"></p>
+      <div class="p-row"><button class="p-btn sec" onclick="Panel.closeModal()">Tancar</button><button class="p-btn main" id="mail-go" onclick="doMail('${o.id}')">Enviar</button></div>`);
+  }
+  async function doMail(id) {
+    const to = $('mail-to').value.trim(), err = $('mail-err'), btn = $('mail-go');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(to)) { err.textContent = 'Aquest correu no sembla bo.'; return; }
+    if (!Store.remote) { Panel.closeModal(); Panel.toast('A la demo no s\'envia cap correu 🙂'); return; }
+    btn.disabled = true; btn.textContent = 'Enviant…';
+    const r = await Store.mailOrder(slug, id, to).catch(() => ({ error: 'network' }));
+    if (r && r.ok) {
+      Store.cache = Store.cache.map(o => o.id === id ? { ...o, mailedAt: Date.now(), customer: { ...o.customer, email: to.toLowerCase() } } : o);
+      Panel.closeModal(); Panel.toast('📧 Confirmació enviada a ' + to); render(); return;
+    }
+    btn.disabled = false; btn.textContent = 'Enviar';
+    err.textContent = ({ wait: 'Espera un minut abans de tornar-la a enviar.', not_paid: 'Aquesta comanda encara no està pagada.', cancelled: 'La comanda està cancel·lada.', invalid_email: 'Aquest correu no sembla bo.' })[r && r.error] || "No s'ha pogut enviar. Torna-ho a provar.";
+  }
+  function askCancel(id) {
+    const o = Store.getOrders(slug).find(x => x.id === id);
+    modal(`<h3>Cancel·lar la comanda #${o.num}?</h3><p>${esc(o.customer.name)} · ${fmtPrice(o.total)}.${o.payment === 'targeta' && o.payStatus !== 'pending' ? ' Com que ja estava pagada amb targeta, retorna-li els diners des del teu Stripe.' : ''} Truca-li per avisar-lo.</p>
+      <div class="row"><button class="btn-sec" onclick="closeModal()">No</button><button class="btn-bad" onclick="doCancel('${id}')">Sí, cancel·lar</button></div>`);
+  }
+  function doCancel(id) {
+    const o = Store.getOrders(slug).find(x => x.id === id);
+    Store.setStatus(slug, id, 'cancel·lada').then(render, () => toast('⚠️ No s\'ha pogut desar.'));
+    // Torna l'estoc dels productes que ho tenen comptat.
+    const products = client.products.map(p => {
+      const back = o.lines.filter(l => l.productId === p.id).reduce((s, l) => s + l.qty, 0);
+      return back && p.stock != null ? { ...p, stock: p.stock + back } : p;
+    });
+    client.products = products; Promise.resolve(Store.saveProducts(slug, products)).catch(() => toast('⚠️ No s\'ha pogut desar l\'estoc.'));
+    closeModal(); toast('Comanda cancel·lada'); render();
+  }
+
+  // ---------- Productes ----------
+  function viewProductes() {
+    return `<h2>Productes</h2><p class="sub">Encén o apaga el que vens avui, i digues quants en queden.</p>
+      ${client.categories.map(c => {
+        const list = client.products.map((p, i) => ({ p, i })).filter(x => x.p.cat === c.id);
+        return list.length ? `<div class="group-title">${esc(tr(c.name, L))}</div><div class="plist">${list.map(({ p, i }) => `
+          <div class="pitem ${p.active === false ? 'off' : ''}">
+            <div class="pemoji">${esc(p.emoji)}</div>
+            <div><div class="pname">${esc(tr(p.name, L))}</div>
+              <div class="pprice">${p.variants ? p.variants.map(v => `${esc(tr(v.name, L))}: ${fmtPrice(v.price)}`).join(' · ') : fmtPrice(p.price)}<button onclick="askPrice(${i})">Canviar preu</button></div>
+              <div class="stock">${p.stock == null
+                ? `<span class="st-label">Sense límit</span><button class="unl" onclick="setStock(${i}, 10)">Comptar unitats</button>`
+                : `<button class="st-btn" onclick="setStock(${i}, ${p.stock - 1})" aria-label="Una menys">−</button><span class="st-n">${p.stock}</span><button class="st-btn" onclick="setStock(${i}, ${p.stock + 1})" aria-label="Una més">+</button>
+                   <span class="st-label">${p.stock === 0 ? '<b style="color:var(--new)">Esgotat</b>' : 'en queden'}</span><button class="unl" onclick="setStock(${i}, null)">Sense límit</button>`}</div>
+            </div>
+            <div class="sell"><button class="switch ${p.active !== false ? 'on' : ''}" onclick="toggle(${i})" aria-label="Es ven o no es ven"></button>${p.active !== false ? 'Es ven' : 'Amagat'}</div>
+          </div>`).join('')}</div>` : '';
+      }).join('')}
+      <div class="help">💡 <b>Sense límit</b> vol dir que el client en pot demanar tants com vulgui (per exemple, el pa de cada dia). Si poses un número, quan arribi a 0 es marcarà <b>Esgotat</b> sol a la botiga.</div>`;
+  }
+  function saveP(i, patch) {
+    client.products[i] = { ...client.products[i], ...patch };
+    Promise.resolve(Store.saveProducts(slug, client.products)).catch(() => toast('⚠️ No s\'ha pogut desar. Revisa la connexió.'));
+    render();
+  }
+  function setStock(i, n) { saveP(i, { stock: n == null ? null : Math.max(0, n) }); }
+  function toggle(i) { const on = client.products[i].active !== false; saveP(i, { active: !on }); toast(on ? 'Amagat de la botiga' : 'Ja es ven a la botiga'); }
+  function askPrice(i) {
+    const p = client.products[i];
+    const items = p.variants ? p.variants.map((v, k) => ({ label: tr(v.name, L), price: v.price, k })) : [{ label: '', price: p.price, k: -1 }];
+    modal(`<h3>Preu de ${esc(tr(p.name, L))}</h3>${items.map(it => `${it.label ? `<p style="margin-top:12px"><b>${esc(it.label)}</b></p>` : ''}<input type="number" inputmode="decimal" step="0.05" min="0" id="pr${it.k}" value="${it.price}">`).join('')}
+      <div class="row"><button class="btn-sec" onclick="closeModal()">Tornar</button><button class="btn-main" onclick="savePrice(${i})">Desar</button></div>`);
+    setTimeout(() => { const el = document.querySelector('#modal input'); el && el.select(); }, 50);
+  }
+  function savePrice(i) {
+    const p = client.products[i];
+    const num = id => Math.max(0, Math.round((parseFloat(String($(id).value).replace(',', '.')) || 0) * 100) / 100);
+    if (p.variants) {
+      const variants = p.variants.map((v, k) => ({ ...v, price: num('pr' + k) }));
+      saveP(i, { variants, price: variants[0].price });
+    } else saveP(i, { price: num('pr-1') });
+    closeModal(); toast('Preu desat');
+  }
+
+  // ---------- Caixa (shared/caixa.js) ----------
+  function initCaixa() {
+    Caixa.init({
+      store: Store, slug,
+      items: o => o.lines.map(l => ({ key: l.variantId ? l.productId + ':' + l.variantId : l.productId, qty: l.qty, label: l.name || lineLabel(l) })),
+      who: o => o.customer.name,
+      payLabel: o => o.payment === 'targeta' ? '💳 Targeta' : '🏪 Botiga',
+      statusText: o => tr(STATUSES[o.status], L),
+      costItems: () => client.products.flatMap(p => p.variants && p.variants.length
+        ? p.variants.map(v => ({ key: p.id + ':' + v.id, name: `${tr(p.name, L)} · ${tr(v.name, L)}`, price: v.price }))
+        : [{ key: p.id, name: tr(p.name, L), price: p.price }]),
+      modal, closeModal, toast, render,
+      rangeFetch: Store.remote ? (from, to) => Remote.ownerRecordsRange(Store.biz.id, 'order', from, to) : null
+    });
+  }
+  const viewCaixa = () => Panel.trialBanner(Store.biz) + Caixa.view();
+
+  // ---------- Resum ----------
+  function viewResum() {
+    const orders = Store.getOrders(slug).filter(o => o.status !== 'cancel·lada');
+    const d0 = today();
+    const todays = orders.filter(o => toISODate(new Date(o.createdAt)) === d0);
+    const week = orders.filter(o => toISODate(new Date(o.createdAt)) > toISODate(addDays(new Date(), -7)));
+    const sum = list => list.reduce((s, o) => s + o.total, 0);
+    const counts = {};
+    week.forEach(o => o.lines.forEach(l => { const k = lineLabel(l); counts[k] = (counts[k] || 0) + l.qty; }));
+    const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const max = top.length ? top[0][1] : 1;
+    const toCollect = orders.filter(o => !Caixa.paidAt(o));
+    return `<h2>Resum</h2><p class="sub">Com va la botiga online.</p>
+      <div class="kpis">
+        <div class="kpi"><small>Vendes d'avui</small><b>${fmtPrice(sum(todays))}</b></div>
+        <div class="kpi"><small>Comandes d'avui</small><b>${todays.length}</b></div>
+        <div class="kpi"><small>Últims 7 dies</small><b>${fmtPrice(sum(week))}</b></div>
+        <div class="kpi"><small>Per cobrar a la botiga</small><b>${fmtPrice(sum(toCollect))}</b></div>
+      </div>
+      <div class="bars"><b>El més venut (7 dies)</b>${top.length ? top.map(([k, n]) => `<div class="bar"><span>${esc(k)}</span><div class="track"><div class="fill" style="width:${Math.round(n / max * 100)}%"></div></div><span>${n}</span></div>`).join('') : '<p class="sub" style="margin:8px 0 0">Encara no hi ha vendes.</p>'}</div>
+      <div class="history">${orders.slice().sort((a, b) => b.createdAt - a.createdAt).slice(0, 8).map(o => `<div><span><b>#${o.num} · ${esc(o.customer.name)}</b><small>${esc(new Date(o.createdAt).toLocaleString('ca-ES', { weekday: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }))} · ${esc(tr(STATUSES[o.status], L))}</small></span><b>${fmtPrice(o.total)}</b></div>`).join('')}</div>`;
+  }
+
+  // ---------- Avisos de comandes noves ----------
+  let audioCtx;
+  function enableSound() { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); soundOn = true; beep(); render(); }
+  function beep() {
+    if (!audioCtx) return;
+    [0, .22].forEach(dt => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.frequency.value = 880; o.connect(g); g.connect(audioCtx.destination);
+      g.gain.setValueAtTime(.0001, audioCtx.currentTime + dt);
+      g.gain.exponentialRampToValueAtTime(.3, audioCtx.currentTime + dt + .02);
+      g.gain.exponentialRampToValueAtTime(.0001, audioCtx.currentTime + dt + .18);
+      o.start(audioCtx.currentTime + dt); o.stop(audioCtx.currentTime + dt + .2);
+    });
+  }
+  function checkNew() {
+    const orders = Store.getOrders(slug);
+    const ids = new Set(orders.map(o => o.id));
+    if (knownIds) {
+      const fresh = orders.filter(o => !knownIds.has(o.id));
+      if (fresh.length) {
+        fresh.forEach(o => flashIds.add(o.id));
+        Panel.beep();
+        toast(`🔔 Comanda nova de ${fresh[fresh.length - 1].customer.name}!`);
+        setTimeout(() => { fresh.forEach(o => flashIds.delete(o.id)); }, 4000);
+      }
+    }
+    knownIds = ids;
+    const n = orders.filter(o => o.status === 'nova').length;
+    $('dot').hidden = !n; $('dot').textContent = n;
+    document.title = (n ? `(${n}) ` : '') + 'Panell · ' + client.name;
+  }
+
+  let toastT;
+  function toast(text) { $('toast').textContent = text; $('toast').classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => $('toast').classList.remove('show'), 2400); }
+  function modal(html) { $('modal').innerHTML = html; $('backdrop').classList.add('open'); }
+  function closeModal() { $('backdrop').classList.remove('open'); }
+  $('backdrop').addEventListener('click', e => { if (e.target.id === 'backdrop') closeModal(); });
+
+  async function resetDemo() {
+    if (!confirm("Tornar la demo a l'estat inicial? S'esborraran les comandes i canvis que hagis fet.")) return;
+    ['orders', 'counter', 'products'].forEach(k => localStorage.removeItem(Store.key(slug, k)));
+    client = await Store.loadClient(slug); knownIds = null; render();
+  }
+
+  function render() {
+    checkNew();
+    document.querySelectorAll('#tabbar button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+    $('main').innerHTML = { comandes: viewComandes, productes: viewProductes, caixa: viewCaixa, resum: viewResum }[tab]();
+  }
+  $('tabbar').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { tab = b.dataset.tab; render(); window.scrollTo({ top: 0 }); } });
+
+  function start() {
+    if (Remote.isRemote(slug)) {
+      return Remote.ownerStart(slug, async biz => { await Store.attachOwner(biz); setup(Store.config); },
+        () => { $('main').innerHTML = '<p class="offline-msg"><span>🔍</span>No s\'ha trobat aquesta botiga.</p>'; });
+    }
+    Store.loadClient(slug).then(setup).catch(() => { $('main').innerHTML = '<p>No s\'ha trobat aquesta botiga.</p>'; });
+  }
+  function setup(c) {
+    client = c;
+    document.documentElement.style.setProperty('--brand', c.color);
+    document.querySelector('meta[name=theme-color]').content = c.color;
+    $('logo').innerHTML = Brand.logo(c); $('bname').textContent = c.name;
+    if (Store.remote) {
+      Brand.homeScreen(c, true);
+      // Editar l'app sencera (productes, fotos, horaris…) amb l'assistent, sense canviar l'enllaç ni el QR.
+      const ed = Object.assign(document.createElement('a'), { href: '../../crea/?editar=' + encodeURIComponent(slug), textContent: '✏️ Editar', title: 'Editar l’app: productes, fotos, colors, horaris…' });
+      document.querySelector('.p-actions, .top-actions').prepend(ed);
+    }
+    $('reset-demo').hidden = !c.demoSeed;
+    $('public-link').href = `index.html?c=${encodeURIComponent(slug)}`;
+    initCaixa();
+    Panel.lock({ app: 'botigaexpress', client: c, onUnlock: () => {
+      render();
+      Store.onChange(async () => { client = Store.remote ? Store.config : await Store.loadClient(slug); if (!$('backdrop').classList.contains('open')) render(); });
+      setInterval(() => { if (!$('backdrop').classList.contains('open')) render(); }, 60000); // refresca els "fa X min"
+    } });
+  }
+  start();
+</script>
+</body>
+</html>

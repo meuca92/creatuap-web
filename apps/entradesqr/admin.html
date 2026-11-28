@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panell · EntradesQR</title>
+<meta name="theme-color" content="#7c3aed">
+<link rel="manifest" href="manifest-admin.json">
+<script src="../shared/manifest.js?v=6087a0f"></script>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/panel.css?v=6087a0f">
+<style>
+  :root { --brand: #7c3aed; }
+  /* Porta: resultat gran i clar, per mirar-lo d'un cop d'ull amb poca llum */
+  .door-count { display: flex; gap: 10px; margin: 6px 0 14px; }
+  .door-count div { flex: 1; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 12px; text-align: center; }
+  .door-count b { display: block; font-size: 1.8rem; line-height: 1.1; }
+  .door-count small { color: var(--muted); font-weight: 700; }
+  .scanbtn { width: 100%; padding: 22px; border-radius: 18px; background: var(--brand); color: #fff; font-weight: 800; font-size: 1.25rem; box-shadow: 0 10px 26px rgba(0,0,0,.15); }
+  .manual { display: flex; gap: 8px; margin-top: 12px; }
+  .manual input { flex: 1; min-width: 0; font: inherit; font-size: 1.15rem; padding: 14px; border: 2px solid var(--border); border-radius: 14px; }
+  .manual button { padding: 0 18px; border-radius: 14px; background: #1c1917; color: #fff; font-weight: 700; }
+  .result { border-radius: 20px; padding: 18px; margin-top: 16px; color: #fff; }
+  .result.ok { background: #16a34a; } .result.bad { background: #dc2626; } .result.warn { background: #d97706; } .result.grey { background: #57534e; }
+  .result .big { font-size: 1.6rem; font-weight: 800; }
+  .result .who { font-size: 1.15rem; font-weight: 700; margin-top: 6px; }
+  .result ul { margin: 8px 0 0 18px; }
+  .result .door-pay { background: rgba(0,0,0,.22); border-radius: 12px; padding: 10px 12px; margin-top: 10px; font-weight: 800; font-size: 1.1rem; }
+  .result button { margin-top: 12px; width: 100%; padding: 16px; border-radius: 14px; background: #fff; color: #111; font-weight: 800; font-size: 1.1rem; }
+  .scanner video { width: 100%; border-radius: 16px; background: #000; aspect-ratio: 1; object-fit: cover; }
+  .scanner .frame { position: relative; }
+  .scanner .frame::after { content: ''; position: absolute; inset: 18%; border: 4px solid rgba(255,255,255,.85); border-radius: 18px; box-shadow: 0 0 0 999px rgba(0,0,0,.25); }
+  /* Vendes i esdeveniments */
+  .evcard { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px; margin-bottom: 12px; }
+  .evcard .h { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+  .evcard .h b { font-size: 1.08rem; }
+  .bar { height: 10px; border-radius: 10px; background: #ede9fe; overflow: hidden; margin: 10px 0 6px; }
+  .bar i { display: block; height: 100%; background: var(--brand); }
+  .sale { display: flex; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid var(--border); font-size: .95rem; }
+  .sale small { color: var(--muted); display: block; }
+  .sale > span:last-child { white-space: nowrap; flex-shrink: 0; }
+  .sale > span:first-child { min-width: 0; }
+  .tkrow { display: grid; grid-template-columns: 1fr 90px 90px 40px; gap: 6px; margin-top: 6px; }
+  .tkrow input { width: 100%; font: inherit; padding: 10px; border: 2px solid var(--border); border-radius: 10px; }
+  .tkrow button { border-radius: 10px; background: #fee2e2; color: #991b1b; font-weight: 700; }
+  .p-modal input[type=date], .p-modal input[type=time] { font-size: 1.05rem; }
+</style>
+</head>
+<body class="locked">
+<header class="p-top"><div class="wrap">
+  <div class="p-brand"><div class="p-logo" id="logo">🎟️</div><div><b id="bname">…</b><small>Panell d'entrades</small></div></div>
+  <div class="p-actions">
+    <a id="public-link" class="hide-m" target="_blank">Pàgina d'entrades ↗</a>
+    <button id="reset-demo" class="hide-m" hidden onclick="resetDemo()">Reiniciar demo</button>
+    <button onclick="Panel.logout('entradesqr', slug)" aria-label="Tancar el panell">🔒</button>
+  </div>
+</div></header>
+<main class="wrap" id="main"></main>
+<nav class="p-tabbar" id="tabbar">
+  <button data-tab="porta" class="on"><span>🚪</span>Porta</button>
+  <button data-tab="vendes"><span>🎟️</span>Vendes<i class="dot" id="dot" hidden></i></button>
+  <button data-tab="esdeveniments"><span>📅</span>Agenda</button>
+  <button data-tab="caixa"><span>💶</span>Caixa</button>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" integrity="sha384-b5Ya4Bq3qCyz39m2ISh+4DxjAIljdeFwK/BsXLuj9gugaNwAcj/ia15fxNZL9Nlx" crossorigin="anonymous"></script>
+<script src="../shared/config.js?v=6087a0f"></script>
+<script src="../shared/remote.js?v=6087a0f"></script>
+<script src="core.js?v=6087a0f"></script>
+<script src="../shared/panel.js?v=6087a0f"></script>
+<script src="../shared/caixa.js?v=6087a0f"></script>
+<script>
+  const slug = new URLSearchParams(location.search).get('c') || 'demo';
+  const L = 'ca';
+  let client, tab = 'porta', doorEv = null, result = null, search = '', knownIds = null;
+  const $ = id => document.getElementById(id);
+  const fmtDay = (iso, o = { weekday: 'long', day: 'numeric', month: 'long' }) => fromISODate(iso).toLocaleDateString('ca-ES', o);
+  const orders = () => Store.getOrders(slug);
+  const evName = e => `${e.emoji || '🎟️'} ${tr(e.name, L)}`;
+  const time = ts => new Date(ts).toLocaleTimeString('ca-ES', { hour: '2-digit', minute: '2-digit' });
+
+  // ---------- Porta ----------
+  // Esdeveniment de la porta: el d'avui (o el pròxim), canviable amb els botons.
+  function doorEvents() { return upcoming(client, true).filter(e => e.date >= toISODate(addDays(new Date(), -1))).slice(0, 6); }
+  function viewPorta() {
+    const evs = doorEvents();
+    if (!doorEv || !evs.some(e => e.id === doorEv)) doorEv = evs[0] && evs[0].id;
+    const e = evs.find(x => x.id === doorEv);
+    if (!e) return `${Panel.trialBanner(Store.biz)}<div class="empty"><span>📅</span>No hi ha cap esdeveniment pròxim. Crea'n un a «Agenda».</div>`;
+    const os = orders().filter(o => o.eventId === e.id && o.status !== 'cancel·lada');
+    const sold = os.reduce((s, o) => s + people(o), 0), inside = os.filter(o => o.status === 'validada').reduce((s, o) => s + people(o), 0);
+    const recent = os.filter(o => o.status === 'validada').sort((a, b) => (b.enteredAt || 0) - (a.enteredAt || 0)).slice(0, 6);
+    return `${Panel.trialBanner(Store.biz)}
+      <div class="chips">${evs.map(x => `<button class="chip ${x.id === doorEv ? 'on' : ''}" onclick="doorEv='${x.id}';result=null;render()">${esc(evName(x))} · ${esc(fmtDay(x.date, { day: 'numeric', month: 'short' }))}</button>`).join('')}</div>
+      <div class="door-count"><div><b>${inside}</b><small>han entrat</small></div><div><b>${sold - inside}</b><small>falten per venir</small></div><div><b>${sold}</b><small>entrades venudes</small></div></div>
+      <button class="scanbtn" onclick="openScanner()">📷 Escanejar entrada</button>
+      <form class="manual" onsubmit="event.preventDefault();check($('code').value)"><input id="code" inputmode="numeric" placeholder="O escriu el número (ex: 2041)" autocomplete="off"><button>Comprovar</button></form>
+      ${result ? resultHTML(result) : ''}
+      ${recent.length ? `<div class="group-title">Últimes entrades <span class="n">${recent.length}</span></div>${recent.map(o => `<div class="sale"><span><b>#${o.num} · ${esc(o.customer.name)}</b><small>${o.enteredAt ? 'Ha entrat a les ' + time(o.enteredAt) : ''} · ${people(o)} pers.</small></span><button class="linkbtn" onclick="undoEntry('${o.id}')">desfer</button></div>`).join('')}` : ''}`;
+  }
+  function resultHTML(r) {
+    const o = r.order;
+    const lines = o ? `<ul>${o.lines.map(l => `<li>${l.qty} × ${esc((l.name || '').split(' · ').pop())}</li>`).join('')}</ul>` : '';
+    if (r.kind === 'ok') return `<div class="result ok"><div class="big">✅ Entrada vàlida</div><div class="who">#${o.num} · ${esc(o.customer.name)} · ${people(o)} ${people(o) === 1 ? 'persona' : 'persones'}</div>${lines}
+      ${o.payment === 'porta' && !Caixa.paidAt(o) ? `<div class="door-pay">💶 Ha de pagar ara: ${fmtPrice(o.total)}</div>` : ''}
+      <button onclick="letIn('${o.id}')">👉 Deixar passar</button></div>`;
+    if (r.kind === 'used') return `<div class="result bad"><div class="big">⛔ Ja s'ha fet servir</div><div class="who">#${o.num} · ${esc(o.customer.name)}</div><p>Va entrar a les ${o.enteredAt ? time(o.enteredAt) : '—'}.</p></div>`;
+    if (r.kind === 'cancel') return `<div class="result grey"><div class="big">🚫 Entrada cancel·lada</div><div class="who">#${o.num} · ${esc(o.customer.name)}</div></div>`;
+    if (r.kind === 'other') return `<div class="result warn"><div class="big">⚠️ És d'un altre dia</div><div class="who">#${o.num} · ${esc(o.customer.name)}</div><p>Aquesta entrada és per a «${esc(r.ev ? evName(r.ev) : '')}»${r.ev ? ', ' + esc(fmtDay(r.ev.date)) : ''}.</p></div>`;
+    if (r.kind === 'unpaid') return `<div class="result warn"><div class="big">⏳ Pagament no completat</div><div class="who">#${o.num} · ${esc(o.customer.name)}</div><p>Va triar pagar amb targeta però el pagament no s'ha confirmat. Cobra-li ara ${fmtPrice(o.total)} o mira-ho al teu Stripe.</p><button onclick="letIn('${o.id}', true)">💶 Ha pagat ara · Deixar passar</button></div>`;
+    return `<div class="result bad"><div class="big">❌ No la trobem</div><p>Aquest codi no és cap entrada d'aquest negoci. Revisa el número o torna a escanejar.</p></div>`;
+  }
+  function check(raw) {
+    const txt = String(raw || '').trim();
+    if (!txt) return;
+    const id = txt.startsWith('EQR:') ? txt.slice(4) : null;
+    const num = id ? null : txt.replace(/\D/g, '');
+    const o = orders().find(x => id ? x.id === id : String(x.num) === num);
+    if (!o) result = { kind: 'none' };
+    else if (o.status === 'cancel·lada') result = { kind: 'cancel', order: o };
+    else if (o.status === 'validada') result = { kind: 'used', order: o };
+    else if (o.eventId && o.eventId !== doorEv) result = { kind: 'other', order: o, ev: (client.categories || []).find(e => e.id === o.eventId) };
+    else if (o.payment === 'targeta' && o.payStatus === 'pending') result = { kind: 'unpaid', order: o };
+    else result = { kind: 'ok', order: o };
+    if (result.kind === 'ok') Panel.beep(); else if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
+    render();
+  }
+  async function letIn(id, paidNow) {
+    const o = orders().find(x => x.id === id);
+    const extra = { enteredAt: Date.now() };
+    if (o.payment === 'porta' || paidNow) extra.paidAt = Caixa.paidAt(o) || Date.now();
+    if (paidNow) extra.payStatus = 'paid';
+    try { await Store.setStatus(slug, id, 'validada', extra); } catch (_) { return Panel.toast("⚠️ No s'ha pogut desar. Revisa la connexió."); }
+    result = null; Panel.toast('👉 Endavant!'); render();
+    if ($('code')) $('code').value = '';
+  }
+  function undoEntry(id) {
+    Panel.ask('Desfer l\'entrada?', 'Tornarà a ser vàlida, com si encara no hagués entrat.', 'Sí, desfer', async () => {
+      await Store.setStatus(slug, id, 'nova', { enteredAt: null }); render();
+    }, false);
+  }
+
+  // Escàner amb la càmera (jsQR). Funciona a qualsevol mòbil amb el navegador; cal https.
+  let stream = null, scanning = false;
+  async function openScanner() {
+    Panel.modal(`<div class="scanner"><h3>📷 Apunta al QR de l'entrada</h3><div class="frame"><video id="cam" playsinline muted></video></div><canvas id="cv" hidden></canvas>
+      <p id="scanmsg" style="margin-top:8px">Obrint la càmera…</p><div class="p-row"><button class="p-btn sec" onclick="closeScanner()">Tancar</button></div></div>`);
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+      const v = $('cam'); v.srcObject = stream; await v.play(); scanning = true; $('scanmsg').textContent = 'Posa el QR dins del quadre.';
+      requestAnimationFrame(tick);
+    } catch (_) { $('scanmsg').textContent = "No es pot obrir la càmera. Dona permís a la càmera o escriu el número de l'entrada."; }
+  }
+  function tick() {
+    if (!scanning) return;
+    const v = $('cam'), cv = $('cv');
+    if (v && v.readyState >= 2 && window.jsQR) {
+      cv.width = v.videoWidth; cv.height = v.videoHeight;
+      const g = cv.getContext('2d', { willReadFrequently: true }); g.drawImage(v, 0, 0);
+      const img = g.getImageData(0, 0, cv.width, cv.height);
+      const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });
+      if (code && code.data) { closeScanner(); check(code.data); return; }
+    }
+    requestAnimationFrame(tick);
+  }
+  function closeScanner() { scanning = false; if (stream) stream.getTracks().forEach(t => t.stop()); stream = null; Panel.closeModal(); }
+
+  // ---------- Vendes ----------
+  function viewVendes() {
+    const evs = upcoming(client, true).filter(e => e.date >= toISODate(addDays(new Date(), -2)));
+    const q = search.trim().toLowerCase();
+    const match = o => !q || o.customer.name.toLowerCase().includes(q) || normPhone(o.customer.phone).includes(normPhone(q) || '§') || String(o.num) === q;
+    return `${Panel.trialBanner(Store.biz)}<h2>Vendes</h2><p class="sub">Entrades venudes de cada esdeveniment.</p>
+      <input id="search" placeholder="🔍 Buscar per nom, telèfon o número" value="${esc(search)}" oninput="search=this.value;render();const s=$('search');s.focus();s.setSelectionRange(s.value.length,s.value.length)" style="width:100%;font:inherit;padding:12px 14px;border:2px solid var(--border);border-radius:14px;margin-bottom:14px">
+      ${evs.length ? evs.map(e => {
+        const os = orders().filter(o => o.eventId === e.id);
+        const live = os.filter(o => o.status !== 'cancel·lada');
+        const sold = live.reduce((s, o) => s + people(o), 0), left = ticketsOf(client, e.id).reduce((s, p) => s + (p.stock || 0), 0);
+        const money = live.reduce((s, o) => s + (o.total || 0), 0);
+        const shown = os.filter(match).sort((a, b) => b.createdAt - a.createdAt);
+        return `<div class="evcard"><div class="h"><b>${esc(evName(e))}</b><span class="c-meta">${esc(fmtDay(e.date, { weekday: 'short', day: 'numeric', month: 'short' }))} · ${esc(e.time || '')}</span></div>
+          <div class="bar"><i style="width:${Math.round(sold / Math.max(1, sold + left) * 100)}%"></i></div>
+          <div class="c-meta">${sold} venudes · queden ${left} · ${fmtPrice(money)}</div>
+          ${shown.slice(0, q ? 50 : 8).map(o => `<div class="sale"><span><b>#${o.num} · ${esc(o.customer.name)}</b><small>${people(o)} pers. · ${o.payment === 'porta' ? '🚪 paga a la porta' : o.payStatus === 'pending' ? '⏳ pagament pendent' : '💳 pagada'} · ${esc(tr(STATUSES[o.status], L))}${o.customer.phone ? ` · <a href="tel:${esc(o.customer.phone)}">${esc(o.customer.phone)}</a>` : ''}</small></span>
+            <span style="text-align:right"><b>${fmtPrice(o.total)}</b>${o.status !== 'cancel·lada' ? `<br><button class="linkbtn" onclick="askMail('${o.id}')">📧 ${o.mailedAt ? 'reenviar' : 'enviar'}</button>` : ''}${o.status === 'nova' ? `<br><button class="linkbtn" onclick="askCancel('${o.id}')">cancel·lar</button>` : ''}</span></div>`).join('') || '<p class="c-meta" style="margin-top:8px">Encara no hi ha vendes.</p>'}
+          ${!q && shown.length > 8 ? `<p class="c-meta" style="margin-top:6px">… i ${shown.length - 8} més (busca-les a dalt).</p>` : ''}</div>`;
+      }).join('') : '<div class="empty"><span>📅</span>No hi ha esdeveniments pròxims.</div>'}`;
+  }
+  // Enviar (o tornar a enviar) l'entrada al correu del client; es pot posar un correu nou.
+  function askMail(id) {
+    const o = Store.getOrders(slug).find(x => x.id === id); if (!o) return;
+    const sent = o.mailedAt ? `Ja es va enviar ${new Date(o.mailedAt).toLocaleString('ca-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}.` : 'Encara no se li ha enviat.';
+    Panel.modal(`<h3>📧 Enviar l'entrada #${o.num}</h3><p>${esc(o.customer.name)} · ${people(o)} pers. ${sent}</p>
+      <label for="mail-to">Correu del client</label><input id="mail-to" type="email" inputmode="email" value="${esc(o.customer.email || '')}" placeholder="nom@correu.com">
+      <p id="mail-err" class="c-meta" style="color:#f87171;min-height:1em"></p>
+      <div class="p-row"><button class="p-btn sec" onclick="Panel.closeModal()">Tancar</button><button class="p-btn main" id="mail-go" onclick="doMail('${o.id}')">Enviar</button></div>`);
+  }
+  async function doMail(id) {
+    const to = $('mail-to').value.trim(), err = $('mail-err'), btn = $('mail-go');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(to)) { err.textContent = 'Aquest correu no sembla bo.'; return; }
+    if (!Store.remote) { Panel.closeModal(); Panel.toast('A la demo no s\'envia cap correu 🙂'); return; }
+    btn.disabled = true; btn.textContent = 'Enviant…';
+    const r = await Store.mailTicket(slug, id, to).catch(() => ({ error: 'network' }));
+    if (r && r.ok) {
+      Store.cache = Store.cache.map(o => o.id === id ? { ...o, mailedAt: Date.now(), customer: { ...o.customer, email: to.toLowerCase() } } : o);
+      Panel.closeModal(); Panel.toast('📧 Entrada enviada a ' + to); render(); return;
+    }
+    btn.disabled = false; btn.textContent = 'Enviar';
+    err.textContent = ({ wait: 'Espera un minut abans de tornar-la a enviar.', not_paid: 'Aquesta entrada encara no està pagada.', cancelled: 'L\'entrada està cancel·lada.', invalid_email: 'Aquest correu no sembla bo.' })[r && r.error] || 'No s\'ha pogut enviar. Torna-ho a provar.';
+  }
+  function askCancel(id) {
+    const o = orders().find(x => x.id === id);
+    Panel.ask(`Cancel·lar l'entrada #${o.num}?`, `${o.customer.name} · ${people(o)} pers. · ${fmtPrice(o.total)}.${o.payment === 'targeta' && o.payStatus !== 'pending' ? ' Com que ja està pagada, retorna-li els diners des del teu Stripe.' : ''} L'entrada deixarà de ser vàlida a la porta.`, 'Sí, cancel·lar', async () => {
+      await Store.setStatus(slug, id, 'cancel·lada'); Panel.toast('Entrada cancel·lada'); render();
+    });
+  }
+
+  // ---------- Esdeveniments ----------
+  let edit = null;
+  function viewEsdeveniments() {
+    const all = upcoming(client, true);
+    const today = toISODate(new Date());
+    return `${Panel.trialBanner(Store.biz)}<h2>Esdeveniments</h2><p class="sub">Crea les nits, concerts o festes i les entrades de cadascun.</p>
+      <button class="scanbtn" style="font-size:1.05rem;padding:16px" onclick="openEdit()">＋ Nou esdeveniment</button>
+      <div style="margin-top:14px">${all.length ? all.slice().sort((a, b) => (a.date < today) - (b.date < today) || a.date.localeCompare(b.date)).map(e => `<div class="evcard" style="${e.date < today ? 'opacity:.55' : ''}"><div class="h"><b>${esc(evName(e))}</b><button class="linkbtn" onclick="openEdit('${e.id}')">✏️ Editar</button></div>
+        <div class="c-meta">${esc(fmtDay(e.date))} · ${esc(e.time || '')}${e.end ? '–' + esc(e.end) : ''}${e.active === false ? ' · <b>amagat</b>' : ''}${e.date < today ? ' · ja ha passat' : ''}</div>
+        <div class="c-meta" style="margin-top:4px">${ticketsOf(client, e.id).map(p => `${esc(tr(p.name, L))}: ${fmtPrice(p.price)} (queden ${p.stock ?? '∞'})`).join(' · ')}</div></div>`).join('') : '<div class="empty"><span>🎉</span>Encara no hi ha cap esdeveniment.</div>'}</div>`;
+  }
+  const EMOJIS = ['🪩', '🎉', '🎸', '🎤', '🎧', '🎆', '🎭', '🍸', '💃', '🎷', '🥂', '🎟️'];
+  function openEdit(id) {
+    const e = id ? (client.categories || []).find(x => x.id === id) : null;
+    edit = e ? { ...e, name: tr(e.name, L), desc: tr(e.desc, L), tickets: ticketsOf(client, e.id).map(p => ({ id: p.id, name: tr(p.name, L), price: p.price, stock: p.stock })) }
+      : { id: null, name: '', desc: '', emoji: '🪩', date: toISODate(addDays(new Date(), 7)), time: '23:00', end: '', active: true, tickets: [{ id: null, name: 'Entrada general', price: 10, stock: 100 }] };
+    renderEdit();
+  }
+  function renderEdit() {
+    const scroll = document.querySelector('.p-modal')?.scrollTop || 0;
+    Panel.modal(`<h3>${edit.id ? 'Editar' : 'Nou'} esdeveniment</h3>
+      <label>Nom</label><input value="${esc(edit.name)}" oninput="edit.name=this.value" placeholder="Ex: Festa dels 80">
+      <label>Icona</label><div class="choices">${EMOJIS.map(x => `<button class="${edit.emoji === x ? 'on' : ''}" onclick="edit.emoji='${x}';renderEdit()">${x}</button>`).join('')}</div>
+      <label>Dia i hora</label><div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:6px"><input type="date" value="${edit.date}" onchange="edit.date=this.value"><input type="time" value="${edit.time}" onchange="edit.time=this.value"><input type="time" value="${edit.end || ''}" onchange="edit.end=this.value" title="Hora d'acabar (opcional)"></div>
+      <label>Explicació (opcional)</label><input value="${esc(edit.desc)}" oninput="edit.desc=this.value" placeholder="Ex: Dress code blanc. Inclou una consumició.">
+      <label>Entrades <small style="font-weight:400">(nom · preu € · quantes en vens)</small></label>
+      ${edit.tickets.map((k, i) => `<div class="tkrow"><input value="${esc(k.name)}" oninput="edit.tickets[${i}].name=this.value" placeholder="Ex: Entrada general"><input type="number" inputmode="decimal" min="0" step="0.5" value="${k.price}" oninput="edit.tickets[${i}].price=parseFloat(this.value.replace(',','.'))||0"><input type="number" inputmode="numeric" min="0" value="${k.stock ?? ''}" oninput="edit.tickets[${i}].stock=this.value===''?null:Math.max(0,parseInt(this.value)||0)" placeholder="∞"><button onclick="edit.tickets.splice(${i},1);renderEdit()" aria-label="Treure">✕</button></div>`).join('')}
+      <button class="linkbtn" style="margin-top:8px" onclick="edit.tickets.push({id:null,name:'',price:10,stock:100});renderEdit()">＋ Afegir un tipus d'entrada</button>
+      <label style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">Es veu a la pàgina d'entrades <button class="switch ${edit.active !== false ? 'on' : ''}" onclick="edit.active=!(edit.active!==false);renderEdit()" aria-label="Visible"></button></label>
+      <p id="eerr" style="color:var(--new);font-weight:700;margin-top:8px"></p>
+      <div class="p-row">${edit.id ? `<button class="p-btn bad" onclick="delEvent()">Esborrar</button>` : ''}<button class="p-btn sec" onclick="Panel.closeModal()">Tornar</button><button class="p-btn main" onclick="saveEvent()">Desar</button></div>`);
+    document.querySelector('.p-modal').scrollTop = scroll;
+  }
+  const uid = () => Math.random().toString(36).slice(2, 8);
+  const loc = (old, text) => { const o = old && typeof old === 'object' ? { ...old } : {}; o.ca = text; return o; };
+  async function saveEvent() {
+    if (!edit.name.trim()) { $('eerr').textContent = 'Posa-li un nom.'; return; }
+    if (!edit.date) { $('eerr').textContent = 'Tria el dia.'; return; }
+    const tks = edit.tickets.filter(k => k.name.trim());
+    if (!tks.length) { $('eerr').textContent = 'Afegeix almenys un tipus d\'entrada.'; return; }
+    const id = edit.id || 'e' + uid();
+    const old = (client.categories || []).find(e => e.id === id) || {};
+    const ev = { ...old, id, name: loc(old.name, edit.name.trim()), desc: loc(old.desc, edit.desc.trim()), emoji: edit.emoji, date: edit.date, time: edit.time, end: edit.end || '', active: edit.active !== false };
+    delete ev.dayOffset; delete ev.yearly;
+    const cats = [...(client.categories || []).filter(e => e.id !== id), ev];
+    const others = (client.products || []).filter(p => p.cat !== id);
+    const mine = tks.map(k => { const o = (client.products || []).find(p => p.id === k.id) || {};
+      return { ...o, id: k.id || id + '-' + uid(), cat: id, name: loc(o.name, k.name.trim()), price: Math.max(0, Math.round((k.price || 0) * 100) / 100), stock: k.stock, active: true, desc: o.desc || { ca: '' } }; });
+    try { await Store.saveEvents(slug, cats, [...others, ...mine]); } catch (_) { $('eerr').textContent = "No s'ha pogut desar. Revisa la connexió."; return; }
+    client.categories = cats; client.products = [...others, ...mine];
+    Panel.closeModal(); Panel.toast('✓ Esdeveniment desat'); render();
+  }
+  function delEvent() {
+    Panel.ask('Esborrar l\'esdeveniment?', 'Ja no es veurà a la pàgina. Les entrades que ja s\'han venut es queden guardades i continuen funcionant a la porta.', 'Sí, esborrar', async () => {
+      const cats = (client.categories || []).filter(e => e.id !== edit.id);
+      await Store.saveEvents(slug, cats, (client.products || []).filter(p => p.cat !== edit.id));
+      client.categories = cats; client.products = client.products.filter(p => p.cat !== edit.id);
+      Panel.toast('Esdeveniment esborrat'); render();
+    });
+  }
+
+  // ---------- Caixa ----------
+  function initCaixa() {
+    Caixa.init({
+      store: Store, slug,
+      words: { one: 'venda', many: 'vendes', Title: 'Entrada', things: 'entrades', thing: 'entrada', ofThings: 'de les entrades', costHint: 'Posa el que et costa cada entrada (consumició inclosa, artistes…), per calcular el benefici.' },
+      items: o => (o.lines || []).map(l => ({ key: l.productId, qty: l.qty, label: l.name })),
+      who: o => o.customer.name,
+      payLabel: o => o.payment === 'porta' ? '🚪 Porta' : '💳 Targeta',
+      statusText: o => tr(STATUSES[o.status], L),
+      costItems: () => (client.products || []).map(p => { const e = (client.categories || []).find(x => x.id === p.cat); return { key: p.id, name: `${e ? tr(e.name, L) + ' · ' : ''}${tr(p.name, L)}`, price: p.price }; }),
+      modal: Panel.modal, closeModal: Panel.closeModal, toast: Panel.toast, render,
+      rangeFetch: Store.remote ? (from, to) => Remote.ownerRecordsRange(Store.biz.id, 'order', from, to) : null
+    });
+  }
+  const viewCaixa = () => Panel.trialBanner(Store.biz) + Caixa.view();
+
+  function checkNew() {
+    const list = orders(), ids = new Set(list.map(o => o.id));
+    if (knownIds) { const fresh = list.filter(o => !knownIds.has(o.id)); if (fresh.length) Panel.toast(`🎟️ Venda nova: ${fresh[fresh.length - 1].customer.name}`); }
+    knownIds = ids;
+  }
+  async function resetDemo() {
+    Panel.ask('Reiniciar la demo?', "Tornarà a l'estat inicial: s'esborraran les vendes i canvis que hagis fet.", 'Sí, reiniciar', async () => {
+      ['orders', 'counter', 'events', 'costs'].forEach(k => localStorage.removeItem(Store.key(slug, k)));
+      client = await Store.loadClient(slug); knownIds = null; result = null; render();
+    }, false);
+  }
+  function render() {
+    checkNew();
+    document.querySelectorAll('#tabbar button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+    $('main').innerHTML = { porta: viewPorta, vendes: viewVendes, esdeveniments: viewEsdeveniments, caixa: viewCaixa }[tab]();
+  }
+  $('tabbar').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { tab = b.dataset.tab; result = null; render(); window.scrollTo({ top: 0 }); } });
+
+  function start() {
+    if (Remote.isRemote(slug)) {
+      return Remote.ownerStart(slug, async biz => { await Store.attachOwner(biz); setup(Store.config); },
+        () => { $('main').innerHTML = '<p class="offline-msg"><span>🔍</span>No s\'ha trobat aquest negoci.</p>'; });
+    }
+    Store.loadClient(slug).then(setup).catch(() => { $('main').innerHTML = '<p>No s\'ha trobat aquest negoci.</p>'; });
+  }
+  function setup(c) {
+    client = c;
+    initCaixa();
+    document.documentElement.style.setProperty('--brand', c.color);
+    document.querySelector('meta[name=theme-color]').content = c.color;
+    $('logo').innerHTML = Brand.logo(c); $('bname').textContent = c.name;
+    if (Store.remote) {
+      Brand.homeScreen(c, true);
+      const ed = Object.assign(document.createElement('a'), { href: '../../crea/?editar=' + encodeURIComponent(slug), textContent: '✏️ Editar', title: 'Editar l’app: nom, fotos, colors…' });
+      document.querySelector('.p-actions').prepend(ed);
+    }
+    document.title = 'Panell · ' + c.name;
+    $('reset-demo').hidden = !c.demoSeed;
+    $('public-link').href = `index.html?c=${encodeURIComponent(slug)}`;
+    Panel.lock({ app: 'entradesqr', client: c, onUnlock: () => {
+      render();
+      const idle = () => !Panel.modalOpen() && document.activeElement?.id !== 'search' && document.activeElement?.id !== 'code';
+      Store.onChange(async () => { if (!Store.remote) client = await Store.loadClient(slug); if (idle()) render(); else checkNew(); });
+    } });
+  }
+  start();
+</script>
+</body>
+</html>

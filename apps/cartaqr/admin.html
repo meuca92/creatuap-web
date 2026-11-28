@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panell · CartaQR</title>
+<meta name="theme-color" content="#0e7490">
+<link rel="manifest" href="manifest-admin.json">
+<script src="../shared/manifest.js?v=6087a0f"></script>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/panel.css?v=6087a0f">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
+<style>
+  .qr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; margin-top: 16px; }
+  .qr-card { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 18px; text-align: center; break-inside: avoid; }
+  .qr-card .code { display: flex; justify-content: center; margin: 12px 0; }
+  .qr-card b { font-size: 1.1rem; display: block; }
+  .qr-card small { color: var(--muted); }
+  .counter { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 12px 16px; flex-wrap: wrap; }
+  .counter button.st { width: 52px; height: 52px; border-radius: 14px; background: var(--bg); font-size: 1.5rem; font-weight: 700; }
+  .counter .n { font-size: 1.6rem; font-weight: 700; min-width: 44px; text-align: center; }
+  .counter .print { margin-left: auto; background: var(--brand); color: #fff; padding: 14px 20px; border-radius: 14px; font-weight: 700; }
+  @media print {
+    main > :not(.qr-grid) { display: none !important; }
+    .qr-card { border: 1px dashed #999; }
+  }
+</style>
+</head>
+<body>
+<header class="p-top"><div class="wrap">
+  <div class="p-brand"><div class="p-logo" id="logo">🍽️</div><div><b id="bname">…</b><small>Panell del restaurant</small></div></div>
+  <div class="p-actions">
+    <a id="open-menu" class="hide-m" target="_blank">Veure la carta ↗</a>
+    <button onclick="Panel.logout('cartaqr', slug)" aria-label="Tancar el panell">🔒</button>
+  </div>
+</div></header>
+
+<main class="wrap" id="main"></main>
+
+<nav class="p-tabbar" id="tabbar">
+  <button data-tab="comandes" class="on"><span>🧾</span>Comandes<i class="dot" id="dot" hidden></i></button>
+  <button data-tab="carta"><span>📖</span>Carta</button>
+  <button data-tab="caixa"><span>💶</span>Caixa</button>
+  <button data-tab="qr"><span>🔳</span>QR de taula</button>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+<script src="../shared/config.js?v=6087a0f"></script>
+<script src="../shared/remote.js?v=6087a0f"></script>
+<script src="core.js?v=6087a0f"></script>
+<script src="../shared/panel.js?v=6087a0f"></script>
+<script src="../shared/caixa.js?v=6087a0f"></script>
+<script>
+  const slug = new URLSearchParams(location.search).get('c') || 'demo';
+  let client, tab = 'comandes', showDone = false, qrCount = 8, knownIds = null;
+  const flashIds = new Set();
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const menuUrl = n => `${location.href.replace(/admin\.html.*$/, 'index.html')}?c=${encodeURIComponent(slug)}${n ? `&taula=${n}` : ''}`;
+
+  // ---------- Comandes ----------
+  const NEXT = {
+    nova: { to: 'preparant', label: '👩‍🍳 Començar a preparar', cls: 'b-prep' },
+    preparant: { to: 'servida', label: '🍽️ Ja és a taula', cls: 'b-ready' }
+  };
+  function orderCard(o) {
+    const n = NEXT[o.status];
+    const cls = { nova: 's-new', preparant: 's-prep', servida: 's-done' }[o.status];
+    return `<div class="card ${cls} ${flashIds.has(o.id) ? 'flash' : ''}">
+      <div class="c-head"><div><div class="c-big">Taula ${esc(o.table)}</div><div class="c-meta">Comanda #${o.num} · ${Panel.ago(o.createdAt)}</div></div>
+        ${o.status === 'servida' ? (Caixa.paidAt(o) ? '<span class="tag ok">✓ Cobrada</span>' : '<span class="tag warn">Servida · per cobrar</span>') : ''}</div>
+      <ul class="c-lines">${o.items.map(i => `<li><span class="q">${i.qty}×</span><span>${esc(i.name)}</span></li>`).join('')}</ul>
+      ${o.note ? `<div class="c-note">💬 ${esc(o.note)}</div>` : ''}
+      <div class="c-foot"><span>Total</span><b>${fmtPrice(o.total)}</b></div>
+      ${n ? `<button class="bigbtn ${n.cls}" onclick="advance('${o.id}')">${n.label}</button>` : ''}
+      ${o.status === 'preparant' ? `<div class="smallrow"><button onclick="setStatus('${o.id}','nova')">↩ Desfer</button></div>` : ''}
+      ${o.status === 'servida' ? `<div class="smallrow"><button onclick="setStatus('${o.id}','preparant')">↩ Desfer</button>${Caixa.paidAt(o) ? '' : `<button onclick="Caixa.pay('${o.id}')">💶 Cobrada</button>`}</div>` : ''}
+    </div>`;
+  }
+  function viewComandes() {
+    const orders = Store.getOrders(slug).sort((a, b) => a.createdAt - b.createdAt);
+    const nova = orders.filter(o => o.status === 'nova'), prep = orders.filter(o => o.status === 'preparant');
+    const done = orders.filter(o => o.status === 'servida' && Date.now() - o.createdAt < 3 * 3600e3).reverse();
+    return `${Panel.trialBanner(Store.biz)}${Panel.soundTip()}<h2>Comandes</h2><p class="sub">Les comandes que fan els clients des de la taula surten aquí. Toca el botó gran quan passis al pas següent.</p>
+      <div class="group-title">🔴 Noves: comença per aquí <span class="n">${nova.length}</span></div>
+      ${nova.length ? `<div class="cards">${nova.map(orderCard).join('')}</div>` : '<div class="empty"><span>☕</span>Cap comanda nova. Quan n\'entri una, sonarà i apareixerà aquí.</div>'}
+      ${prep.length ? `<div class="group-title">🟠 A la cuina <span class="n">${prep.length}</span></div><div class="cards">${prep.map(orderCard).join('')}</div>` : ''}
+      ${done.length ? `<div class="group-title">✔️ Servides (últimes 3 hores) <span class="n">${done.length}</span><button class="right" onclick="showDone=!showDone;render()">${showDone ? 'Amagar' : 'Mostrar'}</button></div>
+        ${showDone ? `<div class="cards">${done.map(orderCard).join('')}</div>` : ''}` : ''}`;
+  }
+  function advance(id) {
+    const o = Store.getOrders(slug).find(x => x.id === id);
+    const n = o && NEXT[o.status];
+    if (!n) return;
+    Store.updateOrder(slug, id, { status: n.to }).then(render, () => Panel.toast('⚠️ No s\'ha pogut desar. Revisa la connexió.'));
+    Panel.toast(n.to === 'servida' ? '👏 Servida' : 'Fet!');
+  }
+  function setStatus(id, status) { Store.updateOrder(slug, id, { status }).then(render, () => Panel.toast('⚠️ No s\'ha pogut desar.')); }
+
+  // ---------- Carta ----------
+  function viewCarta() {
+    return `<h2>Carta</h2><p class="sub">Si un plat s'acaba, apaga'l i deixarà de sortir per demanar. Toca el preu per canviar-lo.</p>
+      ${client.categories.map(c => {
+        const list = client.products.map((p, i) => ({ p, i })).filter(x => x.p.cat === c.id);
+        return list.length ? `<div class="group-title">${esc(tr(c.name, 'ca'))}</div><div class="items">${list.map(({ p, i }) => `
+          <div class="item ${p.available ? '' : 'off'}"><div class="item-emoji">${esc(p.emoji)}</div>
+            <div><div class="item-name">${esc(tr(p.name, 'ca'))}</div>
+              <div class="item-sub">${fmtPrice(p.price)}<button class="linkbtn" onclick="askPrice(${i})">Canviar preu</button></div></div>
+            <div class="sell"><button class="switch ${p.available ? 'on' : ''}" onclick="toggle(${i})" aria-label="Queda o esgotat"></button>${p.available ? 'Queda' : 'Esgotat'}</div>
+          </div>`).join('')}</div>` : '';
+      }).join('')}
+      <div class="help">💡 Els canvis surten a l'instant a la carta dels mòbils dels clients.</div>`;
+  }
+  function saveP(i, patch) {
+    client.products[i] = { ...client.products[i], ...patch };
+    Promise.resolve(Store.saveProducts(slug, client.products)).catch(() => Panel.toast('⚠️ No s\'ha pogut desar. Revisa la connexió.'));
+    render();
+  }
+  function toggle(i) { const on = client.products[i].available; saveP(i, { available: !on }); Panel.toast(on ? 'Marcat com a esgotat' : 'Torna a estar disponible'); }
+  function askPrice(i) {
+    const p = client.products[i];
+    Panel.modal(`<h3>Preu de ${esc(tr(p.name, 'ca'))}</h3><input class="big" id="pv" type="number" inputmode="decimal" step="0.1" min="0" value="${p.price}">
+      <div class="p-row"><button class="p-btn sec" onclick="Panel.closeModal()">Tornar</button><button class="p-btn main" onclick="savePrice(${i})">Desar</button></div>`);
+  }
+  function savePrice(i) {
+    const v = Math.round((parseFloat(String($('pv').value).replace(',', '.')) || 0) * 100) / 100;
+    saveP(i, { price: Math.max(0, v) }); Panel.closeModal(); Panel.toast('Preu desat');
+  }
+
+  // ---------- Caixa (shared/caixa.js) ----------
+  function initCaixa() {
+    Caixa.init({
+      store: Store, slug,
+      items: o => (o.items || []).map(i => ({ key: i.id || i.productId || i.name, qty: i.qty, label: i.name })),
+      who: o => 'Taula ' + o.table,
+      payLabel: () => '',
+      statusText: o => ({ nova: 'Nova', preparant: 'A la cuina', servida: 'Servida', 'cancel·lada': 'Cancel·lada' })[o.status] || o.status,
+      costItems: () => client.products.map(p => ({ key: p.id, name: tr(p.name, 'ca'), price: p.price })),
+      modal: Panel.modal, closeModal: Panel.closeModal, toast: Panel.toast, render,
+      rangeFetch: Store.remote ? (from, to) => Remote.ownerRecordsRange(Store.biz.id, 'order', from, to) : null
+    });
+  }
+  const viewCaixa = () => Panel.trialBanner(Store.biz) + Caixa.view();
+
+  // ---------- QR ----------
+  function viewQR() {
+    const local = /^(localhost|127\.|192\.168\.|10\.)/.test(location.hostname) || location.protocol === 'file:';
+    return `<h2>QR per a les taules</h2><p class="sub">Imprimeix-los i posa'n un a cada taula. En escanejar-lo, el client obre la carta amb el número de taula ja posat.</p>
+      ${local ? '<div class="p-tip"><span>ℹ️ Ara els QR apunten a aquest ordinador. Quan l\'app estigui a internet, apuntaran a l\'adreça real.</span></div>' : ''}
+      <div class="counter"><b>Quantes taules tens?</b>
+        <button class="st" onclick="qrCount=Math.max(1,qrCount-1);render()" aria-label="Una menys">−</button><span class="n">${qrCount}</span>
+        <button class="st" onclick="qrCount=Math.min(60,qrCount+1);render()" aria-label="Una més">+</button>
+        <button class="print" onclick="window.print()">🖨️ Imprimir</button></div>
+      <div class="qr-grid" id="qr-grid"></div>`;
+  }
+  function drawQRs() {
+    const grid = $('qr-grid');
+    if (!grid) return;
+    for (let n = 1; n <= qrCount; n++) {
+      const card = document.createElement('div');
+      card.className = 'qr-card';
+      card.innerHTML = `<b>${esc(client.name)}</b><div class="code"></div><b>Taula ${n}</b><small>Escaneja per veure la carta i demanar</small>`;
+      grid.appendChild(card);
+      if (window.QRCode) new QRCode(card.querySelector('.code'), { text: menuUrl(n), width: 140, height: 140, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M });
+      else card.querySelector('.code').textContent = 'No s\'ha pogut carregar el generador de QR.';
+    }
+  }
+
+  // ---------- Comandes noves ----------
+  function checkNew() {
+    const orders = Store.getOrders(slug);
+    if (knownIds) {
+      const fresh = orders.filter(o => !knownIds.has(o.id));
+      if (fresh.length) {
+        fresh.forEach(o => flashIds.add(o.id));
+        Panel.beep();
+        Panel.toast(`🔔 Comanda nova de la taula ${fresh[fresh.length - 1].table}!`);
+        setTimeout(() => fresh.forEach(o => flashIds.delete(o.id)), 4000);
+      }
+    }
+    knownIds = new Set(orders.map(o => o.id));
+    const n = orders.filter(o => o.status === 'nova').length;
+    $('dot').hidden = !n; $('dot').textContent = n;
+    document.title = (n ? `(${n}) ` : '') + 'Panell · ' + client.name;
+  }
+
+  function render() {
+    checkNew();
+    document.querySelectorAll('#tabbar button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+    $('main').innerHTML = { comandes: viewComandes, carta: viewCarta, caixa: viewCaixa, qr: viewQR }[tab]();
+    if (tab === 'qr') drawQRs();
+  }
+  $('tabbar').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { tab = b.dataset.tab; render(); window.scrollTo({ top: 0 }); } });
+
+  function start() {
+    if (Remote.isRemote(slug)) {
+      return Remote.ownerStart(slug, async biz => { await Store.attachOwner(biz); setup(Store.config); },
+        () => { $('main').innerHTML = '<p class="offline-msg"><span>🔍</span>No s\'ha trobat aquest restaurant.</p>'; });
+    }
+    Store.loadClient(slug).then(setup).catch(() => { $('main').innerHTML = '<h2>Restaurant no trobat</h2>'; });
+  }
+  function setup(c) {
+    client = c;
+    document.documentElement.style.setProperty('--brand', c.color);
+    document.querySelector('meta[name=theme-color]').content = c.color;
+    $('logo').innerHTML = Brand.logo(c); $('bname').textContent = c.name;
+    if (Store.remote) {
+      Brand.homeScreen(c, true);
+      // Editar l'app sencera (productes, fotos, horaris…) amb l'assistent, sense canviar l'enllaç ni el QR.
+      const ed = Object.assign(document.createElement('a'), { href: '../../crea/?editar=' + encodeURIComponent(slug), textContent: '✏️ Editar', title: 'Editar l’app: productes, fotos, colors, horaris…' });
+      document.querySelector('.p-actions, .top-actions').prepend(ed);
+    }
+    $('open-menu').href = menuUrl(1);
+    initCaixa();
+    Panel.lock({ app: 'cartaqr', client: c, onUnlock: () => {
+      render();
+      // Comandes noves: arriben per l'avís entre pestanyes i, per si de cas, es comprova cada 5 s.
+      Store.onChange(() => { if (!Panel.modalOpen() && tab !== 'qr') render(); else checkNew(); });
+      setInterval(() => { if (!Panel.modalOpen() && tab !== 'qr') render(); else checkNew(); }, 5000);
+    } });
+  }
+  start();
+</script>
+</body>
+</html>

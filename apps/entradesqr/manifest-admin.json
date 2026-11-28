@@ -1,0 +1,15 @@
+{
+  "name": "Panell d'entrades",
+  "short_name": "Panell",
+  "display": "standalone",
+  "background_color": "#f5f3ff",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

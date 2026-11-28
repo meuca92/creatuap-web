@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reserva cita</title>
+<meta name="theme-color" content="#7c3aed">
+<link rel="manifest" href="manifest.json">
+<script src="../shared/manifest.js?v=6087a0f"></script>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand: #7c3aed;
+    --bg: #f7f6f9;
+    --card: #ffffff;
+    --text: #1c1a22;
+    --muted: #747080;
+    --border: #e6e3ec;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.45; padding-bottom: 110px; }
+  button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+
+  .hero { background: var(--brand); color: #fff; padding: 22px 0 26px; }
+  .hero.has-cover { padding-top: 96px; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+  .logo { overflow: hidden; }
+  .hero-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,.18); display: grid; place-items: center; font-size: 1.7rem; }
+  .brand h1 { font-size: 1.35rem; line-height: 1.15; }
+  .brand p { opacity: .85; font-size: .9rem; }
+  .langs { display: flex; gap: 4px; background: rgba(0,0,0,.18); border-radius: 999px; padding: 3px; }
+  .langs button { padding: 5px 10px; border-radius: 999px; font-size: .78rem; font-weight: 700; text-transform: uppercase; opacity: .75; }
+  .langs button.on { background: #fff; color: var(--brand); opacity: 1; }
+  .hero-links { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.18); padding: 6px 12px; border-radius: 999px; font-size: .85rem; font-weight: 500; color: #fff; }
+
+  /* Passos */
+  .steps { display: flex; gap: 6px; padding: 18px 0 4px; }
+  .steps span { flex: 1; height: 4px; border-radius: 4px; background: var(--border); }
+  .steps span.on { background: var(--brand); }
+  .step-title { display: flex; align-items: center; gap: 10px; margin: 16px 0 12px; }
+  .step-title h2 { font-size: 1.2rem; }
+  .backbtn { width: 34px; height: 34px; border-radius: 50%; background: var(--card); border: 1px solid var(--border); display: grid; place-items: center; font-size: 1.1rem; }
+  .cat { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 18px 0 8px; }
+
+  .opt { width: 100%; display: flex; gap: 14px; align-items: center; text-align: left; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; transition: border-color .15s; }
+  .opt:hover { border-color: var(--brand); }
+  .emoji { width: 52px; height: 52px; flex-shrink: 0; border-radius: 12px; background: var(--bg); display: grid; place-items: center; font-size: 1.6rem; }
+  .opt .info { flex: 1; min-width: 0; }
+  .opt h3 { font-size: 1rem; }
+  .opt p { font-size: .86rem; color: var(--muted); margin-top: 2px; }
+  .opt .side { text-align: right; white-space: nowrap; }
+  .opt .side b { display: block; }
+  .opt .side small { color: var(--muted); }
+
+  .summary { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; font-size: .9rem; display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--muted); }
+  .summary b { color: var(--text); }
+
+  .days { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: none; }
+  .days::-webkit-scrollbar { display: none; }
+  .day { flex-shrink: 0; width: 62px; padding: 10px 0; border-radius: 14px; background: var(--card); border: 1px solid var(--border); text-align: center; }
+  .day small { display: block; font-size: .72rem; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .day b { font-size: 1.25rem; display: block; }
+  .day i { font-style: normal; font-size: .72rem; color: var(--muted); }
+  .day.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .day.on small, .day.on i { color: rgba(255,255,255,.85); }
+  .day:disabled { opacity: .4; cursor: default; }
+  .month { font-weight: 700; margin: 6px 0 8px; }
+  .month::first-letter, .summary b::first-letter { text-transform: uppercase; }
+
+  .slots-label { font-size: .85rem; font-weight: 700; color: var(--muted); margin: 14px 0 8px; }
+  .slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .slot { padding: 11px 0; border-radius: 10px; background: var(--card); border: 1px solid var(--border); font-weight: 700; }
+  .slot:hover { border-color: var(--brand); color: var(--brand); }
+  .empty { text-align: center; color: var(--muted); padding: 26px 10px; background: var(--card); border: 1px dashed var(--border); border-radius: var(--radius); }
+
+  label { display: block; font-size: .85rem; font-weight: 700; margin: 14px 0 6px; }
+  input, textarea { width: 100%; font: inherit; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); }
+  input:focus, textarea:focus { outline: 2px solid var(--brand); outline-offset: -1px; }
+  .primary { width: 100%; background: var(--brand); color: #fff; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 1rem; margin-top: 18px; }
+  .primary:disabled { opacity: .5; }
+  .ghost { width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; border: 1px solid var(--border); background: var(--card); margin-top: 10px; }
+  .hint { color: var(--muted); font-size: .85rem; margin-top: 10px; }
+  .err { color: #b91c1c; font-size: .9rem; margin-top: 10px; }
+
+  .done { text-align: center; padding: 28px 0 6px; }
+  .done .big { font-size: 3.4rem; }
+  .done h2 { margin: 8px 0 4px; }
+  .done p { color: var(--muted); }
+  .ticket { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-top: 18px; text-align: left; }
+  .ticket div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+  .ticket div:last-child { border: 0; }
+  .ticket span { color: var(--muted); }
+  .code { font-family: ui-monospace, monospace; letter-spacing: .12em; }
+
+  .appt { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+  .appt small { color: var(--muted); display: block; }
+  .appt.cancel { opacity: .5; }
+  .link-danger { color: #b91c1c; font-weight: 700; font-size: .88rem; }
+
+  footer { text-align: center; color: var(--muted); font-size: .78rem; padding: 30px 0 10px; }
+  .error { padding: 60px 20px; text-align: center; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+<script src="../shared/config.js?v=6087a0f"></script>
+<script src="../shared/remote.js?v=6087a0f"></script>
+<script src="core.js?v=6087a0f"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('c') || 'demo';
+
+  const UI = {
+    ca: {
+      book: 'Reserva la teva cita', myAppts: 'Les meves cites', chooseService: 'Quin servei vols?', chooseStaff: 'Amb qui?', any: 'Qualsevol professional',
+      anyHint: 'Et donem la primera hora lliure', chooseTime: 'Tria dia i hora', morning: 'Matí', afternoon: 'Tarda', closed: 'Tancat',
+      noSlots: 'No queda cap hora lliure aquest dia. Prova un altre dia.', yourData: 'Les teves dades', name: 'Nom i cognom', phone: 'Telèfon',
+      email: 'Email (opcional)', emailHint: "Per si el negoci t'ha d'avisar d'algun canvi en la cita.", note: 'Algun comentari?', notePh: 'Ex: tinc els cabells molt llargs…',
+      confirm: 'Confirmar la cita', taken: 'Ui! Algú acaba d\'agafar aquesta hora. Tria\'n una altra.', done: 'Cita confirmada!', doneHint: 'T\'esperem. Si no pots venir, cancel·la-la des de "Les meves cites".',
+      service: 'Servei', with: 'Amb', when: 'Quan', price: 'Preu', code: 'Codi', addCal: '📅 Afegir al calendari', another: 'Fer una altra reserva', back: 'Tornar',
+      lookup: 'Escriu el telèfon amb què vas reservar.', search: 'Buscar les meves cites', none: 'No hem trobat cap cita pendent amb aquest telèfon.',
+      cancel: 'Cancel·lar', cancelQ: 'Segur que vols cancel·lar aquesta cita?', cancelled: 'Cancel·lada', min: 'min', from: 'Durada'
+    },
+    es: {
+      book: 'Reserva tu cita', myAppts: 'Mis citas', chooseService: '¿Qué servicio quieres?', chooseStaff: '¿Con quién?', any: 'Cualquier profesional',
+      anyHint: 'Te damos la primera hora libre', chooseTime: 'Elige día y hora', morning: 'Mañana', afternoon: 'Tarde', closed: 'Cerrado',
+      noSlots: 'No queda ninguna hora libre este día. Prueba otro día.', yourData: 'Tus datos', name: 'Nombre y apellido', phone: 'Teléfono',
+      email: 'Email (opcional)', emailHint: 'Por si el negocio te tiene que avisar de algún cambio en la cita.', note: '¿Algún comentario?', notePh: 'Ej: tengo el pelo muy largo…',
+      confirm: 'Confirmar la cita', taken: '¡Vaya! Alguien acaba de coger esta hora. Elige otra.', done: '¡Cita confirmada!', doneHint: 'Te esperamos. Si no puedes venir, cancélala desde "Mis citas".',
+      service: 'Servicio', with: 'Con', when: 'Cuándo', price: 'Precio', code: 'Código', addCal: '📅 Añadir al calendario', another: 'Hacer otra reserva', back: 'Volver',
+      lookup: 'Escribe el teléfono con el que reservaste.', search: 'Buscar mis citas', none: 'No hemos encontrado ninguna cita pendiente con este teléfono.',
+      cancel: 'Cancelar', cancelQ: '¿Seguro que quieres cancelar esta cita?', cancelled: 'Cancelada', min: 'min', from: 'Duración'
+    }
+  };
+
+  let client, lang;
+  let state = { step: 'service', serviceId: null, staffId: null, date: null, time: null, appt: null, lookupPhone: '' };
+  const $ = id => document.getElementById(id);
+  const t = key => UI[lang][key];
+  const locale = () => lang === 'es' ? 'es-ES' : 'ca-ES';
+  const service = () => client.services.find(s => s.id === state.serviceId);
+  const staffName = id => (client.staff.find(s => s.id === id) || {}).name || '';
+  const fmtDate = (iso, opts = { weekday: 'long', day: 'numeric', month: 'long' }) => fromISODate(iso).toLocaleDateString(locale(), opts);
+
+  function pickLang() {
+    const saved = (() => { try { return localStorage.getItem('reservafacil:lang'); } catch (_) { return null; } })();
+    const nav = (navigator.language || 'ca').slice(0, 2);
+    return [saved, nav].find(l => l && client.languages.includes(l)) || client.languages[0];
+  }
+  function setLang(l) {
+    lang = l;
+    try { localStorage.setItem('reservafacil:lang', l); } catch (_) {}
+    document.documentElement.lang = l;
+    render();
+  }
+  function go(step, patch = {}) { state = { ...state, ...patch, step }; render(); window.scrollTo({ top: 0 }); }
+
+  function header() {
+    return `<header ${Brand.hero(client)}><div class="wrap">
+      <div class="hero-top">
+        <div class="brand"><div class="logo">${Brand.logo(client)}</div><div><h1>${esc(client.name)}</h1><p>${esc(tr(client.tagline, lang))}</p></div></div>
+        ${client.languages.length > 1 ? `<div class="langs">${client.languages.map(l => `<button class="${l === lang ? 'on' : ''}" onclick="setLang('${l}')">${l}</button>`).join('')}</div>` : ''}
+      </div>
+      <div class="hero-links">
+        <button class="pill" onclick="go('service')">📅 ${t('book')}</button>
+        <button class="pill" onclick="go('lookup')">👤 ${t('myAppts')}</button>
+        ${client.address ? `<span class="pill">📍 ${esc(client.address)}</span>` : ''}
+      </div>
+    </div></header>`;
+  }
+
+  function progress(n) { return `<div class="steps">${[1, 2, 3, 4].map(i => `<span class="${i <= n ? 'on' : ''}"></span>`).join('')}</div>`; }
+  function title(text, backTo) {
+    return `<div class="step-title">${backTo ? `<button class="backbtn" aria-label="${t('back')}" onclick="go('${backTo}')">←</button>` : ''}<h2>${text}</h2></div>`;
+  }
+  function summary() {
+    const s = service();
+    const parts = [];
+    if (s) parts.push(`<span>${esc(s.emoji)} <b>${esc(tr(s.name, lang))}</b> · ${s.duration} ${t('min')} · ${fmtPrice(s.price)}</span>`);
+    if (state.staffId) parts.push(`<span>${t('with')} <b>${state.staffId === 'any' ? t('any') : esc(staffName(state.staffId))}</b></span>`);
+    if (state.date && state.time) parts.push(`<span><b>${esc(fmtDate(state.date))}</b> · ${state.time}</span>`);
+    return parts.length ? `<div class="summary">${parts.join('')}</div>` : '';
+  }
+
+  function viewService() {
+    const active = client.services.filter(s => s.active !== false);
+    return progress(1) + title(t('chooseService')) + client.categories.map(c => {
+      const list = active.filter(s => s.cat === c.id);
+      if (!list.length) return '';
+      return `<div class="cat">${esc(tr(c.name, lang))}</div>` + list.map(s => `
+        <button class="opt" onclick="chooseService('${s.id}')">
+          <div class="emoji">${esc(s.emoji)}</div>
+          <div class="info"><h3>${esc(tr(s.name, lang))}</h3><p>${esc(tr(s.desc, lang))}</p></div>
+          <div class="side"><b>${fmtPrice(s.price)}</b><small>${s.duration} ${t('min')}</small></div>
+        </button>`).join('');
+    }).join('');
+  }
+
+  // Si només hi ha una persona que fa el servei, no cal preguntar "amb qui".
+  function chooseService(id) {
+    const list = client.staff.filter(s => s.services.includes(id));
+    if (list.length === 1) go('time', { serviceId: id, staffId: list[0].id, date: null, time: null });
+    else go('staff', { serviceId: id, staffId: null, date: null, time: null });
+  }
+  const singleStaff = () => client.staff.filter(s => s.services.includes(state.serviceId)).length === 1;
+
+  function viewStaff() {
+    const list = client.staff.filter(s => s.services.includes(state.serviceId));
+    const opt = (id, avatar, name, sub) => `
+      <button class="opt" onclick="go('time', { staffId: '${id}', date: null, time: null })">
+        <div class="emoji">${avatar}</div><div class="info"><h3>${esc(name)}</h3><p>${esc(sub)}</p></div><div class="side">›</div>
+      </button>`;
+    return progress(2) + title(t('chooseStaff'), 'service') + summary() + '<div style="height:12px"></div>' +
+      (list.length > 1 ? opt('any', '✨', t('any'), t('anyHint')) : '') +
+      list.map(s => opt(s.id, esc(s.avatar), s.name, tr(s.role, lang))).join('');
+  }
+
+  function viewTime() {
+    const appts = Store.getAppts(slug);
+    const today = new Date();
+    const days = [];
+    for (let i = 0; i < (client.daysAhead || 21); i++) {
+      const iso = toISODate(addDays(today, i));
+      days.push({ iso, n: availableSlots(client, appts, iso, state.serviceId, state.staffId).length });
+    }
+    if (!state.date || !days.some(d => d.iso === state.date && d.n)) {
+      const first = days.find(d => d.n);
+      state.date = first ? first.iso : days[0].iso;
+    }
+    const slots = availableSlots(client, appts, state.date, state.serviceId, state.staffId);
+    const group = (label, list) => list.length ? `<div class="slots-label">${label}</div><div class="slots">${list.map(s =>
+      `<button class="slot" onclick="go('data', { time: '${s.time}', slotStaff: ${JSON.stringify(s.staffIds).replace(/"/g, '&quot;')} })">${s.time}</button>`).join('')}</div>` : '';
+    return progress(3) + title(t('chooseTime'), singleStaff() ? 'service' : 'staff') + summary() +
+      `<div class="month">${esc(fmtDate(state.date, { month: 'long', year: 'numeric' }))}</div>
+       <div class="days">${days.map(d => {
+         const dt = fromISODate(d.iso);
+         return `<button class="day ${d.iso === state.date ? 'on' : ''}" ${d.n ? '' : 'disabled'} onclick="state.date='${d.iso}'; render()">
+           <small>${esc(dt.toLocaleDateString(locale(), { weekday: 'short' }))}</small><b>${dt.getDate()}</b><i>${d.n ? '' : t('closed')}</i></button>`;
+       }).join('')}</div>` +
+      (slots.length
+        ? group(t('morning'), slots.filter(s => toMin(s.time) < 14 * 60)) + group(t('afternoon'), slots.filter(s => toMin(s.time) >= 14 * 60))
+        : `<div class="empty">${t('noSlots')}</div>`);
+  }
+
+  function viewData() {
+    return progress(4) + title(t('yourData'), 'time') + summary() + `
+      <form id="f" autocomplete="on">
+        <label for="n">${t('name')}</label><input id="n" name="name" required autocomplete="name">
+        <label for="p">${t('phone')}</label><input id="p" name="tel" type="tel" required autocomplete="tel" inputmode="tel">
+        <label for="e">${t('email')}</label><input id="e" name="email" type="email" autocomplete="email">
+        <p class="hint">${t('emailHint')}</p>
+        <label for="note">${t('note')}</label><textarea id="note" rows="2" placeholder="${esc(t('notePh'))}"></textarea>
+        <div id="ferr"></div>
+        <button class="primary" type="submit">${t('confirm')}</button>
+      </form>`;
+  }
+
+  let sending = false;
+  async function submitData(e) {
+    e.preventDefault();
+    if (sending) return;
+    const s = service();
+    // Amb "qualsevol", s'assigna el professional lliure amb menys feina aquell dia.
+    const appts = Store.getAppts(slug);
+    const candidates = state.staffId === 'any' ? (state.slotStaff || []) : [state.staffId];
+    const load = id => appts.filter(a => a.staffId === id && a.date === state.date && BLOCKING.has(a.status)).length;
+    const staffId = [...candidates].sort((a, b) => load(a) - load(b))[0];
+    sending = true;
+    $('f').querySelector('button[type=submit]').disabled = true;
+    const appt = staffId && await Store.addAppt(client, {
+      serviceId: s.id, serviceName: tr(s.name, 'ca'), staffId, date: state.date, time: state.time, duration: s.duration, price: s.price,
+      customer: { name: $('n').value.trim(), phone: $('p').value.trim(), email: $('e').value.trim() }, note: $('note').value.trim(), source: 'online'
+    }).catch(() => null);
+    sending = false;
+    if ($('f')) $('f').querySelector('button[type=submit]').disabled = false;
+    if (!appt) { $('ferr').innerHTML = `<p class="err">${t('taken')}</p>`; setTimeout(() => go('time', { time: null }), 1600); return; }
+    go('done', { appt });
+  }
+
+  function viewDone() {
+    const a = state.appt;
+    const s = client.services.find(x => x.id === a.serviceId);
+    return `<div class="done"><div class="big">🎉</div><h2>${t('done')}</h2><p>${t('doneHint')}</p></div>
+      <div class="ticket">
+        <div><span>${t('service')}</span><b>${esc(tr(s && s.name, lang) || a.serviceName)}</b></div>
+        <div><span>${t('with')}</span><b>${esc(staffName(a.staffId))}</b></div>
+        <div><span>${t('when')}</span><b>${esc(fmtDate(a.date))} · ${a.time}</b></div>
+        <div><span>${t('price')}</span><b>${fmtPrice(a.price)}</b></div>
+        <div><span>${t('code')}</span><b class="code">${a.code}</b></div>
+      </div>
+      <button class="primary" onclick="downloadIcs()">${t('addCal')}</button>
+      <button class="ghost" onclick="go('service', { serviceId: null, staffId: null, date: null, time: null, appt: null })">${t('another')}</button>`;
+  }
+
+  function downloadIcs() {
+    const a = state.appt;
+    const s = client.services.find(x => x.id === a.serviceId);
+    const blob = new Blob([icsFor(client, a, tr(s && s.name, lang) || a.serviceName)], { type: 'text/calendar' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'cita.ics';
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+  }
+
+  function viewLookup() {
+    const phone = normPhone(state.lookupPhone);
+    const nowKey = toISODate(new Date());
+    const mine = phone && state.mine ? state.mine
+      .filter(a => a.date >= nowKey && a.status !== 'feta' && a.status !== 'no-presentat')
+      .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time)) : [];
+    return title(t('myAppts'), 'service') + `
+      <form id="lk"><label for="lp">${t('lookup')}</label><input id="lp" type="tel" inputmode="tel" value="${esc(state.lookupPhone)}" required>
+      <button class="primary" type="submit">${t('search')}</button></form>
+      <div style="margin-top:18px">${phone && state.mine ? (mine.length ? mine.map(a => {
+        const s = client.services.find(x => x.id === a.serviceId);
+        const cancelled = a.status === 'cancel·lada';
+        return `<div class="appt ${cancelled ? 'cancel' : ''}"><div><b>${esc(fmtDate(a.date))} · ${a.time}</b>
+          <small>${esc(tr(s && s.name, lang) || a.serviceName)} · ${esc(staffName(a.staffId))} · <span class="code">${a.code}</span></small></div>
+          ${cancelled ? `<small>${t('cancelled')}</small>` : `<button class="link-danger" onclick="cancelAppt('${a.id}')">${t('cancel')}</button>`}</div>`;
+      }).join('') : `<div class="empty">${t('none')}</div>`) : ''}</div>`;
+  }
+
+  async function cancelAppt(id) {
+    if (!confirm(t('cancelQ'))) return;
+    await Store.cancelMine(slug, id, state.lookupPhone);
+    await lookup();
+  }
+  async function lookup() {
+    state.mine = await Store.findMine(slug, state.lookupPhone).catch(() => []);
+    render();
+  }
+
+  function render() {
+    const views = { service: viewService, staff: viewStaff, time: viewTime, data: viewData, done: viewDone, lookup: viewLookup };
+    $('app').innerHTML = header() + `<main class="wrap">${views[state.step]()}</main>
+      <footer>${esc(client.name)} · Tanda by CreaTuApp</footer>`;
+    if ($('f')) $('f').onsubmit = submitData;
+    if ($('lk')) $('lk').onsubmit = e => { e.preventDefault(); state.lookupPhone = $('lp').value; lookup(); };
+  }
+
+  Store.loadClient(slug).then(async c => {
+    client = c;
+    if (Store.remote) Brand.homeScreen(c, false);
+    if (Store.remote) await Store.attachPublic(slug);
+    document.title = `${c.name} · Reserva`;
+    document.documentElement.style.setProperty('--brand', c.color);
+    document.querySelector('meta[name=theme-color]').content = c.color;
+    setLang(pickLang());
+    // Si el negoci canvia alguna cosa des del panell, les hores lliures s'actualitzen soles.
+    Store.onChange(() => { if (state.step === 'time') render(); });
+  }).catch(err => {
+    document.getElementById('app').innerHTML = err && err.message === 'not_live'
+      ? `<div class="error"><h2>${esc(err.businessName || '')}</h2><p>Les reserves online no estan disponibles ara mateix. Truca al negoci per demanar hora.</p></div>`
+      : '<div class="error"><h2>No hem trobat aquest negoci</h2><p>Revisa l\'enllaç que t\'han passat.</p></div>';
+  });
+</script>
+</body>
+</html>

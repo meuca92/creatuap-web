@@ -1,0 +1,8 @@
+{
+  "name": "Panell del restaurant",
+  "short_name": "Panell",
+  "display": "standalone",
+  "background_color": "#f5f3f0",
+  "theme_color": "#0e7490",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
